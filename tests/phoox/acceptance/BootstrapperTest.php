@@ -10,28 +10,14 @@
  */
 class BootstrapperTest extends PhooxTestCase
 {
-	private function runLocalPhpScript($scriptName, array $env=array()) {
-		$runner = new PhpScriptRunner();
-		$runner->run(
-			'php',
-			array(dirname(__file__) . '/' . $scriptName . '.php'),
-			'',
-			$env
-		);
-	}
+	public static function foreignFail($message) {
+		ob_start();
+		debug_print_backtrace();
+		$trace = ob_get_contents();
+		ob_end_clean();
 
-	private function runMethodIsolatedAsMain($method, array $env=array(), array $includePath=array())
-	{
-		$runner = new PhpScriptRunner();
-		$runner->run(
-			'php',
-			array(
-				'-d', 
-				'include_path='. implode(PATH_SEPARATOR, $includePath)
-			),
-			$this->tokenizeMethodForStdIn($method),
-			$env
-		);
+		fwrite(fopen('php://stderr', 'w'), $message . PHP_EOL . $trace);
+		exit(1);
 	}
 
 	/**
@@ -44,7 +30,7 @@ class BootstrapperTest extends PhooxTestCase
 	 *
 	 * @return void
 	 */
-	private function runStaticMethodOfThisTest($method, array $env=array(), array $includePath=array())
+	private function runStaticMethodOfThisTestIsolated($method, array $env=array(), array $includePath=array())
 	{
 		$includePath = implode(PATH_SEPARATOR, array_merge(
 			$includePath, explode(PATH_SEPARATOR, get_include_path())
@@ -58,74 +44,15 @@ class BootstrapperTest extends PhooxTestCase
 			),
 			sprintf(
 				'<?php
-					class PHPUnit_Framework_TestCase {}
-					require_once \'%s\';
+					//HACK lying about static dependencies
+					class PhooxTestCase {}
 					require_once \'%s\';
 					%s::%s();
 				?>',
-				BOOTSTRAP_FILE, __file__, __class__, $method
+				__file__, __class__, $method
 			),
 			$env
 		);
-	}
-
-	private function tokenizeMethodForStdIn($method)
-	{
-		$tokens = token_get_all(file_get_contents(__file__));
-
-		for ($i = 0; $i < count($tokens); ++$i) {
-			if (is_array($tokens[$i]) && T_STRING === $tokens[$i][0] && $method == $tokens[$i][1]) {
-				$start = $i;
-				break;
-			}
-		}
-
-		if (!$start) {
-			throw new Exception('Method not found');
-		}
-
-		for ($i = $start; $i < count($tokens); ++$i) {
-			if (false == is_array($tokens[$i]) && $tokens[$i] === '{') {
-				$start = $i;
-				break;
-			}
-		}
-
-		if (!$start) {
-			throw new Exception('Method not found');
-		}
-
-		$stack = 0;
-		for ($i = $start + 1; $i < count($tokens); ++$i) {
-			if (false == is_array($tokens[$i]) && $tokens[$i] === '{') {
-				++$stack;
-				continue;
-			}
-	
-			if (false == is_array($tokens[$i]) && $tokens[$i] === '}') {
-				if (0 === $stack) {
-					$end = $i;
-					break;
-				}
-				--$stack;
-				continue;
-			}
-
-		}
-
-		if (!$end) {
-			throw new Exception('Method not found');
-		}
-
-		$script = '';
-		for ($i = $start + 1; $i < $end; ++$i) {
-			if (is_array($tokens[$i])) {
-				$script .= $tokens[$i][1];
-			} else {
-				$script .= $tokens[$i];
-			}
-		}
-		return sprintf('<?php %s ?>', $script);
 	}
 
 	/**
@@ -139,17 +66,15 @@ class BootstrapperTest extends PhooxTestCase
 		$fsDriver->rmdir('bootstrapper');
 		$fsDriver->mkdir('bootstrapper');
 		$fsDriver->mkdir('bootstrapper/lib1');
-		$fsDriver->touch('bootstrapper/lib1/FirstClass.php', '<?php class FirstClass {} ?>');
+		$fsDriver->touch('bootstrapper/lib1/FirstClass.php', '<?php class FirstClass extends SecondClass {} ?>');
 		$fsDriver->mkdir('bootstrapper/lib2');
-		$fsDriver->touch('bootstrapper/lib2/SecondClass.php', '<?php class SecondClass extends FirstClass {} ?>');
+		$fsDriver->touch('bootstrapper/lib2/SecondClass.php', '<?php class SecondClass {} ?>');
 
 		$env = array(
 			'WORK_DIR' => $fsDriver->absolute('bootstrapper')
 		);
 
-		$this->runMethodIsolatedAsMain('bootstrapped', $env, array(
-			PHOOX_DIR
-		));
+		$this->runStaticMethodOfThisTestIsolated('bootstrapped', $env, array(PHOOX_DIR));
 
 		$fsDriver->rmdir('bootstrapper');
 	}
@@ -161,20 +86,21 @@ class BootstrapperTest extends PhooxTestCase
 			$_ENV['WORK_DIR'] . '/lib2/'
 		));
 
+		//this should be loaded
 		new FirstClass;
 
-		function foo($code, $message)
-		{
-			if (false !== strpos($message, 'Failed loading NonExistant')) {
-				exit (0);
-			}
-		}
-
-		set_error_handler('foo');
+		set_error_handler(array(__class__, 'foo'));
 		error_reporting(E_ALL | E_STRICT | E_DEPRECATED);
 		new NonExistant;
 
 		exit(1);
+	}
+
+	public static function foo($code, $message)
+	{
+		if (false !== strpos($message, 'Failed loading NonExistant')) {
+			exit (0);
+		}
 	}
 
 	/**
@@ -185,7 +111,7 @@ class BootstrapperTest extends PhooxTestCase
 	public function errorHandlerRegistrationOrderIsStackLike()
 	{
 		try {
-			$this->runStaticMethodOfThisTest('handlerWorkFlow');
+			$this->runStaticMethodOfThisTestIsolated('handlerWorkFlow');
 		} catch(ForeignError $ex) {
 			$this->assertStringStartsWith(
 				'PHP Notice:  error 6', $ex->getMessage(),
@@ -223,16 +149,6 @@ class BootstrapperTest extends PhooxTestCase
 class BootStrapperTest_HandlerStack {
 	private $order = 0;
 
-	private function fail($message) {
-		ob_start();
-		debug_print_backtrace();
-		$trace = ob_get_contents();
-		ob_end_clean();
-
-		fwrite(STDERR, $message . PHP_EOL . $trace);
-		exit(1);
-	}
-
 	private function assertOrder($func, $message, array $order) {
 		$errorId = $message{6};
 
@@ -244,7 +160,7 @@ class BootStrapperTest_HandlerStack {
 			return;
 		}
 
-		$this->fail(sprintf(
+		BootstrapperTest::foreignFail(sprintf(
 			'Expected errorhandler %s '        . PHP_EOL .
 			'to be called at one of these: %s' . PHP_EOL .
 			'Actually called at %s',
