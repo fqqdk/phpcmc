@@ -91,6 +91,14 @@ class FileIncludeHandler implements ErrorHandler {
 		array_push($this->files, $fileName);
 	}
 
+	/**
+	 *
+	 * @param <type> $fileName
+	 *
+	 * @todo what if an included file tampers with the errorhandling?
+	 *
+	 * @return void
+	 */
 	public function stopIncluding($fileName) {
 		array_pop($this->files);
 		restore_error_handler();
@@ -112,6 +120,15 @@ class FileIncludeHandler implements ErrorHandler {
 		return (bool) preg_match('#'.preg_quote($this->fileName(), '#').'#', $errorMessage);
 	}
 
+	/**
+	 *
+	 * @param <type> $errorCode
+	 * @param <type> $errorMessage
+	 *
+	 * @todo check shouldswallow method
+	 *
+	 * @return <type>
+	 */
 	public function handle($errorCode, $errorMessage) {
 		if (false === $this->shouldSwallow($errorCode)) {
 			return false;
