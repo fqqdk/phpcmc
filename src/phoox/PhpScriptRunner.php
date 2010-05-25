@@ -21,7 +21,7 @@ class PhpScriptRunner
 		);
 
 		$cmd  = $this->cmd($script, $args);
-		$proc = proc_open($cmd, $desc, $pipes, null, $env);
+		$proc = proc_open($cmd, $desc, $pipes, null, $env, array('bypass_shell'=>true));
 		if (false === $proc) {
 			trigger_error('cannot execute ' . $cmd);
 		}
