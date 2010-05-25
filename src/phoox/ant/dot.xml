@@ -1,0 +1,21 @@
+<project name="dot-macro">
+
+<macrodef name="dot">
+
+<attribute name="in" />
+<attribute name="out" />
+<attribute name="format" />
+<attribute name="engine" />
+
+<sequential>
+	<shell executable="dot" failonerror="false">
+		<arg value="-T@{format}" />
+		<arg value="-o@{out}" />
+		<arg value="-K@{engine}" />
+		<arg value="@{in}" />
+	</shell>
+</sequential>
+
+</macrodef>
+
+</project>

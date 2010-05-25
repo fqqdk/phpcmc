@@ -1,0 +1,168 @@
+<project name="php">
+
+<macrodef name="php">
+	<attribute name="file" />
+	<attribute name="failonerror" default="true" />
+	<attribute name="includepath" default="${php.includepath}" />
+	<element name="args" optional="yes" implicit="yes" />
+	<sequential>
+		<shell executable="php" failonerror="@{failonerror}">
+			<arg value="-d" />
+			<arg value="include_path='@{includepath}'" />
+			<arg value="-d" />
+			<arg value="display_errors='stderr'" />
+			<arg value="-f" />
+			<arg value="@{file}" />
+			<arg value="--" />
+			<args />
+		</shell>
+	</sequential>
+</macrodef>
+
+<macrodef name="getincludepath">
+	<sequential>
+		<exec executable="php" failonerror="true" os="Linux" outputproperty="php.includepath">
+			<arg value="-r" />
+			<arg value="echo get_include_path();" />
+		</exec>
+		<exec executable="cmd" failonerror="true" os="Windows XP" outputproperty="php.includepath">
+			<arg value="/c" />
+			<arg value="php" />
+			<arg value="-r" />
+			<arg value="echo get_include_path();" />
+		</exec>
+	</sequential>
+</macrodef>
+
+<macrodef name="phpclasspath">
+	<attribute name="output" />
+	<sequential>
+	<echo message="@{output}" />
+		<php file="classpath.php">
+			<redirector output="@{output}" />
+		</php>
+	</sequential>
+</macrodef>
+
+<!-- testing -->
+<macrodef name="phpunit">
+	<attribute name="config" />
+	<attribute name="test" />
+
+	<sequential>
+		<shell executable="phpunit">
+			<arg value="--configuration" />
+			<arg value="@{config}" />
+			<arg value="@{test}" />
+		</shell>
+	</sequential>
+</macrodef>
+
+<!-- metrics -->
+
+<macrodef name="pdepend">
+	<attribute name="dir" />
+	<attribute name="outputdir" />
+	<attribute name="excludepackages" />
+	<attribute name="mode" />
+	
+	<sequential>
+		<shell executable="pdepend" failonerror="false">
+			<arg value="--bad-documentation" />
+			<arg value="--coderank-mode=@{mode}" />
+			<arg value="--summary-xml=@{outputdir}/summary.xml" />
+			<arg value="--jdepend-xml=@{outputdir}/jdepend.xml" />
+			<arg value="--jdepend-chart=@{outputdir}/jdepend.svg" />
+			<arg value="--overview-pyramid=@{outputdir}/pyramid.svg" />
+			<arg value="--exclude=@{excludepackages}" />
+			<arg value="@{dir}" />
+		</shell>
+	</sequential>
+</macrodef>
+
+<macrodef name="phpcpd">
+	<attribute name="dir" />
+	<attribute name="output" />
+	<attribute name="min-tokens" default="70" />
+	<attribute name="min-lines" default="5" />
+
+	<sequential>
+		<shell executable="phpcpd" failonerror="false">
+			<arg value="--log-pmd" />		<arg value="@{output}" />
+			<arg value="--min-tokens" />	<arg value="@{min-tokens}" />
+			<arg value="--min-lines" />		<arg value="@{min-lines}" />
+			<arg value="@{dir}" />
+		</shell>
+	</sequential>
+</macrodef>
+
+<macrodef name="phpcs">
+	<attribute name="dir" />
+	<attribute name="outfile" />
+
+	<sequential>
+		<echo message="generating checkstyle report" />
+		<touch file="@{outfile}" />
+		<shell executable="phpcs" failonerror="false">
+			<arg value="--tab-width=4" />
+			<arg value="--report=checkstyle" />
+			<arg value="@{dir}" />
+			<redirector output="@{xmloutfile}" />
+		</shell>
+	</sequential>
+</macrodef>
+
+<macrodef name="phpmd">
+	<attribute name="dir" />
+	<attribute name="output" />
+
+	<sequential>
+		<shell executable="phpmd" failonerror="false">
+			<arg value="@{dir}" />
+			<arg value="xml" />
+			<arg value="codesize" />
+			<redirector output="@{output}" />
+		</shell>
+	</sequential>
+</macrodef>
+
+<macrodef name="pearanha">
+	<attribute name="failonerror" default="true" />
+	<element name="args" optional="yes" implicit="yes" />
+	<sequential>
+		<shell executable="pear" failonerror="@{failonerror}">
+			<arg value="-c" />
+			<arg value=".pearrc" />
+			<args />
+		</shell>
+	</sequential>
+</macrodef>
+
+<macrodef name="pear-depend">
+    <attribute name="channel" />
+    <attribute name="package" />
+    <sequential>
+        <pearanha failonerror="false">
+            <arg value="channel-discover" />
+            <arg value="@{channel}" />
+        </pearanha>
+        <pearanha failonerror="false">
+            <arg value="install" />
+            <arg value="@{package}" />
+        </pearanha>
+    </sequential>
+</macrodef>
+
+<macrodef name="svn-depend">
+    <attribute name="alias" />
+    <attribute name="url" />
+    <sequential>
+        <shell executable="svn">
+            <arg value="export" />
+            <arg value="@{url}" />
+            <arg value="vendor/@{alias}" />
+        </shell>
+    </sequential>
+</macrodef>
+
+</project>

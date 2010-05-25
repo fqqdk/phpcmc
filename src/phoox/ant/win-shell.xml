@@ -1,0 +1,18 @@
+<project name="shell">
+
+<macrodef name="shell">
+
+	<attribute name="executable" />
+	<attribute name="failonerror" default="true" />
+
+	<element name="args" optional="yes" implicit="yes" />
+
+	<sequential>
+		<exec executable="cmd" failonerror="@{failonerror}">
+			<arg value="/c" /><arg value="@{executable}" /><args />
+		</exec>
+	</sequential>
+
+</macrodef>
+
+</project>
