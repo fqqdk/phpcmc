@@ -37,9 +37,11 @@ class FileSystemDriver
 		mkdir($this->baseDir . $dir, 0777, true);
 	}
 
-	public function touch($file)
+	public function touch($file, $contents='')
 	{
-		touch($this->baseDir . $file);
+		$fileName = $this->baseDir . $file;
+		touch($fileName);
+		file_put_contents($fileName, $contents);
 	}
 
 	private function delTree($absDir)

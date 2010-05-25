@@ -10,7 +10,7 @@
  */
 class PhpScriptRunner
 {
-	public function run($script, array $args, $stdin)
+	public function run($script, array $args, $stdin='', array $env=array())
 	{
 		$stdinHandle = $this->open($stdin);
 
@@ -21,7 +21,7 @@ class PhpScriptRunner
 		);
 
 		$cmd  = $this->cmd($script, $args);
-		$proc = proc_open($cmd, $desc, $pipes);
+		$proc = proc_open($cmd, $desc, $pipes, null, $env);
 		if (false === $proc) {
 			trigger_error('cannot execute ' . $cmd);
 		}

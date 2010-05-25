@@ -21,9 +21,7 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 	 */
 	public function collectsClassesFromDirectory()
 	{
-		$workDir  = dirname(__file__) . '/workdir/';
-
-		$fsDriver = new FileSystemDriver($workDir);
+		$fsDriver = new FileSystemDriver(WORK_DIR);
 
 		$fsDriver->rmdir('flatdir');
 		$fsDriver->mkdir('flatdir');
@@ -50,9 +48,7 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 	 */
 	public function collectsClassesRecursively()
 	{
-		$workDir  = dirname(__file__) . '/workdir/';
-
-		$fsDriver = new FileSystemDriver($workDir);
+		$fsDriver = new FileSystemDriver(WORK_DIR);
 
 		$fsDriver->rmdir('deepdir');
 		$fsDriver->mkdir('deepdir');

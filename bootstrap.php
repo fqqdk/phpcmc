@@ -14,10 +14,15 @@ function __bootstrap()
 {
 	error_reporting(E_ALL | E_STRICT | E_DEPRECATED);
 
-	define('BASE_DIR' ,     dirname(__file__) . '/');
-	define('SRC_DIR',       BASE_DIR . 'src/phpcmc/');
-	define('PHOOX_DIR',     BASE_DIR . 'src/phoox/');
-	define('TEST_DIR',      BASE_DIR . 'tests/');
+	define('BASE_DIR' , dirname(__file__) . '/');
+
+	define('BOOTSTRAP_FILE', __file__);
+
+	define('SRC_DIR',   BASE_DIR . 'src/phpcmc/');
+	define('PHOOX_DIR', BASE_DIR . 'src/phoox/');
+	define('TEST_DIR',  BASE_DIR . 'tests/');
+	define('WORK_DIR',  BASE_DIR . 'build/work/');
+
 	define('PHPCMC_SCRIPT', BASE_DIR . 'src/phpcmc.php');
 
 	require_once BASE_DIR . 'src/phoox/Bootstrapper.php';
