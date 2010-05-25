@@ -34,11 +34,10 @@ class TestIntegrationTest extends PhooxTestCase
 	 */
 	public function loaderHandlerIsNice()
 	{
-		$this->markTestSkipped();
 		try {
 			new NonExistant;
 		} catch(PHPUnit_Framework_Error $ex) {
-			// this is it
+			return;
 		}
 	}
 
