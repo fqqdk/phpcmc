@@ -47,7 +47,7 @@ class FileSystemDriver
 	public function delTree($absDir)
 	{
 		foreach(glob($absDir . '*', GLOB_MARK ) as $absFile) {
-			if(substr($absFile, -1) == '/' ) {
+			if(is_dir($absDir)) {
 				$this->delTree($absFile);
 			} else {
 				unlink($absFile);
