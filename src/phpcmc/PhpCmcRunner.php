@@ -39,17 +39,30 @@ class PhpCmcRunner
 		$this->assert   = $assert;
 	}
 
-	public function run()
+	public function runInDirectory($dir)
 	{
 		$this->output = $this->runner->run('php', array(
 			BASE_DIR . 'src/phpcmc.php',
-			$this->fsDriver->baseDir(),
+			$this->fsDriver->absolute($dir),
 		), '');
+	}
+
+	private function getOutput()
+	{
+		$result = '';
+		foreach (explode(PHP_EOL, $this->output) as $line) {
+			$result .= '> ' . $line . PHP_EOL;
+		}
+		return $result;
 	}
 
 	public function outputShows($constraint)
 	{
-		$this->assert->that($this->output, $constraint);
+		$this->assert->that(
+			$this->output,
+			$constraint,
+			'Erroneous script output : ' . PHP_EOL . $this->getOutput() . PHP_EOL
+		);
 	}
 }
 

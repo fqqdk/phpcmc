@@ -34,11 +34,13 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 		$assert = new Assert($this);
 		$driver = new PhpCmcRunner($fsDriver, new PhpScriptRunner($assert), $assert);
 
-		$driver->run();
+		$driver->runInDirectory('foo');
 
 		$driver->outputShows($this->correctHeader());
 		$driver->outputShows($this->aClassEntry('SomeClass',  'foo'));
 		$driver->outputShows($this->aClassEntry('OtherClass', 'foo'));
+
+		$fsDriver->rmdir('foo');
 	}
 
 	public function aClassEntry($className, $classFilePath)
@@ -50,7 +52,7 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 
 	private function classEntryPattern($className, $classFilePath)
 	{
-		return '/'.preg_quote($className, '/').'.*=>.*'.preg_quote($classFilePath, '/').'/';
+		return '#.*'.preg_quote($className, '#').'.*'.preg_quote($classFilePath, '#').'.*#';
 	}
 
 	public function correctHeader()

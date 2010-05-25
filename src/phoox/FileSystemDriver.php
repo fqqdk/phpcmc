@@ -17,6 +17,11 @@ class FileSystemDriver
 		$this->baseDir = $baseDir;
 	}
 
+	public function absolute($path)
+	{
+		return $this->baseDir . $path;
+	}
+
 	public function baseDir()
 	{
 		return $this->baseDir;
