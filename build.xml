@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : build.xml
+    Created on : May 11, 2010, 8:35 PM
+    Author     : fqqdk <fqqdk@freemail.hu>
+    Description:
+        The main build file
+-->
+
+<project name="phpcmc">
+	<target name="clean">
+		<delete dir="${basedir}/build"/>
+	</target>
+
+	<target name="bump">
+		<propertyfile file="version.properties">
+			<entry key="version.minor" operation="+" value="1" default="0" type="int" />
+		</propertyfile>
+	</target>
+
+	<target name="prepare">
+		<property file="version.properties" />
+		<property name="releaseVersion" value="${version.major}.${version.minor}" />
+
+        <mkdir dir="${basedir}/build/logs" />
+        <mkdir dir="${basedir}/build/pirum" />
+		<mkdir dir="${basedir}/build/doc" />
+		<mkdir dir="${basedir}/build/package" />
+		<mkdir dir="${basedir}/build/checkstyle" />
+        <mkdir dir="${basedir}/build/unittest" />
+        <mkdir dir="${basedir}/build/unittest/coverage" />
+		<mkdir dir="${basedir}/build/unittest/coverage/source" />
+    </target>
+
+	<target name="unittest"   description="runs unit level tests"          depends="phpunit" />
+	<target name="checkstyle" description="checks for standard violations" depends="phpcs" />
+
+    <target name="phpunit" depends="prepare">
+        <exec dir="${basedir}" executable="phpunit" failonerror="true" logError="true">
+			<arg value="--configuration" /><arg value="${basedir}/phpunit.xml" />
+			<arg value="${basedir}/tests" />
+        </exec>
+    </target>
+
+	<target name="phpcs" depends="prepare">
+		<exec dir="${basedir}"
+			executable="phpcs"
+			failonerror="false">
+
+			<arg line="--standard=Ustream --extensions=php ${basedir}/src ${basedir}/tests"/>
+		</exec>
+	</target>
+
+	<target name="phpcs-ci" depends="prepare">
+		<apply executable="phpcs" dest="build/checkstyle" parallel="false">
+			<arg value="--report=checkstyle"/>
+			<arg value="--standard=$Ustream" />
+			<srcfile />
+
+			<fileset dir="${basedir}">
+				<include name="**/*.php" />
+			</fileset>
+
+			<redirector logError="yes">
+				<outputmapper>
+					<!-- redirectors' mapper inherits source file names from apply... -->
+					<packagemapper from="*.php" to="build/checkstyle/*.xml" />
+				</outputmapper>
+			</redirector>
+			<packagemapper from="*.php" to="*.xml" />
+		</apply>
+	</target>
+
+	<target name="phploc" depends="prepare">
+		<exec dir="${basedir}"
+			executable="phploc"
+			failonerror="false">
+
+			<arg line="src tests"/>
+		</exec>
+	</target>
+
+	<target name="pdepend" depends="prepare">
+        <exec dir="${basedir}/src"
+			executable="pdepend"
+			failonerror="false">
+
+            <arg line="--jdepend-xml=${basedir}/build/logs/jdepend.xml --coverage-report=${basedir}/build/unittest/coverage/clover.xml --jdepend-chart=${basedir}/build/logs/dpec.svg --overview-pyramid=${basedir}/build/logs/pir.svg ."/>
+        </exec>
+    </target>
+
+    <target name="phpmd" depends="prepare">
+        <exec dir="${basedir}/src"
+			executable="phpmd"
+			failonerror="false">
+			<arg line=". xml codesize,naming,unusedcode --reportfile ${basedir}/build/logs/pmd.xml"/>
+        </exec>
+    </target>
+
+    <target name="phpcpd" depends="prepare">
+        <exec executable="phpcpd">
+        	<arg line="--min-tokens 20 --log-pmd ${basedir}/build/logs/pmd-cpd.xml ${basedir}/src"/>
+        </exec>
+    </target>
+
+    <target name="document" depends="phpdoc"/>
+
+    <target name="phpdoc">
+		<exec dir="${basedir}"
+			executable="phpdoc"
+			failonerror="false">
+			<arg line="-t ${basedir}/build/doc/ -o HTML:default:default -d ${basedir}/"/>
+		</exec>
+    </target>
+
+	<target name="doxygen">
+		<exec dir="${basedir}" executable="doxygen" failonerror="false" />
+    </target>
+
+	<target name="build" depends="phpunit"></target>
+
+	<target name="explode" depends="prepare">
+		<echo message="generating package with version ${releaseVersion}" />
+
+		<delete dir="${basedir}/build/package" />
+		<mkdir dir="${basedir}/build/package" />
+
+		<copy todir="build/package">
+			<fileset dir="${basedir}/src">
+				<include name="**" />
+			</fileset>
+			<fileset dir="${basedir}/tests">
+				<include name="**/*Test.php" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="manifest" depends="explode">
+		<property name="pear.channel" value="pear.clusterone.hu.lh" />
+		<copy todir="${basedir}/build/package" file="${basedir}/package.xml">
+			<filterchain>
+				<expandproperties />
+			</filterchain>
+		</copy>
+	</target>
+
+	<target name="package" depends="manifest">
+		<exec dir="${basedir}/build/package" executable="pear" failonerror="true">
+			<arg line="package" />
+		</exec>
+	</target>
+
+	<target name="deploy-local" depends="manifest">
+		<copy file="${basedir}/pirum.xml" todir="${basedir}/build/pirum" />
+
+		<exec executable="pirum" failonerror="true">
+			<arg value="build" />
+			<arg value="${basedir}/build/pirum" />
+		</exec>
+
+	</target>
+
+	<target name="ci-build" depends="phploc, pdepend, phpmd, phpcpd, phpunit, phpcs-ci"/>
+
+	<target name="release" depends="bump,prepare,package" />
+</project>

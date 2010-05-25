@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : phpunit.xml
+    Created on : May 5, 2010, 20:51 PM
+    Author     : fqqdk <fqqdk@freemail.hu>
+    Description:
+        master phpunit configuration file
+-->
+
+<phpunit
+	colors                      = "true"
+	syntaxCheck                 = "false"
+	convertErrorsToExceptions   = "true"
+	convertNoticesToExceptions  = "true"
+	convertWarningsToExceptions = "true"
+	stopOnFailure               = "false"
+	backupGlobals               = "false"
+	backupStaticAttributes      = "false"
+	bootstrap                   = "bootstrap.php"
+	>
+    <filter>
+		<whitelist>
+			<directory suffix=".php">src/phoox</directory>
+			<directory suffix=".php">src/phpcmc</directory>
+		</whitelist>
+    </filter>
+
+    <groups>
+		<exclude>
+			<group>integration</group>
+			<group>acceptance</group>
+		</exclude>
+    </groups>
+
+	<php>
+		<ini name="display_errors"   value="0"          />
+		<!-- E_ALL & ~E_WARNING & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT -->
+		<ini name="error_reporting"  value="32767"      />
+		<var name="__testSuiteName"  value="no-log"     />
+		<var name="__testRunType"    value="microtests" />
+ 	</php>
+
+</phpunit>

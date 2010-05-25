@@ -1,0 +1,19 @@
+[20-May-2010 11:51:31] PHP Notice:  foo in /Users/fqqdk/projects/phpcmc/src/phpcmc.php on line 23
+[20-May-2010 11:51:31] PHP Stack trace:
+[20-May-2010 11:51:31] PHP   1. {main}() /Users/fqqdk/projects/phpcmc/src/phpcmc.php:0
+[20-May-2010 11:51:31] PHP   2. trigger_error() /Users/fqqdk/projects/phpcmc/src/phpcmc.php:23
+[20-May-2010 11:51:31] PHP Fatal error:  Call to undefined method CliApplicationDriver::noErrorsOccured() in /Users/fqqdk/projects/phpcmc/tests/phpcmc/acceptance/smoke/CliScriptRunTest.php on line 32
+[20-May-2010 11:51:31] PHP Stack trace:
+[20-May-2010 11:51:31] PHP   1. {main}() /usr/bin/phpunit:0
+[20-May-2010 11:51:31] PHP   2. PHPUnit_TextUI_Command::main() /usr/bin/phpunit:54
+[20-May-2010 11:51:31] PHP   3. PHPUnit_TextUI_Command->run() /usr/lib/php/PHPUnit/TextUI/Command.php:146
+[20-May-2010 11:51:31] PHP   4. PHPUnit_TextUI_TestRunner->doRun() /usr/lib/php/PHPUnit/TextUI/Command.php:213
+[20-May-2010 11:51:31] PHP   5. PHPUnit_Framework_TestSuite->run() /usr/lib/php/PHPUnit/TextUI/TestRunner.php:349
+[20-May-2010 11:51:31] PHP   6. PHPUnit_Framework_TestSuite->run() /usr/lib/php/PHPUnit/Framework/TestSuite.php:688
+[20-May-2010 11:51:31] PHP   7. PHPUnit_Framework_TestSuite->runTest() /usr/lib/php/PHPUnit/Framework/TestSuite.php:729
+[20-May-2010 11:51:31] PHP   8. PHPUnit_Framework_TestCase->run() /usr/lib/php/PHPUnit/Framework/TestSuite.php:753
+[20-May-2010 11:51:31] PHP   9. PHPUnit_Framework_TestResult->run() /usr/lib/php/PHPUnit/Framework/TestCase.php:652
+[20-May-2010 11:51:31] PHP  10. PHPUnit_Framework_TestCase->runBare() /usr/lib/php/PHPUnit/Framework/TestResult.php:686
+[20-May-2010 11:51:31] PHP  11. PHPUnit_Framework_TestCase->runTest() /usr/lib/php/PHPUnit/Framework/TestCase.php:705
+[20-May-2010 11:51:31] PHP  12. ReflectionMethod->invokeArgs() /usr/lib/php/PHPUnit/Framework/TestCase.php:822
+[20-May-2010 11:51:31] PHP  13. CliScriptRunTest->collectsClasses() /Users/fqqdk/projects/phpcmc/tests/phpcmc/acceptance/smoke/CliScriptRunTest.php:0
