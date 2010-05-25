@@ -44,7 +44,7 @@ class FileSystemDriver
 		file_put_contents($fileName, $contents);
 	}
 
-	private function delTree($absDir)
+	public function delTree($absDir)
 	{
 		foreach(glob($absDir . '*', GLOB_MARK ) as $absFile) {
 			if(substr($absFile, -1) == '/' ) {
