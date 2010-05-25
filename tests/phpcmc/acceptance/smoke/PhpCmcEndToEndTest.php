@@ -13,7 +13,7 @@
 class PhpCmcEndToEndTest extends PhooxTestCase
 {
 	/**
-	 * Script runs
+	 * Script runs and reports files from a single directory
 	 * 
 	 * @test
 	 * 
@@ -21,26 +21,56 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 	 */
 	public function collectsClassesFromDirectory()
 	{
-		// given
 		$workDir  = dirname(__file__) . '/workdir/';
 
 		$fsDriver = new FileSystemDriver($workDir);
 
-		$fsDriver->rmdir('foo');
-		$fsDriver->mkdir('foo');
-		$fsDriver->touch('foo/SomeClass.php');
-		$fsDriver->touch('foo/OtherClass.php');
+		$fsDriver->rmdir('flatdir');
+		$fsDriver->mkdir('flatdir');
+		$fsDriver->touch('flatdir/SomeClass.php');
+		$fsDriver->touch('flatdir/OtherClass.php');
 
 		$assert = new Assert($this);
 		$driver = new PhpCmcRunner($fsDriver, new PhpScriptRunner($assert), $assert);
 
-		$driver->runInDirectory('foo');
+		$driver->runInDirectory('flatdir');
 
 		$driver->outputShows($this->correctHeader());
-		$driver->outputShows($this->aClassEntry('SomeClass',  'foo'));
-		$driver->outputShows($this->aClassEntry('OtherClass', 'foo'));
+		$driver->outputShows($this->aClassEntry('SomeClass',  'flatdir'));
+		$driver->outputShows($this->aClassEntry('OtherClass', 'flatdir'));
 
-		$fsDriver->rmdir('foo');
+		$fsDriver->rmdir('flatdir');
+	}
+
+	/**
+	 * 
+	 * @test
+	 *
+	 * @return void
+	 */
+	public function collectsClassesRecursively()
+	{
+		$workDir  = dirname(__file__) . '/workdir/';
+
+		$fsDriver = new FileSystemDriver($workDir);
+
+		$fsDriver->rmdir('deepdir');
+		$fsDriver->mkdir('deepdir');
+		$fsDriver->mkdir('deepdir/one');
+		$fsDriver->mkdir('deepdir/two');
+		$fsDriver->touch('deepdir/one/SomeClass.php');
+		$fsDriver->touch('deepdir/two/OtherClass.php');
+
+		$assert = new Assert($this);
+		$driver = new PhpCmcRunner($fsDriver, new PhpScriptRunner($assert), $assert);
+
+		$driver->runInDirectory('deepdir');
+
+		$driver->outputShows($this->correctHeader());
+		$driver->outputShows($this->aClassEntry('SomeClass',  'deepdir/one'));
+		$driver->outputShows($this->aClassEntry('OtherClass', 'deepdir/two'));
+
+		$fsDriver->rmdir('deepdir');
 	}
 
 	public function aClassEntry($className, $classFilePath)

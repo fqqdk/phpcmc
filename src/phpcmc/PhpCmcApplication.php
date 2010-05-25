@@ -17,13 +17,14 @@ class PhpCmcApplication
 	public static function main(array $argv) {
 		echo 'phpcmc 0.0.1 by fqqdk' . PHP_EOL . PHP_EOL;
 
-//		var_dump($argv);
-
 		$dir = $argv[1];
 
-		foreach (glob($dir . '/*.php') as $file) {
-			$className = basename($file, '.php');
-			echo $className . ' ' . dirname($file) . PHP_EOL;
+		$rec = new RecursiveDirectoryIterator($dir);
+		$it  = new RecursiveIteratorIterator($rec);
+
+		foreach ($it as $file) {
+			$className = $file->getBaseName('.php');
+			echo $className . ' ' . dirname($file->getPathname()) . PHP_EOL;
 		}
 	}
 }
