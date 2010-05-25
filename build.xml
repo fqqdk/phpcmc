@@ -30,7 +30,7 @@
 		</tstamp>
 		<property file="version.properties" />
 		<property name="release.version" value="${version.major}.${version.minor}" />
-
+		<property name="release.channel" value="pear.meza.hu" />
     </target>
 
 	<target name="clean" depends="prepare">
@@ -96,7 +96,6 @@
 	</target>
 
 	<target name="package-xml" depends="explode-pear">
-		<property name="release.channel" value="pear.meza.hu" />
 		<copy tofile="${basedir}/build/package/package.xml" file="${basedir}/jabbar.xml">
 			<filterchain>
 				<expandproperties />
