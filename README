@@ -1,1 +1,4 @@
-This CLI tool collects PHP classes from certain directories, and prints them in various formats.
+This CLI tool collects PHP classes
+from certain source directories,
+using predefined and pluggable class-file naming conventions
+and prints them in various output formats.
