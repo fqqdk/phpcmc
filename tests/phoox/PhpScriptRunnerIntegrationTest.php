@@ -1,13 +1,23 @@
 <?php
 
-class PhpScriptRunnerIntegrationTest extends PhooxTestCase {
-	
+class PhpScriptRunnerIntegrationTest extends PhooxTestCase
+{
+	/**
+	 * @var PhpScriptRunner the object under test
+	 */
+	private $runner;
+
+	protected function setUp()
+	{
+		$this->runner = new PhpScriptRunner();
+	}
+
 	/**
 	 * @test
 	 */
 	public function phpShouldBeRunAsBinary() {
-		$runner = new PhpScriptRunner();
-		$runner->run('php',array(), '<?php echo 42; ?>');
+		$output = $this->runner->runPhpScriptFromStdin('<?php echo 42; ?>');
+		$this->assertEquals(42, $output);
 	}
 
 	/**
@@ -15,86 +25,65 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase {
 	 */
 	public function scriptCallShouldPassArguments() {
 		$argv = array(42);
-		$runner = new PhpScriptRunner();
-		$output = $runner->run(
-			'php',
-			array_merge(
-				array(
-					'--',
-				),
-				$argv
-			),
-			'<?php echo $_SERVER["argv"][1]; ?>'
+
+		$output = $this->runner->runPhpScriptFromStdin(
+			'<?php echo $_SERVER["argv"][1]; ?>', array(), $argv
 		);
+
 		$this->assertEquals(42,$output);
 	}
 	
 	/**
 	 * @test
 	 */
-	public function envShouldBeAvailable() {
-		$this->assertContains('E', ini_get('variables_order'), 'env vars should be registered in the php.ini');
-		$runner = new PhpScriptRunner();
-		$output = $runner->run('php',array(), '<?php echo $_ENV["foo"]; ?>', array('foo'=>'bar'));
-		$this->assertEquals('bar',$output);
+	public function envIsAvailable()
+	{
+		$this->assertContains(
+			'E', ini_get('variables_order'),
+			'env vars should be registered in the php.ini'
+		);
+		$output = $this->runner->runPhpScriptFromStdin(
+			'<?php echo $_ENV["foo"]; ?>',
+			array(),
+			array(),
+			array('foo'=>'bar')
+		);
+
+		$this->assertEquals('bar', $output);
 	}
 
 	/**
 	 * @test
 	 */
-	public function scriptCallShouldPassIncludePathCorrectly() {
-		$this->markTestSkipped();
-		$includePath = 'foo'.DIRECTORY_SEPARATOR.'bar'.PATH_SEPARATOR.'bar'.DIRECTORY_SEPARATOR.'foo';
-		$runner = new PhpScriptRunner();
-		$output = $runner->run(
-			'php',
-			array(
-				'-d',
-				'include_path='. $includePath,
-			),
-			'<?php echo get_include_path(); ?>'
+	public function arbitraryIniVariableGetsPassed()
+	{
+		$output = $this->runner->runPhpScriptFromStdin(
+			'<?php echo ini_get("mysql.default_password"); ?>',
+			array('mysql.default_password' => 'bar;baz')
 		);
-		$this->assertEquals($includePath,$output);
+
+		$this->assertEquals("bar;baz", $output);
 	}
 
 	/**
 	 * @test
 	 */
-	public function iniPassingShouldBeCorrect() {
-		$this->markTestSkipped();
-		$runner = new PhpScriptRunner();
-		$output = $runner->run(
-			'php',
-			array(
-				'-d',
-				'error_log=something;other',
-			),
-			'<?php echo ini_get("error_log"); ?>'
+	public function includePathGetsPassedCorrectly()
+	{
+		$includePath = 'foo/bar' . PATH_SEPARATOR . 'bar/foo';
+		$output      = $this->runner->runPhpScriptFromStdin(
+			'<?php echo get_include_path(); ?>',
+			array('include_path' => $includePath)
 		);
-		$this->assertEquals("something;other",$output);
-	}
-	
-	/**
-	 * @test
-	 */
-	public function arbitraryIniVariableGetsPassed() {
-		$this->markTestSkipped('PHP fucks this up, too... too bad');
-		$runner = new PhpScriptRunner();
-		$output = $runner->run(
-			'php',
-			array(
-				'-d',
-				'mysql.default_password=bar;baz',
-			),
-			'<?php echo ini_get("mysql.default_password"); ?>'
-		);
-		$this->assertEquals("bar;baz",$output);
+
+		$this->assertEquals($includePath, $output);
 	}
 
 	/**
 	 * @test
 	 */
-	public function escapeshellargsShouldWork() {
+	public function escapeshellargsShouldWork()
+	{
 		$this->assertRegExp(
 			'#^([\'"])foo'.PATH_SEPARATOR.'bar\1$#',
 			escapeshellarg('foo'.PATH_SEPARATOR.'bar')

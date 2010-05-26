@@ -42,6 +42,21 @@ class PhpScriptRunner
 		return $result;
 	}
 
+	public function runPhpScriptFromStdin($script, array $iniVars=array(), array $scriptArgs=array(), array $env=array())
+	{
+		$phpArgs = array();
+
+		foreach ($iniVars as $iniVarName => $iniVarValue) {
+			$phpArgs[] = '-d';
+			$phpArgs[] = sprintf('%s="%s"', $iniVarName, $iniVarValue);
+		}
+
+		$phpArgs[] = '--';
+		$argv      = array_merge($phpArgs, $scriptArgs);
+
+		return $this->run('php', $argv, $script, $env);
+	}
+
 	private function cmd($script, array $args)
 	{
 		$result = $script;
