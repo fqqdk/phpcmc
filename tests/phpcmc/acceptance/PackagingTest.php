@@ -17,6 +17,14 @@ class PackagingTest extends PhooxTestCase
 		parent::setUp();
 		$this->runner = new PhpScriptRunner();
 	}
+	
+	/**
+	 * @test
+	 */
+	public function antIsAvailable() {
+		$output = $this->runAntTasks(array('-version'),array());
+		$this->assertRegExp('/^Apache Ant version/',$output);
+	}
 
 	/**
 	 * @test
@@ -99,7 +107,7 @@ class PackagingTest extends PhooxTestCase
 	private function runPearInstall($pearConfigFile, $packageFile)
 	{
 		$args   = array('-c', $pearConfigFile, 'install', $packageFile);
-		$output = $this->runner->run('pear', $args);
+		$output = $this->runner->run('pear', $args, '', $_ENV, false);
 	}
 
 	private function runAntTasks(array $tasks, array $properties)
@@ -108,7 +116,7 @@ class PackagingTest extends PhooxTestCase
 		foreach ($properties as $propertyName => $propertyValue) {
 			$argv[] = sprintf('-D%s=%s', $propertyName, $propertyValue);
 		}
-		$this->runner->run('ant', $argv);
+		return $this->runner->run('ant', $argv, '', $_ENV, false);
 	}
 
 	private function runPearConfigCreate($repoDir, $configFile, $binDir)
@@ -116,8 +124,8 @@ class PackagingTest extends PhooxTestCase
 		$configCreate = array('config-create', $repoDir, $configFile);
 		$configSet    = array('-c', $configFile,'config-set', 'bin_dir', $binDir);
 
-		$this->runner->run('pear', $configCreate);
-		$this->runner->run('pear', $configSet);
+		$this->runner->run('pear', $configCreate, '', $_ENV, false);
+		$this->runner->run('pear', $configSet, '', $_ENV, false);
 	}
 }
 
