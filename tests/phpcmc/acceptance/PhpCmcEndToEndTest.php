@@ -29,11 +29,11 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 		$fsDriver->touch('flatdir/OtherClass.php');
 
 		$assert = new Assert($this);
-		$driver = new PhpCmcRunner($fsDriver, new PhpScriptRunner($assert), $assert);
+		$driver = new PhpCmcRunner(new PhpScriptRunner(), $assert);
 
-		$driver->runInDirectory('flatdir');
+		$driver->runInDirectory(BASE_DIR . 'src/phpcmc.php', $fsDriver->absolute('flatdir'));
 
-		$driver->outputShows($this->correctHeader());
+		$driver->outputShows($this->correctHeader('@package_version@'));
 		$driver->outputShows($this->aClassEntry('SomeClass',  'flatdir'));
 		$driver->outputShows($this->aClassEntry('OtherClass', 'flatdir'));
 
@@ -58,35 +58,37 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 		$fsDriver->touch('deepdir/two/OtherClass.php');
 
 		$assert = new Assert($this);
-		$driver = new PhpCmcRunner($fsDriver, new PhpScriptRunner($assert), $assert);
+		$driver = new PhpCmcRunner(new PhpScriptRunner(), $assert);
 
-		$driver->runInDirectory('deepdir');
+		$driver->runInDirectory(BASE_DIR . 'src/phpcmc.php', $fsDriver->absolute('deepdir'));
 
-		$driver->outputShows($this->correctHeader());
-		$driver->outputShows($this->aClassEntry('SomeClass',  'deepdir/one'));
-		$driver->outputShows($this->aClassEntry('OtherClass', 'deepdir/two'));
+		$driver->outputShows($this->correctHeader('@package_version@'));
+		$driver->outputShows(self::aClassEntry('SomeClass',  'deepdir/one'));
+		$driver->outputShows(self::aClassEntry('OtherClass', 'deepdir/two'));
 
 		$fsDriver->rmdir('deepdir');
 	}
 
-	public function aClassEntry($className, $classFilePath)
+	public static function aClassEntry($className, $classFilePath)
 	{
-		return $this->matchesRegularExpression(
-			$this->classEntryPattern(
+		return PHPUnit_Framework_Assert::matchesRegularExpression(
+			self::classEntryPattern(
 				$className,
 				str_replace(DIRECTORY_SEPARATOR, '/', $classFilePath)
 			)
 		);
 	}
 
-	private function classEntryPattern($className, $classFilePath)
+	public static function classEntryPattern($className, $classFilePath)
 	{
 		return '#.*'.preg_quote($className, '#').'.*'.preg_quote($classFilePath, '#').'.*#';
 	}
 
-	public function correctHeader()
+	public static function correctHeader($version)
 	{
-		return $this->stringContains('phpcmc 0.0.1 by fqqdk');
+		return PHPUnit_Framework_Assert::stringContains(
+			sprintf('phpcmc %s by fqqdk', $version)
+		);
 	}
 }
 

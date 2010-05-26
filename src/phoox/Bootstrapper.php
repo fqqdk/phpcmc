@@ -10,16 +10,19 @@
  */
 class Bootstrapper
 {
-	public static function bootstrap(array $library)
+	public static function bootstrap(array $library, $file=__file__)
 	{
 		require_once dirname(__file__) . '/library.php';
 		$loaderSession = new LoaderSession(new FileIncludeHandler());
 
 		spl_autoload_register(array($loaderSession, 'start'));
-		foreach ($library as $dir) {
-			spl_autoload_register(array(new DirLoader($loaderSession, $dir), 'load'));
-		}
 		spl_autoload_register(array($loaderSession, 'stop'));
+
+		foreach ($library as $dir) {
+			$loaderSession->append(new DirLoader($loaderSession, $dir, $file));
+		}
+
+		return $loaderSession;
 	}
 }
 

@@ -1,0 +1,1 @@
+@php_bin@ "@bin_dir@\phpunit" %*

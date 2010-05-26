@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /**
  * Entry point of the application
@@ -14,6 +14,7 @@
 require_once 'phoox/Bootstrapper.php';
 require_once 'phpcmc/PhpCmcApplication.php';
 
+define('PHPCMC_VERSION', '@package_version@');
 error_reporting(E_ALL);
 Bootstrapper::bootstrap(PhpCmcApplication::library());
 PhpCmcApplication::main($_SERVER['argv']);

@@ -10,10 +10,6 @@
  */
 class PhooxTestCase extends PHPUnit_Framework_TestCase
 {
-	protected function createResult()
-	{
-		return new ResultAmender;
-	}
 }
 
 ?>

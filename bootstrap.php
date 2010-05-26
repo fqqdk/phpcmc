@@ -27,7 +27,7 @@ function __bootstrap()
 
 	require_once BASE_DIR . 'src/phoox/Bootstrapper.php';
 
-	Bootstrapper::bootstrap(array(SRC_DIR, PHOOX_DIR, TEST_DIR));
+	$session = Bootstrapper::bootstrap(array(SRC_DIR, PHOOX_DIR, TEST_DIR), __file__);
 
 	register_shutdown_function('__shutdown');
 }

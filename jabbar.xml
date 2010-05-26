@@ -11,7 +11,7 @@
 		 http://pear.php.net/dtd/package-2.0.xsd">
 <!-- SECTION: global -->
 	<name>phpcmc</name>
-	<channel>${release.channel}</channel>
+	${uriAndOrChannel}
 	<summary>PHP Class Map Collector</summary>
 	<description>
 		Collects PHP classes from a set of directories and reports them in a format
@@ -50,9 +50,21 @@
 <!-- SECTION: release.contents -->
 	<contents>
 		<dir name="/">
-			<dir name="src">
-				<dir name="phpcmc" />
-				<file name="phpcmc.php" role="script" baseinstalldir="/"/>
+			<file name="phpcmc.php" role="script" baseinstalldir="/">
+				<tasks:replace from="/usr/bin/env php"  to="php_bin" type="pear-config" />
+				<tasks:replace from="@php_bin@"         to="php_bin" type="pear-config" />
+				<tasks:replace from="@package_version@" to="version" type="package-info" />
+			</file>
+			<file name="phpcmc.bat" role="script" baseinstalldir="/">
+				<tasks:replace from="@php_bin@" to="php_bin" type="pear-config" />
+				<tasks:replace from="@bin_dir@" to="bin_dir" type="pear-config" />
+			</file>
+			<dir name="phoox">
+				<file name="Bootstrapper.php" role="php" />
+				<file name="library.php"      role="php" />
+			</dir>
+			<dir name="phpcmc">
+				<file name="PhpCmcApplication.php" role="php" />
 			</dir>
 		</dir>
 	</contents>
@@ -68,6 +80,21 @@
 		</required>
 	</dependencies>
 
-	<phprelease />
+	<phprelease>
+		<installconditions>
+			<os><name>windows</name></os>
+		</installconditions>
+		<filelist>
+			<install as="phpcmc" name="phpcmc.php" />
+			<install as="phpcmc.bat" name="phpcmc.bat" />
+		</filelist>
+	</phprelease>
+
+	<phprelease>
+		<filelist>
+			<install as="phpcmc" name="phpcmc.php" />
+			<ignore name="phpcmc.bat" />
+		</filelist>
+	</phprelease>
 
 </package>

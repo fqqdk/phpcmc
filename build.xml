@@ -36,12 +36,14 @@
 		</tstamp>
 		<property file="version.properties" />
 		<property name="release.version" value="${version.major}.${version.minor}" />
-		<property name="release.channel" value="pear.meza.hu" />
+		<property name="uriAndOrChannel" value="&lt;channel&gt;pear.meza.hu&lt;/channel&gt;" />
+		<property name="package.dir"     value="${basedir}/build/package" />
     </target>
 
 	<target name="clean" depends="prepare">
 		<delete dir="${basedir}/build"/>
 
+		<mkdir dir="${basedir}/build/work" />
 		<mkdir dir="${basedir}/build/logs" />
         <mkdir dir="${basedir}/build/pirum" />
 		<mkdir dir="${basedir}/build/doc" />
@@ -82,24 +84,34 @@
 	<target name="explode-pear" depends="prepare">
 		<echo message="generating package with version ${release.version}" />
 
-		<delete dir="${basedir}/build/package" />
-		<mkdir dir="${basedir}/build/package" />
+		<delete dir="${package.dir}" />
+		<mkdir dir="${package.dir}" />
 
-		<copy todir="build/package/src">
+		<!-- scripts -->
+		<copy todir="${package.dir}">
 			<fileset dir="${basedir}/src">
-				<include name="**" />
+				<include name="*.*" />
 			</fileset>
 		</copy>
 
-		<copy todir="build/package/tests">
+		<!-- sources -->
+		<copy todir="${package.dir}">
+			<fileset dir="${basedir}/src">
+				<include name="**" />
+				<exclude name="*.*" />
+			</fileset>
+		</copy>
+
+		<!-- tests -->
+		<copy todir="${package.dir}/tests">
 			<fileset dir="${basedir}/tests">
-				<include name="**/*.php" />
+				<include name="**" />
 			</fileset>
 		</copy>
 	</target>
 
 	<target name="package-xml" depends="explode-pear">
-		<copy tofile="${basedir}/build/package/package.xml" file="${basedir}/jabbar.xml">
+		<copy tofile="${package.dir}/package.xml" file="${basedir}/jabbar.xml">
 			<filterchain>
 				<expandproperties />
 			</filterchain>
@@ -107,7 +119,7 @@
 	</target>
 
 	<target name="pear" depends="package-xml">
-		<exec dir="${basedir}/build/package" executable="pear" failonerror="true">
+		<exec dir="${package.dir}" executable="pear" failonerror="true" logError="true">
 			<arg line="package" />
 		</exec>
 	</target>

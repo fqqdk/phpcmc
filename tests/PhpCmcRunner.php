@@ -11,11 +11,6 @@
 class PhpCmcRunner
 {
 	/**
-	 * @var FileSystemDriver
-	 */
-	private $fsDriver;
-
-	/**
 	 * @var PhpScriptRunner
 	 */
 	private $runner;
@@ -30,21 +25,15 @@ class PhpCmcRunner
 	 */
 	private $output;
 
-	public function __construct(
-		FileSystemDriver $fsDriver, PhpScriptRunner $runner, Assert $assert
-	)
+	public function __construct(PhpScriptRunner $runner, Assert $assert)
 	{
-		$this->fsDriver = $fsDriver;
 		$this->runner   = $runner;
 		$this->assert   = $assert;
 	}
 
-	public function runInDirectory($dir)
+	public function runInDirectory($cmcScript, $dir, $includePath='.')
 	{
-		$this->output = $this->runner->run('php', array(
-			BASE_DIR . 'src/phpcmc.php',
-			$this->fsDriver->absolute($dir),
-		), '');
+		$this->output = $this->runner->runPhpScript($cmcScript, array($dir), $includePath);
 	}
 
 	private function getOutput()

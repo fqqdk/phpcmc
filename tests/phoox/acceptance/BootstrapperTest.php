@@ -30,16 +30,16 @@ class BootstrapperTest extends PhooxTestCase
 	 *
 	 * @return void
 	 */
-	private function runStaticMethodOfThisTestIsolated($method, array $env=array(), array $includePath=array(), array $argv=array())
+	private function runFunctionIsolated($function, $file, array $env=array(), array $includePath=array(), array $argv=array())
 	{
 		$script = sprintf(
 			'<?php
 				//HACK lying about static dependencies
 				class PhooxTestCase {}
 				require_once \'%s\';
-				%s::%s();
+				%s();
 			?>',
-			__file__, __class__, $method
+			$file, $function
 		);
 		$iniVars = array(
 			'include_path' => implode(PATH_SEPARATOR, $includePath)
@@ -63,12 +63,15 @@ class BootstrapperTest extends PhooxTestCase
 		$fsDriver->touch('bootstrapper/lib1/FirstClass.php', '<?php class FirstClass extends SecondClass {} ?>');
 		$fsDriver->mkdir('bootstrapper/lib2');
 		$fsDriver->touch('bootstrapper/lib2/SecondClass.php', '<?php class SecondClass {} ?>');
+		$fsDriver->mkdir('bootstrapper/lib3');
+		$fsDriver->touch('bootstrapper/lib3/ThirdClass.php',  '<?php class ThirdClass {} ?>');
+		$fsDriver->touch('bootstrapper/lib3/FourthClass.php', '<?php class FourthClass {} ?>');
 
 		$env = array(
 			'WORK_DIR' => $fsDriver->absolute('bootstrapper')
 		);
 
-		$this->runStaticMethodOfThisTestIsolated('bootstrapped', $env, array(PHOOX_DIR));
+		$this->runFunctionIsolated(__class__.'::bootstrapped', __file__, $env, array(PHOOX_DIR));
 
 		$fsDriver->rmdir('bootstrapper');
 	}
@@ -76,25 +79,30 @@ class BootstrapperTest extends PhooxTestCase
 	public static function bootstrapped() {
 		$workDir = $_ENV['WORK_DIR'];
 		require_once 'Bootstrapper.php';
-		Bootstrapper::bootstrap(array(
+		$session = Bootstrapper::bootstrap(array(
 			$workDir . '/lib1/',
-			$workDir . '/lib2/'
+			$workDir . '/lib2/',
 		));
 
 		// this should be loaded
 		new FirstClass;
 
+		$libThreeLoader = new DirLoader($session, $workDir . '/lib3/', __file__);
+		$session->append($libThreeLoader);
+
+		new ThirdClass;
+
 		// errorhandlers shouldn't mess with the loaders
 		set_error_handler(array(__class__, 'foo'));
 		error_reporting(E_ALL | E_STRICT | E_DEPRECATED);
-		new NonExistant;
+		new FourthClass;
 
 		exit(1);
 	}
 
 	public static function foo($code, $message)
 	{
-		if (false !== strpos($message, 'Failed loading NonExistant')) {
+		if (false !== strpos($message, 'Failed loading FourthClass')) {
 			exit (0);
 		}
 	}
@@ -107,11 +115,11 @@ class BootstrapperTest extends PhooxTestCase
 	public function errorHandlerRegistrationOrderIsStackLike()
 	{
 		try {
-			$this->runStaticMethodOfThisTestIsolated('handlerWorkFlow');
+			$this->runFunctionIsolated(__class__.'::handlerWorkFlow', __file__);
 		} catch(ForeignError $ex) {
 			$this->assertStringStartsWith(
-				'PHP Notice:  error 6', $ex->getMessage(),
-				'STDERR content was: ' . $ex->getMessage()
+				'PHP Notice:  error 6', $ex->getError(),
+				'Unexpected error in script :' . $ex->getError()
 			);
 			return;
 		}
@@ -120,7 +128,7 @@ class BootstrapperTest extends PhooxTestCase
 
 	public static function handlerWorkFlow()
 	{
-		$handler = new BootStrapperTest_HandlerStack();
+		$handler = new FakeHandlerStack();
 
 		set_error_handler(array($handler, 'first'));
 		trigger_error('error 1');
@@ -142,7 +150,7 @@ class BootstrapperTest extends PhooxTestCase
 	}
 }
 
-class BootStrapperTest_HandlerStack {
+class FakeHandlerStack {
 	private $order = 0;
 
 	private function assertOrder($func, $message, array $order) {

@@ -14,11 +14,17 @@ class ResultAmender extends PHPUnit_Framework_TestResult
 	{
 		if ($e instanceof ForeignError) {
             $this->errors[] = new ForeignFailure($test, $e);
-            $notifyMethod   = 'addError';
 
             if ($this->stopOnFailure) {
                 $this->stop();
             }
+
+			foreach ($this->listeners as $listener) {
+				$listener->addError($test, $e, $time);
+			}
+
+			$this->lastTestFailed = true;
+			$this->time          += $time;
 			return;
 		}
 

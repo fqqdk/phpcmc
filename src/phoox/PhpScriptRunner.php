@@ -21,7 +21,7 @@ class PhpScriptRunner
 		);
 
 		$cmd  = $this->cmd($script, $args);
-		$proc = proc_open($cmd, $desc, $pipes, null, $env, array('bypass_shell'=>true));
+		$proc = proc_open($cmd, $desc, $pipes, null, $env, array('bypass_shell' => true));
 		if (false === $proc) {
 			trigger_error('cannot execute ' . $cmd);
 		}
@@ -31,7 +31,7 @@ class PhpScriptRunner
 		$errors = stream_get_contents($pipes[2]);
 
 		if (false == empty($errors)) {
-			throw new ForeignError($errors);
+			throw new ForeignError($result, $errors);
 		}
 
 		fclose($pipes[1]);
@@ -55,6 +55,13 @@ class PhpScriptRunner
 		$argv      = array_merge($phpArgs, $scriptArgs);
 
 		return $this->run('php', $argv, $script, $env);
+	}
+
+	public function runPhpScript($script, array $args=array(), $includePath)
+	{
+		$argv = $args;
+		array_unshift($argv, '-f', $script, '-d', 'include_path="'.$includePath.'"', '--');
+		return $this->run('php', $argv);
 	}
 
 	private function cmd($script, array $args)

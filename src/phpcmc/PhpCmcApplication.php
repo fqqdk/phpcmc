@@ -15,7 +15,11 @@ class PhpCmcApplication
 	}
 
 	public static function main(array $argv) {
-		echo 'phpcmc 0.0.1 by fqqdk' . PHP_EOL . PHP_EOL;
+		echo sprintf('phpcmc %s by fqqdk', PHPCMC_VERSION) . PHP_EOL . PHP_EOL;
+
+		if (false == isset($argv[1])) {
+			trigger_error('the directory argument is mandatory');
+		}
 
 		$dir = $argv[1];
 

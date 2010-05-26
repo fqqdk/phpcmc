@@ -46,17 +46,33 @@ class FileSystemDriver
 
 	public function delTree($absDir)
 	{
-		foreach(glob($absDir . '*', GLOB_MARK ) as $absFile) {
-			if(is_dir($absDir)) {
-				$this->delTree($absFile);
-			} else {
-				unlink($absFile);
-			}
+		try {
+			$rec  = new RecursiveDirectoryIterator($absDir);
+		} catch(UnexpectedValueException $ex) {
+			return;
 		}
 
-		if (is_dir($absDir)) {
-			rmdir($absDir);
+		$iter = new RecursiveIteratorIterator(
+			$rec, RecursiveIteratorIterator::CHILD_FIRST
+		);
+
+		foreach ($iter as $file) {
+			if ($file->isDir()) {
+				rmdir($file->getPathname());
+				continue;
+			}
+			unlink($file->getPathname());
 		}
+	}
+
+	public function isReadable($file)
+	{
+		return is_readable($this->absolute($file));
+	}
+	
+	public function unlink($file)
+	{
+		unlink($this->absolute($file));
 	}
 }
 
