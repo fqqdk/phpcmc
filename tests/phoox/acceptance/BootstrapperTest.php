@@ -32,31 +32,21 @@ class BootstrapperTest extends PhooxTestCase
 	 */
 	private function runStaticMethodOfThisTestIsolated($method, array $env=array(), array $includePath=array(), array $argv=array())
 	{
-		$includePath = implode(PATH_SEPARATOR, array_merge(
-			$includePath, explode(PATH_SEPARATOR, get_include_path())
-		));
-		$runner = new PhpScriptRunner();
-		$runner->run(
-			'php',
-			array_merge(
-				array(
-					'-d',
-					'include_path='. $includePath,
-					'--',
-				),
-				$argv
-			),
-			sprintf(
-				'<?php
-					//HACK lying about static dependencies
-					class PhooxTestCase {}
-					require_once \'%s\';
-					%s::%s();
-				?>',
-				__file__, __class__, $method
-			),
-			$env
+		$script = sprintf(
+			'<?php
+				//HACK lying about static dependencies
+				class PhooxTestCase {}
+				require_once \'%s\';
+				%s::%s();
+			?>',
+			__file__, __class__, $method
 		);
+		$iniVars = array(
+			'include_path' => implode(PATH_SEPARATOR, $includePath)
+		);
+
+		$runner = new PhpScriptRunner();
+		$runner->runPhpScriptFromStdin($script, $iniVars, $argv, $env);
 	}
 
 	/**
@@ -66,7 +56,6 @@ class BootstrapperTest extends PhooxTestCase
 	 */
 	public function bootstrapperWorkflowIsSound()
 	{
-		$this->markTestSkipped();
 		$fsDriver = new FileSystemDriver(WORK_DIR);
 		$fsDriver->rmdir('bootstrapper');
 		$fsDriver->mkdir('bootstrapper');
@@ -85,8 +74,7 @@ class BootstrapperTest extends PhooxTestCase
 	}
 
 	public static function bootstrapped() {
-		self::foreignFail(var_export($_SERVER['argv'],true));
-		$workDir = $_SERVER['argv'][1];
+		$workDir = $_ENV['WORK_DIR'];
 		require_once 'Bootstrapper.php';
 		Bootstrapper::bootstrap(array(
 			$workDir . '/lib1/',
