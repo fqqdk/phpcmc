@@ -63,6 +63,7 @@ class FileSystemDriver
 			}
 			unlink($file->getPathname());
 		}
+		rmdir($absDir);
 	}
 
 	public function isReadable($file)

@@ -24,16 +24,19 @@ class FileSystemDriverIntegrationTest extends PhooxTestCase
 	 */
 	public function delTreeDeletesRecursively()
 	{
-		if (file_exists(WORK_DIR.'dirTreeToDelete/foo.txt')) {
-			unlink(WORK_DIR.'dirTreeToDelete/foo.txt');
+		$dir = WORK_DIR.'dirTreeToDelete';
+		$file = $dir.'/foo.txt';
+		if (file_exists($file)) {
+			unlink($file);
 		}
-		if (is_dir(WORK_DIR.'dirTreeToDelete')) {
-			rmdir(WORK_DIR.'dirTreeToDelete');
+		if (is_dir($dir)) {
+			rmdir($dir);
 		}
-		mkdir(WORK_DIR.'dirTreeToDelete');
-		file_put_contents(WORK_DIR.'dirTreeToDelete/foo.txt','lorem ipsum');
+		mkdir($dir);
+		file_put_contents($file,'lorem ipsum');
 		$fsDriver = new FileSystemDriver(WORK_DIR);
-		$fsDriver->delTree(WORK_DIR.'dirTreeToDelete');
+		$fsDriver->delTree($dir);
+		$this->assertFalse(is_dir($dir));
 	}
 
 	/**
@@ -72,6 +75,7 @@ class FileSystemDriverIntegrationTest extends PhooxTestCase
 		$fsDriver = new FileSystemDriver(WORK_DIR);
 		$fsDriver->delTree($dir);
 	}
+	
 }
 
 ?>
