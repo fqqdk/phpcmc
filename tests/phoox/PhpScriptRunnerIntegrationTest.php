@@ -9,16 +9,6 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase {
 		$runner = new PhpScriptRunner();
 		$runner->run('php',array(), '<?php echo 42; ?>');
 	}
-	
-	/**
-	 * @test
-	 */
-	public function envShouldBeAvailable() {
-		$this->markTestSkipped('php bug');
-		$runner = new PhpScriptRunner();
-		$output = $runner->run('php',array(), '<?php echo $_ENV["foo"]; ?>', array('foo'=>'bar'));
-		$this->assertEquals('bar',$output);
-	}
 
 	/**
 	 * @test
@@ -39,6 +29,16 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase {
 		$this->assertEquals(42,$output);
 	}
 	
+	/**
+	 * @test
+	 */
+	public function envShouldBeAvailable() {
+		$this->assertContains('E', ini_get('variables_order'), 'env vars should be registered in the php.ini');
+		$runner = new PhpScriptRunner();
+		$output = $runner->run('php',array(), '<?php echo $_ENV["foo"]; ?>', array('foo'=>'bar'));
+		$this->assertEquals('bar',$output);
+	}
+
 	/**
 	 * @test
 	 */
@@ -95,7 +95,10 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase {
 	 * @test
 	 */
 	public function escapeshellargsShouldWork() {
-		$this->assertRegExp('#^([\'"])foo'.PATH_SEPARATOR.'bar\1$#', escapeshellarg('foo'.PATH_SEPARATOR.'bar'));
+		$this->assertRegExp(
+			'#^([\'"])foo'.PATH_SEPARATOR.'bar\1$#',
+			escapeshellarg('foo'.PATH_SEPARATOR.'bar')
+		);
 	}
 }
 
