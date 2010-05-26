@@ -1,2 +1,5 @@
 nbproject/
 build/
+.buildpath
+.project
+.settings/

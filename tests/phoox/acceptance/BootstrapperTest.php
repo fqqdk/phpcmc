@@ -30,7 +30,7 @@ class BootstrapperTest extends PhooxTestCase
 	 *
 	 * @return void
 	 */
-	private function runStaticMethodOfThisTestIsolated($method, array $env=array(), array $includePath=array())
+	private function runStaticMethodOfThisTestIsolated($method, array $env=array(), array $includePath=array(), array $argv=array())
 	{
 		$includePath = implode(PATH_SEPARATOR, array_merge(
 			$includePath, explode(PATH_SEPARATOR, get_include_path())
@@ -38,9 +38,13 @@ class BootstrapperTest extends PhooxTestCase
 		$runner = new PhpScriptRunner();
 		$runner->run(
 			'php',
-			array(
-				'-d',
-				'include_path='. $includePath
+			array_merge(
+				array(
+					'-d',
+					'include_path='. $includePath,
+					'--',
+				),
+				$argv
 			),
 			sprintf(
 				'<?php
@@ -62,6 +66,7 @@ class BootstrapperTest extends PhooxTestCase
 	 */
 	public function bootstrapperWorkflowIsSound()
 	{
+		$this->markTestSkipped();
 		$fsDriver = new FileSystemDriver(WORK_DIR);
 		$fsDriver->rmdir('bootstrapper');
 		$fsDriver->mkdir('bootstrapper');
@@ -80,10 +85,12 @@ class BootstrapperTest extends PhooxTestCase
 	}
 
 	public static function bootstrapped() {
+		self::foreignFail(var_export($_SERVER['argv'],true));
+		$workDir = $_SERVER['argv'][1];
 		require_once 'Bootstrapper.php';
 		Bootstrapper::bootstrap(array(
-			$_ENV['WORK_DIR'] . '/lib1/',
-			$_ENV['WORK_DIR'] . '/lib2/'
+			$workDir . '/lib1/',
+			$workDir . '/lib2/'
 		));
 
 		//this should be loaded

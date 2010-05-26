@@ -9,6 +9,12 @@
 -->
 
 <project name="phpcmc">
+	<condition property="shell.task" value="win-shell" else="exec-shell"><os family="windows" /></condition>
+
+	<import file="src/phoox/ant/${shell.task}.xml"/>
+	<import file="src/phoox/ant/php.xml"/>
+
+
 	<target name="unittest"   description="runs unit level tests"          depends="phpunit" />
 	<target name="checkstyle" description="checks for standard violations" depends="phpcs" />
     <target name="document"   description="generates documentation"        depends="phpdoc"/>
@@ -46,12 +52,9 @@
 		<mkdir dir="${basedir}/build/unittest/coverage/source" />
 	</target>
 
-    <target name="phpunit">
-        <exec dir="${basedir}" executable="phpunit" failonerror="true" logError="true">
-			<arg value="--configuration" /><arg value="${basedir}/phpunit.xml" />
-			<arg value="${basedir}/tests" />
-        </exec>
-    </target>
+	<target name="phpunit">
+		<phpunit config="phpunit.xml" test="tests"/>
+	</target>
 
 	<target name="phpcs">
 		<exec dir="${basedir}"
