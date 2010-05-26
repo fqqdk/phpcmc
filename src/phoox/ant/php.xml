@@ -126,43 +126,16 @@
 	</sequential>
 </macrodef>
 
-<macrodef name="pearanha">
+<macrodef name="pear">
 	<attribute name="failonerror" default="true" />
+	<attribute name="dir" default="${basedir}" />
 	<element name="args" optional="yes" implicit="yes" />
+
 	<sequential>
-		<shell executable="pear" failonerror="@{failonerror}">
-			<arg value="-c" />
-			<arg value=".pearrc" />
+		<shell executable="pear" failonerror="@{failonerror}" dir="@{dir}">
 			<args />
 		</shell>
 	</sequential>
-</macrodef>
-
-<macrodef name="pear-depend">
-    <attribute name="channel" />
-    <attribute name="package" />
-    <sequential>
-        <pearanha failonerror="false">
-            <arg value="channel-discover" />
-            <arg value="@{channel}" />
-        </pearanha>
-        <pearanha failonerror="false">
-            <arg value="install" />
-            <arg value="@{package}" />
-        </pearanha>
-    </sequential>
-</macrodef>
-
-<macrodef name="svn-depend">
-    <attribute name="alias" />
-    <attribute name="url" />
-    <sequential>
-        <shell executable="svn">
-            <arg value="export" />
-            <arg value="@{url}" />
-            <arg value="vendor/@{alias}" />
-        </shell>
-    </sequential>
 </macrodef>
 
 </project>

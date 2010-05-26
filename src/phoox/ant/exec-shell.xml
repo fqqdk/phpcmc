@@ -1,14 +1,14 @@
 <project name="shell">
 
 <macrodef name="shell">
-
 	<attribute name="executable" />
 	<attribute name="failonerror" default="true" />
+	<attribute name="dir"         default="${basedir}"/>
 
 	<element name="args" optional="yes" implicit="yes" />
 
 	<sequential>
-		<exec executable="@{executable}" failonerror="@{failonerror}">
+		<exec executable="@{executable}" failonerror="@{failonerror}" dir="@{dir}">
 			<args />
 		</exec>
 	</sequential>
