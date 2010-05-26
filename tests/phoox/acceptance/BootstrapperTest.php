@@ -81,9 +81,10 @@ class BootstrapperTest extends PhooxTestCase
 			$workDir . '/lib2/'
 		));
 
-		//this should be loaded
+		// this should be loaded
 		new FirstClass;
 
+		// errorhandlers shouldn't mess with the loaders
 		set_error_handler(array(__class__, 'foo'));
 		error_reporting(E_ALL | E_STRICT | E_DEPRECATED);
 		new NonExistant;
