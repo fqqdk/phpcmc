@@ -72,7 +72,10 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 	public function aClassEntry($className, $classFilePath)
 	{
 		return $this->matchesRegularExpression(
-			$this->classEntryPattern($className, $classFilePath)
+			$this->classEntryPattern(
+				$className,
+				str_replace(DIRECTORY_SEPARATOR, '/', $classFilePath)
+			)
 		);
 	}
 
