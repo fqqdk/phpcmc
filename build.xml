@@ -119,9 +119,9 @@
 	</target>
 
 	<target name="pear" depends="package-xml">
-		<exec dir="${package.dir}" executable="pear" failonerror="true" logError="true">
+		<pear dir="${package.dir}">
 			<arg line="package" />
-		</exec>
+		</pear>
 	</target>
 
 	<target name="pear-deploy">

@@ -3,12 +3,13 @@
 <macrodef name="shell">
 
 	<attribute name="executable" />
+	<attribute name="dir"         default="@{basedir}" />
 	<attribute name="failonerror" default="true" />
 
 	<element name="args" optional="yes" implicit="yes" />
 
 	<sequential>
-		<exec executable="cmd" failonerror="@{failonerror}">
+		<exec executable="cmd" failonerror="@{failonerror}" dir="@{dir}">
 			<arg value="/c" /><arg value="@{executable}" /><args />
 		</exec>
 	</sequential>
