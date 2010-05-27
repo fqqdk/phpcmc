@@ -10,7 +10,7 @@
  */
 class PhpScriptRunner
 {
-	public function run($script, array $args, $stdin='', array $env=array())
+	public function run($script, array $args, $stdin='', array $env=array(), $bypassShell = true)
 	{
 		$stdinHandle = $this->open($stdin);
 
@@ -21,7 +21,7 @@ class PhpScriptRunner
 		);
 
 		$cmd  = $this->cmd($script, $args);
-		$proc = proc_open($cmd, $desc, $pipes, null, $env, array('bypass_shell' => true));
+		$proc = proc_open($cmd, $desc, $pipes, null, $env, array('bypass_shell' => $bypassShell));
 		if (false === $proc) {
 			trigger_error('cannot execute ' . $cmd);
 		}
