@@ -43,9 +43,6 @@ class PackagingTest extends PhooxTestCase
 		$classDir       = 'classes';
 		$includeDir    = $repoDir . 'pear/php';
 
-//		$fsDriver->rmdir($packageDir);
-//		$fsDriver->mkdir($packageDir);
-
 		$this->runAntTasks(array('clean', 'package'), array(
 			'release.version' => $version,
 			'package.dir'     => $fsDriver->absolute($packageDir),
@@ -104,28 +101,35 @@ class PackagingTest extends PhooxTestCase
 		$fsDriver->unlink($pearConfigFile);
 	}
 
-	private function runPearInstall($pearConfigFile, $packageFile)
-	{
-		$args   = array('-c', $pearConfigFile, 'install', $packageFile);
-		$output = $this->runner->run('pear', $args, '', $_ENV, false);
-	}
-
 	private function runAntTasks(array $tasks, array $properties)
 	{
-		$argv = $tasks;
+		$antProperties = array();
 		foreach ($properties as $propertyName => $propertyValue) {
-			$argv[] = sprintf('-D%s=%s', $propertyName, $propertyValue);
+			$antProperties['-D'.$propertyName] = $propertyValue;
 		}
-		return $this->runner->run('ant', $argv, '', $_ENV, false);
+
+		return ShellCommandBuilder::newBinary('ant')
+			->addProperties($antProperties)
+			->addArgs($tasks)
+			->runWith($this->runner, '', $_ENV);
+	}
+
+	private function runPear(array $args)
+	{
+		return ShellCommandBuilder::newScript('pear')
+			->addArgs($args)
+			->runWith($this->runner, '', $_ENV);
+	}
+
+	private function runPearInstall($pearConfigFile, $packageFile)
+	{
+		return $this->runPear(array('-c', $pearConfigFile, 'install', $packageFile));
 	}
 
 	private function runPearConfigCreate($repoDir, $configFile, $binDir)
 	{
-		$configCreate = array('config-create', $repoDir, $configFile);
-		$configSet    = array('-c', $configFile,'config-set', 'bin_dir', $binDir);
-
-		$this->runner->run('pear', $configCreate, '', $_ENV, false);
-		$this->runner->run('pear', $configSet, '', $_ENV, false);
+		$this->runPear(array('config-create', $repoDir, $configFile));
+		$this->runPear(array('-c', $configFile,'config-set', 'bin_dir', $binDir));
 	}
 }
 

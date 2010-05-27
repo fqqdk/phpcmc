@@ -8,9 +8,9 @@
 /**
  * Description of PhpScriptRunner
  */
-class PhpScriptRunner
+class PhpScriptRunner implements ShellCommandRunner
 {
-	public function run($script, array $args, $stdin='', array $env=array(), $bypassShell = true)
+	public function run($shellCommand, $stdin='', array $env=array(), $bypassShell = true)
 	{
 		$stdinHandle = $this->open($stdin);
 
@@ -20,14 +20,12 @@ class PhpScriptRunner
 			2 => array('pipe', 'w')
 		);
 
-		$cmd  = $this->cmd($script, $args);
-		$proc = proc_open($cmd, $desc, $pipes, null, $env, array('bypass_shell' => $bypassShell));
+		$proc = proc_open($shellCommand, $desc, $pipes, null, $env, array('bypass_shell' => $bypassShell));
 		if (false === $proc) {
-			trigger_error('cannot execute ' . $cmd);
+			trigger_error('cannot execute ' . $shellCommand);
 		}
 
 		$result = stream_get_contents($pipes[1]);
-
 		$errors = stream_get_contents($pipes[2]);
 
 		if (false == empty($errors)) {
@@ -42,44 +40,27 @@ class PhpScriptRunner
 		return $result;
 	}
 
-	public function runPhpScriptFromStdin($script, array $iniVars=array(), array $scriptArgs=array(), array $env=array())
-	{
-		$phpArgs = array();
-
-		foreach ($iniVars as $iniVarName => $iniVarValue) {
-			$phpArgs[] = '-d';
-			$phpArgs[] = sprintf('%s="%s"', $iniVarName, $iniVarValue);
-		}
-
-		$phpArgs[] = '--';
-		$argv      = array_merge($phpArgs, $scriptArgs);
-
-		return $this->run('php', $argv, $script, $env);
-	}
-
-	public function runPhpScript($script, array $args=array(), $includePath)
-	{
-		$argv = $args;
-		array_unshift($argv, '-f', $script, '-d', 'include_path="'.$includePath.'"', '--');
-		return $this->run('php', $argv);
-	}
-
-	private function cmd($script, array $args)
-	{
-		$result = $script;
-
-		foreach($args as $arg) {
-			$result .= ' ' . escapeshellarg($arg);
-		}
-
-		return $result;
-	}
-
 	private function open($stdin)
 	{
 		return fopen('data://text/plain;encoding=utf-8,'.$stdin, 'r');
 	}
 
+	public function runPhpScriptFromStdin($scriptContent, array $iniVars=array(), array $scriptArgs=array(), array $env=array())
+	{
+		return ShellCommandBuilder::newPhp()
+			->addIniVars($iniVars)
+			->addArgs($scriptArgs)
+			->runWith($this, $scriptContent, $env);
+	}
+
+	public function runPhpScript($script, array $args=array(), $includePath)
+	{
+		return ShellCommandBuilder::newPhp()
+			->addPhpProperty('-f', $script)
+			->addIniVars(array('include_path' => $includePath))
+			->addPhpArgs($args)
+			->runWith($this);
+	}
 }
 
 ?>
