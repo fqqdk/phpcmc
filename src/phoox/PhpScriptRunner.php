@@ -45,8 +45,12 @@ class PhpScriptRunner implements ShellCommandRunner
 		return fopen('data://text/plain;encoding=utf-8,'.$stdin, 'r');
 	}
 
-	public function runPhpScriptFromStdin($scriptContent, array $iniVars=array(), array $scriptArgs=array(), array $env=array())
+	public function runPhpScriptFromStdin($scriptContent, array $iniVars=array(), array $scriptArgs=array(), array $env=null)
 	{
+		if (null === $env) {
+			$env = $_ENV;
+		}
+
 		return ShellCommandBuilder::newPhp()
 			->addIniVars($iniVars)
 			->addArgs($scriptArgs)

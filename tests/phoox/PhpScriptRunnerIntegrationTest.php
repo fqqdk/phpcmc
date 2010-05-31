@@ -55,6 +55,15 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	/**
 	 * @test
 	 */
+	public function scriptInheritsParentEnvByDefault()
+	{
+		$output = $this->runner->runPhpScriptFromStdin('<?php echo serialize(sort($_ENV)); ?>');
+		$this->assertEquals(sort($_ENV), unserialize($output));
+	}
+
+	/**
+	 * @test
+	 */
 	public function arbitraryIniVariableGetsPassed()
 	{
 		$output = $this->runner->runPhpScriptFromStdin(
