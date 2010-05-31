@@ -6,7 +6,7 @@
  */
 
 /**
- * Description of Assert
+ * The Assert class is a Facade for creating assertions.
  */
 class Assert
 {
