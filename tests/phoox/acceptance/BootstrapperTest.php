@@ -30,7 +30,7 @@ class BootstrapperTest extends PhooxTestCase
 	 *
 	 * @return void
 	 */
-	private function runFunctionIsolated($function, $file, array $env=array(), array $includePath=array(), array $argv=array())
+	private function runFunctionIsolated($function, $file, array $env=null, array $includePath=array(), array $argv=array())
 	{
 		$script = sprintf(
 			'<?php
