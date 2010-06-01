@@ -1,1 +1,1 @@
-@php_bin@ "@bin_dir@\phpunit" %*
+@php_bin@ "@bin_dir@\phpcmc" %*

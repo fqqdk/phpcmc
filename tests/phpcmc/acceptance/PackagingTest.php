@@ -41,9 +41,6 @@ class PackagingTest extends PhooxTestCase
 		$binDir         = $repoDir . 'pear/bin';
 		$binFile        = $binDir . '/phpcmc';
 		$isWin          = false !== strpos(strtolower(PHP_OS), 'win');
-		if ($isWin) {
-		    $binFile .= '.bat';
-		}
 		
 		$classDir       = 'classes';
 		$includeDir    = $repoDir . 'pear/php';
