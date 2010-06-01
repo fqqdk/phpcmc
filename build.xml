@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <!--
     Document   : build.xml
     Created on : May 11, 2010, 8:35 PM
@@ -9,27 +8,78 @@
 -->
 
 <project name="phpcmc">
-	<condition property="shell.task" value="win-shell" else="exec-shell"><os family="windows" /></condition>
 
-	<import file="src/phoox/ant/${shell.task}.xml"/>
-	<import file="src/phoox/ant/php.xml"/>
+<!--
+	project header: general targets tasks, macrodefs, imports, etc
+	MUST NOT have dependencies
+	MUST NOT have descriptions
+	MUST have bodies
+-->
 
+<condition property="shell.task" value="win-shell" else="exec-shell"><os family="windows" /></condition>
+<import file="src/phoox/ant/${shell.task}.xml" />
+<import file="src/phoox/ant/php.xml" />
 
-	<target name="unittest"   description="runs unit level tests"          depends="phpunit" />
-	<target name="checkstyle" description="checks for standard violations" depends="phpcs" />
-    <target name="document"   description="generates documentation"        depends="phpdoc"/>
+<target name="unimplemented">
+	<fail message="Unimplemented target!" />
+</target>
+
+<!--
+	abstract public targets, defining the workflows
+		they MUST NOT have bodies
+		they MUST have descriptions
+		they MAY have multiple dependencies on other abstract targets to define their workflow
+		they MUST have at most one implementation dependency
+		the implementor target (if there is one) MUST appear after the ordering (workflow) dependencies
+-->
+
+	<target name        = "prepare"
+			description = "prepares the project by setting properties, filesets, etc"
+			depends     = "phpcmc.prepare" />
+
+	<target name        = "clean"
+			description = "cleans the working directories"
+			depends     = "prepare, phpmc.clean" />
+
+	<target name        = "unittest"
+			description = "runs unit level tests"
+			depends     = "prepare, phpunit" />
+
+	<target name        = "package"
+			description = "packages the project"
+			depends     = "prepare, pear" />
+
+	<target name        = "deploy"
+			description = "deploys package to the repository"
+			depends     = "package, jabbar-deploy" />
+
+	<target name        = "release"
+			description = "releases the project"
+			depends     = "bump, prepare, package, deploy" />
+
+	<target name        = "document"
+			description = "generates the API documentation"
+			depends     = "prepare, phpdoc" />
+
+	<target name        = "checkstyle"
+			description = "checks for standard violations"
+			depends     = "phpcs" />
+
 	<target name="build"      description="runs the build"                 depends="phpunit" />
-	<target name="package"    description="packages the project"           depends="pear" />
-	<target name="deploy"     description="deploys package to the repository"
-			depends="pear-deploy" />
-	<target name="release"    description="releases the project"
-			depends="bump,prepare,package,deploy" />
-	<target name="ci-build"   description="runs the build in the CI environment"
-			depends="checkstyle,unittest" />
 
-	<!-- internal targets -->
+<!-- 
+	internal targets, defining implementation details of abstract targets
+		they SHOULD NOT have descriptions
+		they MUST be prefixed with a unique prefix to create consistent naming
+		they MAY depend on abstract targets, but those are ordering dependencies so it is discouraged
+			(workflow dependencies SHOULD be defined among the abstract targets)
+		they MAY depend on other internal targets to define an internal, implementation specific worflow
+		internal dependencies MUST appear after any abstract dependency
+		internal dependencies of a target MUST be in the same namespace
+-->
 
-	<target name="prepare">
+<!-- project specific implementation targets -->
+	<target name="phpcmc.prepare">
 		<tstamp prefix="release">
 			<format property="date" pattern="yyyy-MM-dd" />
 			<format property="time" pattern="HH:mm:ss" />
@@ -38,9 +88,10 @@
 		<property name="release.version" value="${version.major}.${version.minor}" />
 		<property name="uriAndOrChannel" value="&lt;channel&gt;pear.meza.hu&lt;/channel&gt;" />
 		<property name="package.dir"     value="${basedir}/build/package" />
+		<property name="package.url"     value="${package.dir}/phpcmc-${release.version}" />
     </target>
 
-	<target name="clean" depends="prepare">
+	<target name="phpmc.clean" depends="prepare">
 		<delete dir="${basedir}/build"/>
 
 		<mkdir dir="${basedir}/build/work" />
@@ -67,7 +118,7 @@
 		</exec>
 	</target>
 
-    <target name="phpdoc">
+    <target name="phpdoc" depends="unimplemented">
 		<exec dir="${basedir}"
 			executable="phpdoc"
 			failonerror="false">
@@ -124,8 +175,10 @@
 		</pear>
 	</target>
 
-	<target name="pear-deploy">
-		<fail message="unimplemented target" />
+	<target name="jabbar-deploy" depends="prepare">
+		<pear>
+			<arg line="install ${package.url}" />
+		</pear>
 	</target>
 	
 	<target name="tst">
