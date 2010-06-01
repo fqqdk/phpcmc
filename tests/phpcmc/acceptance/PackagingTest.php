@@ -40,6 +40,11 @@ class PackagingTest extends PhooxTestCase
 		$repoDir        = 'repo/';
 		$binDir         = $repoDir . 'pear/bin';
 		$binFile        = $binDir . '/phpcmc';
+		$isWin          = false !== strpos(strtolower(PHP_OS), 'win');
+		if ($isWin) {
+		    $binFile .= '.bat';
+		}
+		
 		$classDir       = 'classes';
 		$includeDir    = $repoDir . 'pear/php';
 
@@ -57,11 +62,7 @@ class PackagingTest extends PhooxTestCase
 		$fsDriver->rmdir($repoDir);
 		$fsDriver->mkdir($repoDir);
 
-		$this->runPearConfigCreate(
-			$fsDriver->absolute($repoDir),
-			$fsDriver->absolute($pearConfigFile),
-			$fsDriver->absolute($binDir)
-		);
+		$this->runPearConfigCreate($fsDriver, $pearConfigFile, $repoDir, $isWin);
 
 		$this->assertTrue(
 			$fsDriver->isReadable($pearConfigFile),
@@ -125,10 +126,22 @@ class PackagingTest extends PhooxTestCase
 		return $this->runPear(array('-c', $pearConfigFile, 'install', $packageFile));
 	}
 
-	private function runPearConfigCreate($repoDir, $configFile, $binDir)
+	private function runPearConfigCreate($fsDriver, $configFile, $repoDir, $isWin)
 	{
-		$this->runPear(array('config-create', $repoDir, $configFile));
-		$this->runPear(array('-c', $configFile,'config-set', 'bin_dir', $binDir));
+		$absRepoDir    = $fsDriver->absolute($repoDir);
+		$absConfigFile = $fsDriver->absolute($configFile);
+		$absBinDir     = $fsDriver->absolute($repoDir . 'pear/bin');
+
+		$createArgs = array('config-create');
+		if ($isWin) {
+			$createArgs []= '-w';
+		}
+		$createArgs []= $absRepoDir;
+		$createArgs []= $absConfigFile;
+
+		$this->runPear($createArgs);
+
+		$this->runPear(array('-c', $absConfigFile, 'config-set', 'bin_dir', $absBinDir));
 	}
 }
 

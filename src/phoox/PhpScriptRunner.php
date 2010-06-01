@@ -12,6 +12,8 @@ class PhpScriptRunner implements ShellCommandRunner
 {
 	public function run($shellCommand, $stdin='', array $env=array(), $bypassShell = true)
 	{
+//	if (false !== strpos($shellCommand, 'php'))
+//	print $shellCommand . PHP_EOL;
 		if (empty($env)) {
 			$env = null;
 		}
