@@ -22,7 +22,7 @@ class PhpCommandBuilder extends ShellCommandBuilder
 
 	public function addPhpArg($arg)
 	{
-		$this->phpArgs[] = escapeshellarg($arg);
+		$this->phpArgs[] = $arg;
 
 		return $this;
 	}
@@ -38,7 +38,8 @@ class PhpCommandBuilder extends ShellCommandBuilder
 
 	public function addPhpProperty($propertyName, $propertyValue)
 	{
-		$this->phpArgs[] = $propertyName . ' ' . escapeshellarg($propertyValue);
+		$this->phpArgs[] = $propertyName;
+		$this->phpArgs[] = $propertyValue;
 
 		return $this;
 	}
@@ -54,7 +55,12 @@ class PhpCommandBuilder extends ShellCommandBuilder
 
 	public function addIniVar($iniVarName, $iniVarValue)
 	{
-		$this->phpArgs[] = '-d '.$iniVarName.'="'.escapeshellarg($iniVarValue).'"';
+	    if ($this->isWindows() && false !== strpos($iniVarValue, ';')) {
+			$iniVarValue = '\'' . $iniVarValue . '\'';
+		}
+
+		$this->phpArgs[] = '-d';
+		$this->phpArgs[] = $iniVarName.'='.$iniVarValue;
 
 		return $this;
 	}

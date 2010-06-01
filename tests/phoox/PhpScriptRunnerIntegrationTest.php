@@ -16,7 +16,7 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	 * @test
 	 */
 	public function phpShouldBeRunAsBinary() {
-		$output = $this->runner->runPhpScriptFromStdin('<?php echo 42; ?>');
+		$output = $this->runner->runPhpScriptFromStdin('<?php echo 42; ?'.'>');
 		$this->assertEquals(42, $output);
 	}
 
@@ -27,7 +27,7 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 		$argv = array(42);
 
 		$output = $this->runner->runPhpScriptFromStdin(
-			'<?php echo $_SERVER["argv"][1]; ?>', array(), $argv
+			'<?php echo $_SERVER["argv"][1]; ?'.'>', array(), $argv
 		);
 
 		$this->assertEquals(42,$output);
@@ -43,7 +43,7 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 			'env vars should be registered in the php.ini'
 		);
 		$output = $this->runner->runPhpScriptFromStdin(
-			'<?php echo $_ENV["foo"]; ?>',
+			'<?php echo $_ENV["foo"]; ?'.'>',
 			array(),
 			array(),
 			array('foo'=>'bar')
@@ -57,7 +57,7 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	 */
 	public function scriptInheritsParentEnvByDefault()
 	{
-		$output = $this->runner->runPhpScriptFromStdin('<?php echo serialize(sort($_ENV)); ?>');
+		$output = $this->runner->runPhpScriptFromStdin('<?php echo serialize(sort($_ENV)); ?'.'>');
 		$this->assertEquals(sort($_ENV), unserialize($output));
 	}
 
@@ -67,7 +67,7 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	public function arbitraryIniVariableGetsPassed()
 	{
 		$output = $this->runner->runPhpScriptFromStdin(
-			'<?php echo ini_get("mysql.default_password"); ?>',
+			'<?php echo ini_get("mysql.default_password"); ?'.'>',
 			array('mysql.default_password' => 'bar;baz')
 		);
 
@@ -81,7 +81,7 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	{
 		$includePath = 'foo/bar' . PATH_SEPARATOR . 'bar/foo';
 		$output      = $this->runner->runPhpScriptFromStdin(
-			'<?php echo get_include_path(); ?>',
+			'<?php echo get_include_path(); ?'.'>',
 			array('include_path' => $includePath)
 		);
 

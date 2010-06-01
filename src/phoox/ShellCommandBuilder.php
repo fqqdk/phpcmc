@@ -51,7 +51,7 @@ class ShellCommandBuilder
 
 	public function addArg($arg)
 	{
-		$this->args[] = escapeshellarg($arg);
+		$this->args[] = $arg;
 
 		return $this;
 	}
@@ -67,13 +67,17 @@ class ShellCommandBuilder
 
 	public function addProperty($propertyName, $propertyValue, $separator='=')
 	{
-		$this->args[] = $propertyName . $separator . escapeshellarg($propertyValue);
+		$this->args[] = $propertyName . $separator . $propertyValue;
 
 		return $this;
 	}
 
 	public function addProperties(array $properties, $separator='=')
 	{
+	    if ($separator == ' ') {
+	        throw new InvalidArgumentException('use separate args instead');
+		}
+
 		foreach ($properties as $propertyName => $propertyValue) {
 			$this->addProperty($propertyName, $propertyValue, $separator);
 		}
@@ -83,8 +87,25 @@ class ShellCommandBuilder
 
 	public function runWith(ShellCommandRunner $runner, $stdin='', $env=array())
 	{
-		$shellCommand = $this->executable . ' ' . implode(' ', $this->args);
+		$shellCommand = $this->executable . ' ' . implode(' ', array_map(
+			array($this, 'escapeArg'), $this->args
+		));
+
 		return $runner->run($shellCommand, $stdin, $env, $this->isWindowsBinary);
+	}
+
+	protected function isWindows()
+	{
+	    return false !== strpos(strtolower(PHP_OS), 'win');
+	}
+
+	protected function escapeArg($arg)
+	{
+		if ('\'' === substr($arg, -1)) {
+			$arg .= '\'';
+		}
+
+		return escapeshellarg($arg);
 	}
 }
 

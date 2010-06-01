@@ -17,7 +17,7 @@ class PackagingTest extends PhooxTestCase
 		parent::setUp();
 		$this->runner = new PhpScriptRunner();
 	}
-	
+
 	/**
 	 * @test
 	 */
@@ -45,8 +45,8 @@ class PackagingTest extends PhooxTestCase
 
 		$this->runAntTasks(array('clean', 'package'), array(
 			'release.version' => $version,
-			'package.dir'     => $fsDriver->absolute($packageDir),
-			'uriAndOrChannel' => '<uri>file://' . $fsDriver->absolute($packageFile).'</uri>',
+			'package.dir'     => $packageDir,
+			'uriAndOrChannel' => '<uri>file://' . urlencode($fsDriver->absolute($packageFile)).'</uri>',
 		));
 
 		$this->assertTrue(
@@ -95,10 +95,9 @@ class PackagingTest extends PhooxTestCase
 		$driver->outputShows(PhpCmcEndToEndTest::aClassEntry('SomeClass',  $classDir));
 		$driver->outputShows(PhpCmcEndToEndTest::aClassEntry('OtherClass', $classDir));
 
-		$fsDriver->rmdir($packageDir);
-		$fsDriver->rmdir($repoDir);
-
-		$fsDriver->unlink($pearConfigFile);
+//		$fsDriver->rmdir($packageDir);
+//		$fsDriver->rmdir($repoDir);
+//		$fsDriver->unlink($pearConfigFile);
 	}
 
 	private function runAntTasks(array $tasks, array $properties)
@@ -108,17 +107,17 @@ class PackagingTest extends PhooxTestCase
 			$antProperties['-D'.$propertyName] = $propertyValue;
 		}
 
-		return ShellCommandBuilder::newBinary('ant')
+		return ShellCommandBuilder::newScript('ant')
 			->addProperties($antProperties)
 			->addArgs($tasks)
-			->runWith($this->runner, '', $_ENV);
+			->runWith($this->runner);
 	}
 
 	private function runPear(array $args)
 	{
 		return ShellCommandBuilder::newScript('pear')
 			->addArgs($args)
-			->runWith($this->runner, '', $_ENV);
+			->runWith($this->runner);
 	}
 
 	private function runPearInstall($pearConfigFile, $packageFile)

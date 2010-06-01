@@ -12,6 +12,9 @@ class PhpScriptRunner implements ShellCommandRunner
 {
 	public function run($shellCommand, $stdin='', array $env=array(), $bypassShell = true)
 	{
+		if (empty($env)) {
+			$env = null;
+		}
 		$stdinHandle = $this->open($stdin);
 
 		$desc = array(
@@ -45,12 +48,11 @@ class PhpScriptRunner implements ShellCommandRunner
 		return fopen('data://text/plain;encoding=utf-8,'.$stdin, 'r');
 	}
 
-	public function runPhpScriptFromStdin($scriptContent, array $iniVars=array(), array $scriptArgs=array(), array $env=null)
+	public function runPhpScriptFromStdin($scriptContent, array $iniVars=array(), array $scriptArgs=array(), array $env=array())
 	{
-		if (null === $env) {
-			$env = $_ENV;
+	    if (false == empty($env)) {
+			$env = array_merge($_ENV, $env);
 		}
-
 		return ShellCommandBuilder::newPhp()
 			->addIniVars($iniVars)
 			->addArgs($scriptArgs)

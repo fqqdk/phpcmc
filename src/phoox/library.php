@@ -93,13 +93,18 @@ class DirLoader implements ClassLoader
 	}
 
 	public function load($className) {
-		$this->session->includeClassFile($this->dir . $className . '.php');
+		$this->session->includeClassFile($this->path($this->dir . $className . '.php'));
 
 		$success = $this->session->classExists($className);
 		if ($success) {
 			$this->session->success();
 		}
 		return $success;
+	}
+
+	private function path($path)
+	{
+		return str_replace('/', DIRECTORY_SEPARATOR, $path);
 	}
 
 	public function getDir()

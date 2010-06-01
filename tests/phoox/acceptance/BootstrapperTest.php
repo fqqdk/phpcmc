@@ -30,7 +30,7 @@ class BootstrapperTest extends PhooxTestCase
 	 *
 	 * @return void
 	 */
-	private function runFunctionIsolated($function, $file, array $env=null, array $includePath=array(), array $argv=array())
+	private function runFunctionIsolated($function, $file, array $env=array(), array $includePath=array(), array $argv=array())
 	{
 		$script = sprintf(
 			'<?php
@@ -38,7 +38,7 @@ class BootstrapperTest extends PhooxTestCase
 				class PhooxTestCase {}
 				require_once \'%s\';
 				%s();
-			?>',
+			?'.'>',
 			$file, $function
 		);
 		$iniVars = array(
@@ -57,15 +57,20 @@ class BootstrapperTest extends PhooxTestCase
 	public function bootstrapperWorkflowIsSound()
 	{
 		$fsDriver = new FileSystemDriver(WORK_DIR);
-		$fsDriver->rmdir('bootstrapper');
+		try {
+			$fsDriver->rmdir('bootstrapper');
+		} catch (UnexpectedValueException $ex) {
+			// the dir didn't exist yet
+		}
+
 		$fsDriver->mkdir('bootstrapper');
 		$fsDriver->mkdir('bootstrapper/lib1');
-		$fsDriver->touch('bootstrapper/lib1/FirstClass.php', '<?php class FirstClass extends SecondClass {} ?>');
+		$fsDriver->touch('bootstrapper/lib1/FirstClass.php', '<?php class FirstClass extends SecondClass {} ?'.'>');
 		$fsDriver->mkdir('bootstrapper/lib2');
-		$fsDriver->touch('bootstrapper/lib2/SecondClass.php', '<?php class SecondClass {} ?>');
+		$fsDriver->touch('bootstrapper/lib2/SecondClass.php', '<?php class SecondClass {} ?'.'>');
 		$fsDriver->mkdir('bootstrapper/lib3');
-		$fsDriver->touch('bootstrapper/lib3/ThirdClass.php',  '<?php class ThirdClass {} ?>');
-		$fsDriver->touch('bootstrapper/lib3/FourthClass.php', '<?php class FourthClass {} ?>');
+		$fsDriver->touch('bootstrapper/lib3/ThirdClass.php',  '<?php class ThirdClass {} ?'.'>');
+		$fsDriver->touch('bootstrapper/lib3/FourthClass.php', '<?php class FourthClass {} ?'.'>');
 
 		$env = array(
 			'WORK_DIR' => $fsDriver->absolute('bootstrapper')

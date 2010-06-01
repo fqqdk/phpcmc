@@ -127,4 +127,8 @@
 	<target name="pear-deploy">
 		<fail message="unimplemented target" />
 	</target>
+	
+	<target name="tst">
+	    <echo message="${foo}" />
+	</target>
 </project>

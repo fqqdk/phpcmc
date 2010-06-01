@@ -2,30 +2,18 @@
 
 class FileSystemDriverIntegrationTest extends PhooxTestCase
 {
+	private function path($path)
+	{
+		return FileSystemDriver::path($path);
+	}
 	/**
 	 * @test
 	 */
 	public function rmdirShouldWork()
 	{
-		if (file_exists(WORK_DIR.'dirToDelete/foo.txt')) {
-			unlink(WORK_DIR.'dirToDelete/foo.txt');
-		}
-		if (is_dir(WORK_DIR.'dirToDelete')) {
-			rmdir(WORK_DIR.'dirToDelete');
-		}
-		mkdir(WORK_DIR.'dirToDelete');
-		file_put_contents(WORK_DIR.'dirToDelete/foo.txt','lorem ipsum');
-		$fsDriver = new FileSystemDriver(WORK_DIR);
-		$fsDriver->rmdir('dirToDelete');
-	}
+	    $dir  = WORK_DIR . 'dirToDelete';
+	    $file = WORK_DIR . 'dirToDelete/foo.txt';
 
-	/**
-	 * @test
-	 */
-	public function delTreeDeletesRecursively()
-	{
-		$dir = WORK_DIR.'dirTreeToDelete';
-		$file = $dir.'/foo.txt';
 		if (file_exists($file)) {
 			unlink($file);
 		}
@@ -33,9 +21,33 @@ class FileSystemDriverIntegrationTest extends PhooxTestCase
 			rmdir($dir);
 		}
 		mkdir($dir);
-		file_put_contents($file,'lorem ipsum');
+		file_put_contents($file, 'lorem ipsum');
+		$fsDriver = new FileSystemDriver(WORK_DIR);
+		$fsDriver->rmdir('dirToDelete');
+		
+		$this->assertFalse(is_file($file), 'The file should have been deleted.');
+		$this->assertFalse(is_dir($dir), 'The dir should have been deleted');
+	}
+
+	/**
+	 * @test
+	 */
+	public function delTreeDeletesRecursively()
+	{
+		$dir  = WORK_DIR . 'dirTreeToDelete';
+		$file = $dir . '/foo.txt';
+
+		if (file_exists($file)) {
+			unlink($file);
+		}
+		if (is_dir($dir)) {
+			rmdir($dir);
+		}
+		mkdir($dir);
+		file_put_contents($file, 'lorem ipsum');
 		$fsDriver = new FileSystemDriver(WORK_DIR);
 		$fsDriver->delTree($dir);
+		$this->assertFalse(is_file($file));
 		$this->assertFalse(is_dir($dir));
 	}
 
@@ -44,11 +56,11 @@ class FileSystemDriverIntegrationTest extends PhooxTestCase
 	 */
 	public function delTreeDeletesHiddenFiles()
 	{
-		$dir              = WORK_DIR . 'dirTreeWithHiddenFiles/';
-		$hiddenSubDir     = $dir . '.hiddendir/';
+		$dir              = $this->path(WORK_DIR . 'dirTreeWithHiddenFiles');
+		$hiddenSubDir     = $this->path($dir . '/.hiddendir');
 
-		$hiddenFile       = $dir . '.hidden';
-		$hiddenSubDirFile = $hiddenSubDir . 'file';
+		$hiddenFile       = $this->path($dir . '/.hidden');
+		$hiddenSubDirFile = $this->path($hiddenSubDir . '/file');
 
 		if (file_exists($hiddenFile)) {
 			unlink($hiddenFile);
@@ -74,6 +86,12 @@ class FileSystemDriverIntegrationTest extends PhooxTestCase
 
 		$fsDriver = new FileSystemDriver(WORK_DIR);
 		$fsDriver->delTree($dir);
+		
+		$this->assertFalse(is_file($hiddenFile));
+		$this->assertFalse(is_file($hiddenSubDirFile));
+		
+		$this->assertFalse(is_dir($hiddenSubDir));
+		$this->assertFalse(is_dir($dir));
 	}
 	
 }

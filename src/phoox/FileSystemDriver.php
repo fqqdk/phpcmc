@@ -19,7 +19,7 @@ class FileSystemDriver
 
 	public function absolute($path)
 	{
-		return $this->baseDir . $path;
+		return $this->path($this->baseDir . $path);
 	}
 
 	public function baseDir()
@@ -29,29 +29,24 @@ class FileSystemDriver
 
 	public function rmdir($dir)
 	{
-		$this->delTree($this->baseDir . $dir);
+		$this->delTree($this->path($this->baseDir . $dir));
 	}
 
 	public function mkdir($dir)
 	{
-		mkdir($this->baseDir . $dir, 0777, true);
+		mkdir($this->path($this->baseDir . $dir), 0777, true);
 	}
 
 	public function touch($file, $contents='')
 	{
-		$fileName = $this->baseDir . $file;
+		$fileName = $this->path($this->baseDir . $file);
 		touch($fileName);
 		file_put_contents($fileName, $contents);
 	}
 
 	public function delTree($absDir)
 	{
-		try {
-			$rec  = new RecursiveDirectoryIterator($absDir);
-		} catch(UnexpectedValueException $ex) {
-			return;
-		}
-
+		$rec  = new RecursiveDirectoryIterator($absDir);
 		$iter = new RecursiveIteratorIterator(
 			$rec, RecursiveIteratorIterator::CHILD_FIRST
 		);
@@ -61,8 +56,18 @@ class FileSystemDriver
 				rmdir($file->getPathname());
 				continue;
 			}
-			unlink($file->getPathname());
+			
+			if ($file->isFile()) {
+				unlink($file->getPathname());
+				continue;
+			}
+			
+			trigger_error('Not a dir or a file');
 		}
+
+		//or else we run into locking issues on windows
+		unset($iter, $rec);
+
 		rmdir($absDir);
 	}
 
@@ -70,10 +75,15 @@ class FileSystemDriver
 	{
 		return is_readable($this->absolute($file));
 	}
-	
+
 	public function unlink($file)
 	{
 		unlink($this->absolute($file));
+	}
+
+	public static function path($path)
+	{
+		return str_replace('/', DIRECTORY_SEPARATOR, $path);
 	}
 }
 
