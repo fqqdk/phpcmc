@@ -101,8 +101,8 @@ class ShellCommandBuilder
 
 	protected function escapeArg($arg)
 	{
-		if ('\'' === substr($arg, -1)) {
-			$arg .= '\'';
+		if ('\\' === substr($arg, -1, 1)) {
+			$arg .= '\\';
 		}
 
 		return escapeshellarg($arg);

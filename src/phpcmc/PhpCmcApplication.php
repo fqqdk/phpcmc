@@ -28,7 +28,7 @@ class PhpCmcApplication
 
 		foreach ($it as $file) {
 			$className = $file->getBaseName('.php');
-			echo $className . ' ' . dirname($file->getPathname()) . PHP_EOL;
+			echo $className . ' ' . str_replace('\\', '/', dirname($file->getPathname())) . PHP_EOL;
 		}
 	}
 }
