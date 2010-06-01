@@ -40,7 +40,7 @@ class PackagingTest extends PhooxTestCase
 		$repoDir        = 'repo/';
 		$binDir         = $repoDir . 'pear/bin';
 		$binFile        = $binDir . '/phpcmc';
-		$isWin          = false !== strpos(strtolower(PHP_OS), 'win');
+		$isWin          = 'win' === substr(strtolower(PHP_OS), 0, 3);
 		
 		$classDir       = 'classes';
 		$includeDir    = $repoDir . 'pear/php';
@@ -93,9 +93,9 @@ class PackagingTest extends PhooxTestCase
 		$driver->outputShows(PhpCmcEndToEndTest::aClassEntry('SomeClass',  $classDir));
 		$driver->outputShows(PhpCmcEndToEndTest::aClassEntry('OtherClass', $classDir));
 
-//		$fsDriver->rmdir($packageDir);
-//		$fsDriver->rmdir($repoDir);
-//		$fsDriver->unlink($pearConfigFile);
+		$fsDriver->rmdir($packageDir);
+		$fsDriver->rmdir($repoDir);
+		$fsDriver->unlink($pearConfigFile);
 	}
 
 	private function runAntTasks(array $tasks, array $properties)
@@ -131,6 +131,7 @@ class PackagingTest extends PhooxTestCase
 
 		$createArgs = array('config-create');
 		if ($isWin) {
+			print PHP_OS . PHP_EOL;
 			$createArgs []= '-w';
 		}
 		$createArgs []= $absRepoDir;
