@@ -131,7 +131,6 @@ class PackagingTest extends PhooxTestCase
 
 		$createArgs = array('config-create');
 		if ($isWin) {
-			print PHP_OS . PHP_EOL;
 			$createArgs []= '-w';
 		}
 		$createArgs []= $absRepoDir;
