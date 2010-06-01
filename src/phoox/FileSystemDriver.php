@@ -29,7 +29,11 @@ class FileSystemDriver
 
 	public function rmdir($dir)
 	{
-		$this->delTree($this->path($this->baseDir . $dir));
+		try {
+			$this->delTree($this->path($this->baseDir . $dir));
+		} catch (UnexpectedValueException $ex) {
+			// rmdir is quiet
+		}
 	}
 
 	public function mkdir($dir)

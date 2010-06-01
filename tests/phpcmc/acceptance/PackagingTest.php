@@ -45,7 +45,7 @@ class PackagingTest extends PhooxTestCase
 
 		$this->runAntTasks(array('clean', 'package'), array(
 			'release.version' => $version,
-			'package.dir'     => $packageDir,
+			'package.dir'     => $fsDriver->absolute($packageDir),
 			'uriAndOrChannel' => '<uri>file://' . urlencode($fsDriver->absolute($packageFile)).'</uri>',
 		));
 
