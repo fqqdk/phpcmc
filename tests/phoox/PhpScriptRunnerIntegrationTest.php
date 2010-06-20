@@ -67,8 +67,8 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	public function arbitraryIniVariableGetsPassed()
 	{
 		$output = $this->runner->runPhpScriptFromStdin(
-			'<?php echo ini_get("mysql.default_password"); ?'.'>',
-			array('mysql.default_password' => 'bar;baz')
+			'<?php echo ini_get("include_path"); ?'.'>',
+			array('include_path' => 'bar;baz')
 		);
 
 		$this->assertEquals("bar;baz", $output);

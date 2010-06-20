@@ -48,24 +48,35 @@ class FileSystemDriver
 		file_put_contents($fileName, $contents);
 	}
 
+	private function isDot(SplFileInfo $file)
+	{
+		return '/.'   == substr($file->getPathname(), -2) ||
+			'/..' == substr($file->getPathname(), -3);
+	}
+
 	public function delTree($absDir)
 	{
-		$rec  = new RecursiveDirectoryIterator($absDir);
-		$iter = new RecursiveIteratorIterator(
-			$rec, RecursiveIteratorIterator::CHILD_FIRST
-		);
+		$flags = RecursiveIteratorIterator::CHILD_FIRST;
+		$rec   = new RecursiveDirectoryIterator($absDir);
+		$iter  = new RecursiveIteratorIterator($rec, $flags);
 
 		foreach ($iter as $file) {
+			// Lunix lists dots (. and ..) as childs. Mac and win dont.
+			// Also, SKIP_DOTS flag skips all "hidden" directories.
+			if ($this->isDot($file)) {
+				continue;
+			}
+
 			if ($file->isDir()) {
 				rmdir($file->getPathname());
 				continue;
 			}
-			
+
 			if ($file->isFile()) {
 				unlink($file->getPathname());
 				continue;
 			}
-			
+
 			trigger_error('Not a dir or a file');
 		}
 

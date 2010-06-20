@@ -99,6 +99,11 @@ class ShellCommandBuilder
 	    return false !== strpos(strtolower(PHP_OS), 'win');
 	}
 
+	protected function isLinux()
+	{
+		return false !== strpos(strtolower(PHP_OS), 'linux');
+	}
+
 	protected function escapeArg($arg)
 	{
 		if ('\\' === substr($arg, -1, 1)) {

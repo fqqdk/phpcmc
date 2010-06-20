@@ -59,6 +59,10 @@ class PhpCommandBuilder extends ShellCommandBuilder
 			$iniVarValue = '\'' . $iniVarValue . '\'';
 		}
 
+		if ($this->isLinux() && false !== strpos($iniVarValue, ';')) {
+			$iniVarValue = '\'' . $iniVarValue . '\'';
+		}
+
 		$this->phpArgs[] = '-d';
 		$this->phpArgs[] = $iniVarName.'='.$iniVarValue;
 
