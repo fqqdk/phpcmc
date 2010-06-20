@@ -23,7 +23,7 @@ class PackagingTest extends PhooxTestCase
 	 */
 	public function antIsAvailable() {
 		$output = $this->runAntTasks(array('-version'),array());
-		$this->assertRegExp('/^Apache Ant version/',$output);
+		$this->assertRegExp('/Apache Ant version/',$output);
 	}
 
 	/**
