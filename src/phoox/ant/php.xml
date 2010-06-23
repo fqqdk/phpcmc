@@ -34,16 +34,6 @@
 	</sequential>
 </macrodef>
 
-<macrodef name="phpclasspath">
-	<attribute name="output" />
-	<sequential>
-	<echo message="@{output}" />
-		<php file="classpath.php">
-			<redirector output="@{output}" />
-		</php>
-	</sequential>
-</macrodef>
-
 <!-- testing -->
 <macrodef name="phpunit">
 	<attribute name="config" />
@@ -59,7 +49,6 @@
 </macrodef>
 
 <!-- metrics -->
-
 <macrodef name="pdepend">
 	<attribute name="dir" />
 	<attribute name="outputdir" />
@@ -96,19 +85,31 @@
 	</sequential>
 </macrodef>
 
-<macrodef name="phpcs">
-	<attribute name="dir" />
-	<attribute name="outfile" />
+<macrodef name = "phpcs">
+	<attribute name = "standard" />
+	<attribute name = "outputdir" />
+	<element name = "fileset" optional = "no" implicit="yes" />
 
 	<sequential>
-		<echo message="generating checkstyle report" />
-		<touch file="@{outfile}" />
-		<shell executable="phpcs" failonerror="false">
-			<arg value="--tab-width=4" />
-			<arg value="--report=checkstyle" />
-			<arg value="@{dir}" />
-			<redirector output="@{xmloutfile}" />
-		</shell>
+		<echo message = "generating checkstyle report" />
+		<apply
+			executable = "phpcs"
+			dest       = "@{outputdir}"
+			parallel   = "false">
+
+			<arg value = "--report=checkstyle"/>
+			<arg value = "--standard=${phpcs.standard}" />
+			<srcfile />
+
+			<fileset />
+			<redirector logError = "yes">
+				<outputmapper>
+					<!-- redirectors' mapper inherits source file names from apply... -->
+					<packagemapper from = "*.php" to = "@{outputdir}/*.xml" />
+				</outputmapper>
+			</redirector>
+			<packagemapper from="*.php" to="*.xml" />
+		</apply>
 	</sequential>
 </macrodef>
 

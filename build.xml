@@ -89,6 +89,7 @@
 		<property name="uriAndOrChannel" value="&lt;channel&gt;pear.meza.hu&lt;/channel&gt;" />
 		<property name="package.dir"     value="${basedir}/build/package" />
 		<property name="package.url"     value="${package.dir}/phpcmc-${release.version}" />
+		<property name="phpcs.standard"  value="Ustream" />
     </target>
 
 	<target name="phpmc.clean" depends="prepare">
@@ -105,17 +106,17 @@
 		<mkdir dir="${basedir}/build/unittest/coverage/source" />
 	</target>
 
-	<target name="phpunit">
+	<target name = "phpunit">
 		<phpunit config="phpunit.xml" test="tests"/>
 	</target>
 
-	<target name="phpcs">
-		<exec dir="${basedir}"
-			executable="phpcs"
-			failonerror="false">
-
-			<arg line="--standard=Ustream --extensions=php ${basedir}/src ${basedir}/tests"/>
-		</exec>
+	<target name = "phpcs">
+		<phpcs standard = "${phpcs.standard}" outputdir="build/checkstyle">
+			<fileset dir = "${basedir}">
+				<include name="src/**/*.php" />
+				<include name="tests/**/*.php" />
+			</fileset>
+		</phpcs>
 	</target>
 
     <target name="phpdoc" depends="unimplemented">
