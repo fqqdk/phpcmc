@@ -111,7 +111,10 @@
 	</target>
 
 	<target name = "phpcs">
-		<phpcs standard = "${phpcs.standard}" outputdir="build/checkstyle">
+		<phpcs 
+			standard  = "${phpcs.standard}"
+			outputdir ="build/checkstyle">
+
 			<fileset dir = "${basedir}">
 				<include name="src/**/*.php" />
 				<include name="tests/**/*.php" />

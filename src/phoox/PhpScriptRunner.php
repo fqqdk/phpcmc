@@ -6,14 +6,23 @@
  */
 
 /**
- * Description of PhpScriptRunner
+ * Facility specially suited to run php commands on the CLI
  */
 class PhpScriptRunner implements ShellCommandRunner
 {
-	public function run($shellCommand, $stdin='', array $env=array(), $bypassShell = true)
+	/**
+	 * Runs a script
+	 *
+	 * @param string  $shellCommand the command to run
+	 * @param string  $stdin        contents that should be piped in as stdin
+	 * @param array   $env          environment variables
+	 * @param boolean $bypassShell  whether "cmd /c" should be bypassed
+	 *                              on windows systems
+	 *
+	 * @return string the output of the script
+	 */
+	public function run($shellCommand, $stdin='', array $env=array(), $bypassShell=true)
 	{
-//	if (false !== strpos($shellCommand, 'php'))
-//	print $shellCommand . PHP_EOL;
 		if (empty($env)) {
 			$env = null;
 		}
@@ -25,7 +34,8 @@ class PhpScriptRunner implements ShellCommandRunner
 			2 => array('pipe', 'w')
 		);
 
-		$proc = proc_open($shellCommand, $desc, $pipes, null, $env, array('bypass_shell' => $bypassShell));
+		$flags = array('bypass_shell' => $bypassShell);
+		$proc  = proc_open($shellCommand, $desc, $pipes, null, $env, $flags);
 		if (false === $proc) {
 			trigger_error('cannot execute ' . $shellCommand);
 		}
@@ -45,14 +55,33 @@ class PhpScriptRunner implements ShellCommandRunner
 		return $result;
 	}
 
+	/**
+	 * Opens a file handle for the passed in stdin content
+	 *
+	 * @param string $stdin the contents of stdin
+	 *
+	 * @return resource php file handle
+	 */
 	private function open($stdin)
 	{
 		return fopen('data://text/plain;encoding=utf-8,'.$stdin, 'r');
 	}
 
-	public function runPhpScriptFromStdin($scriptContent, array $iniVars=array(), array $scriptArgs=array(), array $env=array())
+	/**
+	 * Runs arbitrary PHP code piped to the php executable as stdin
+	 *
+	 * @param string $scriptContent php code
+	 * @param array  $iniVars       ini variables
+	 * @param array  $scriptArgs    arguments for the script
+	 * @param array  $env           environment variables
+	 *
+	 * @return string the output of the script
+	 */
+	public function runPhpScriptFromStdin(
+		$scriptContent, array $iniVars=array(), array $scriptArgs=array(),
+		array $env=array())
 	{
-	    if (false == empty($env)) {
+		if (false == empty($env)) {
 			$env = array_merge($_ENV, $env);
 		}
 		return ShellCommandBuilder::newPhp()
@@ -61,6 +90,15 @@ class PhpScriptRunner implements ShellCommandRunner
 			->runWith($this, $scriptContent, $env);
 	}
 
+	/**
+	 * Runs a PHP script file
+	 *
+	 * @param string $script      the script file
+	 * @param array  $args        arguments to pass to the script
+	 * @param string $includePath include_path to pass to the script
+	 *
+	 * @return string output of the script
+	 */
 	public function runPhpScript($script, array $args=array(), $includePath)
 	{
 		return ShellCommandBuilder::newPhp()

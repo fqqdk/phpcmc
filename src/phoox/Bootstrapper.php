@@ -6,10 +6,20 @@
  */
 
 /**
- * Description of Bootstrapper
+ * Contains common bootstrapping logic to be used by PHPUnit tests
  */
 class Bootstrapper
 {
+	/**
+	 * Bootstrap functionality for PHPUnit tests
+	 *
+	 * Sets up autoloaders.
+	 *
+	 * @param array  $library list of source paths
+	 * @param string $file    overridable parameter used by classloaders
+	 *
+	 * @return LoaderSession
+	 */
 	public static function bootstrap(array $library, $file=__file__)
 	{
 		require_once dirname(__file__) . '/library.php';

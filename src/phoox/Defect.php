@@ -6,7 +6,7 @@
  */
 
 /**
- * Description of Defect
+ * Programmer error
  */
 class Defect extends LogicException
 {

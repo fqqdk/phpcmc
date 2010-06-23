@@ -6,24 +6,55 @@
  */
 
 /**
- * Description of Constraint
+ * CallbackConstraint is a generic constraint that can be used to assert
+ * that various boolean returning functions return true for a value
  */
 class CallbackConstraint extends PHPUnit_Framework_Constraint
 {
+	/**
+	 * @var callable the wrapped callback
+	 */
 	private $callback;
+
+	/**
+	 * @var string human-readable name for the object.
+	 */
 	private $name;
 
+	/**
+	 * Constructor
+	 *
+	 * @param callable $callback the callback to wrap
+	 * @param string   $name     human-readable name of the callback
+	 */
 	public function __construct($callback, $name=null)
 	{
 		$this->callback = $callback;
 		$this->name     = $name;
 	}
 
-	public function evaluate($value)
+	/**
+	 * Evaluates the constraint
+	 *
+	 * @param mixed $variable the value to check
+	 *
+	 * @return boolean
+	 */
+	public function evaluate($variable)
 	{
-		return (bool)call_user_func($this->callback, $value);
+		return (bool)call_user_func($this->callback, $variable);
 	}
-	
+
+	/**
+	 * Throws a specific exception to report failure
+	 *
+	 * @param mixed   $other   the value that failed to evaluate
+	 * @param string  $message optional failure message
+	 * @param boolean $not     whether the constraint is negated
+	 *
+	 * @return void
+	 * @throws PHPUnit_Framework_ExpectationFailedException
+	 */
 	public function fail($other, $message, $not=false)
 	{
 		throw new PHPUnit_Framework_ExpectationFailedException(
