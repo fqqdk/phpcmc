@@ -21,10 +21,20 @@
 	>
     <filter>
 		<whitelist>
+			<directory suffix=".php">src/angst</directory>
 			<directory suffix=".php">src/phoox</directory>
 			<directory suffix=".php">src/phpcmc</directory>
 		</whitelist>
     </filter>
+
+	<logging>
+		<log type="testdox-html"  target="build/testdox.html" />
+		<log type="junit"         target="build/junit.xml" logIncompleteSkipped="false" />
+		<log type="coverage-xml"  target="build/coverage.xml" />
+		<log type="coverage-html" target="build/coverage" charset="UTF-8"
+			yui="true" highlight="true"
+			lowUpperBound="35" highLowerBound="70"/>
+	</logging>
 
     <groups>
 		<exclude>

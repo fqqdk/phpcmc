@@ -101,9 +101,7 @@
 		<mkdir dir="${basedir}/build/doc" />
 		<mkdir dir="${basedir}/build/package" />
 		<mkdir dir="${basedir}/build/checkstyle" />
-        <mkdir dir="${basedir}/build/unittest" />
-        <mkdir dir="${basedir}/build/unittest/coverage" />
-		<mkdir dir="${basedir}/build/unittest/coverage/source" />
+        <mkdir dir="${basedir}/build/coverage" />
 	</target>
 
 	<target name = "phpunit">
