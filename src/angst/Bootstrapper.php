@@ -2,7 +2,7 @@
 /**
  * Holds the Bootstrapper class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
@@ -15,9 +15,8 @@ class Bootstrapper
 	 *
 	 * Sets up autoloaders.
 	 *
-	 * @param string $angstDir directory where the angst framework is located
-	 * @param array  $library  list of source paths
-	 * @param string $file     overridable parameter used by classloaders
+	 * @param array  $library list of source paths
+	 * @param string $file    overridable parameter used by classloaders
 	 *
 	 * @return LoaderSession
 	 */

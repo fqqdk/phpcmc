@@ -13,9 +13,11 @@ interface ClassLoader
 	/**
 	 * Loads a class into memory
 	 *
+	 * Returns true on success, false if the class couldn't be loaded
+	 *
 	 * @param string $className the name of the class
 	 *
-	 * @return void
+	 * @return boolean
 	 */
 	public function load($className);
 }
