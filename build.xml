@@ -184,4 +184,11 @@
 			<arg line="install ${package.url}" />
 		</pear>
 	</target>
+
+	<target name="install-standard">
+		<mkdir dir="${pear.dir}/PHP/CodeSniffer/Standards/Angst" />
+		<copy
+			file   = "src/PHP/CodeSniffer/Standards/Angst/AngstCodingStandard.php"
+			tofile = "${pear.dir}/PHP/CodeSniffer/Standards/Angst/AngstCodingStandard.php" />
+	</target>
 </project>
