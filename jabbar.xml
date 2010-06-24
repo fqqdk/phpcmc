@@ -59,9 +59,13 @@
 				<tasks:replace from="@php_bin@" to="php_bin" type="pear-config" />
 				<tasks:replace from="@bin_dir@" to="bin_dir" type="pear-config" />
 			</file>
-			<dir name="phoox">
-				<file name="Bootstrapper.php" role="php" />
-				<file name="library.php"      role="php" />
+			<dir name="angst">
+				<file name="Bootstrapper.php"       role="php" />
+				<file name="ClassLoader.php"        role="php" />
+				<file name="DirLoader.php"          role="php" />
+				<file name="LoaderSession.php"      role="php" />
+				<file name="ErrorHandler.php"       role="php" />
+				<file name="FileIncludeHandler.php" role="php" />
 			</dir>
 			<dir name="phpcmc">
 				<file name="PhpCmcApplication.php" role="php" />

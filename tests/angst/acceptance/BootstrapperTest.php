@@ -92,7 +92,7 @@ class BootstrapperTest extends PhooxTestCase
 			'WORK_DIR' => $fsDriver->absolute('bootstrapper')
 		);
 
-		$this->runFunctionIsolated(__class__.'::bootstrapped', __file__, $env, array(PHOOX_DIR));
+		$this->runFunctionIsolated(__class__.'::bootstrapped', __file__, $env, array(ANGST_DIR));
 
 		$fsDriver->rmdir('bootstrapper');
 	}
@@ -104,7 +104,7 @@ class BootstrapperTest extends PhooxTestCase
 	 */
 	public static function bootstrapped()
 	{
-		$workDir = $_ENV['WORK_DIR'];
+		$workDir  = $_ENV['WORK_DIR'];
 		require_once 'Bootstrapper.php';
 		$session = Bootstrapper::bootstrap(array(
 			$workDir . '/lib1/',

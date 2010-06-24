@@ -15,14 +15,22 @@ class Bootstrapper
 	 *
 	 * Sets up autoloaders.
 	 *
-	 * @param array  $library list of source paths
-	 * @param string $file    overridable parameter used by classloaders
+	 * @param string $angstDir directory where the angst framework is located
+	 * @param array  $library  list of source paths
+	 * @param string $file     overridable parameter used by classloaders
 	 *
 	 * @return LoaderSession
 	 */
 	public static function bootstrap(array $library, $file=__file__)
 	{
-		require_once dirname(__file__) . '/library.php';
+		$angstDir = dirname(__file__) . '/';
+
+		require_once $angstDir . 'ClassLoader.php';
+		require_once $angstDir . 'ErrorHandler.php';
+		require_once $angstDir . 'LoaderSession.php';
+		require_once $angstDir . 'FileIncludeHandler.php';
+		require_once $angstDir . 'DirLoader.php';
+
 		$loaderSession = new LoaderSession(new FileIncludeHandler());
 
 		spl_autoload_register(array($loaderSession, 'start'));

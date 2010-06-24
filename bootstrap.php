@@ -20,14 +20,16 @@ function __bootstrap()
 
 	define('SRC_DIR',   BASE_DIR . 'src/phpcmc/');
 	define('PHOOX_DIR', BASE_DIR . 'src/phoox/');
+	define('ANGST_DIR', BASE_DIR . 'src/angst/');
 	define('TEST_DIR',  BASE_DIR . 'tests/');
 	define('WORK_DIR',  BASE_DIR . 'build/work/');
 
 	define('PHPCMC_SCRIPT', BASE_DIR . 'src/phpcmc.php');
 
-	require_once BASE_DIR . 'src/phoox/Bootstrapper.php';
+	require_once ANGST_DIR . 'Bootstrapper.php';
 
-	$session = Bootstrapper::bootstrap(array(SRC_DIR, PHOOX_DIR, TEST_DIR), __file__);
+	$library = array(SRC_DIR, ANGST_DIR, PHOOX_DIR, TEST_DIR);
+	$session = Bootstrapper::bootstrap($library, __file__);
 
 	register_shutdown_function('__shutdown');
 }

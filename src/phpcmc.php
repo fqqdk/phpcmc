@@ -11,7 +11,7 @@
  * We need the bootstrapper that sets the classloaders and the
  * CMC library. These will be packaged separately.
  */
-require_once 'phoox/Bootstrapper.php';
+require_once 'angst/Bootstrapper.php';
 require_once 'phpcmc/PhpCmcApplication.php';
 
 /**
