@@ -6,11 +6,13 @@
  */
 
 /**
- * Description of TestIntegrationTest
+ * Test cases that check that we don't destroy PHPUnit's internal behaviour
+ * while amending it here and there
  */
 class TestIntegrationTest extends PhooxTestCase
 {
 	/**
+	 * Tests that the current error handler is PHPUnit's own error handler
 	 *
 	 * @test
 	 *
@@ -27,6 +29,8 @@ class TestIntegrationTest extends PhooxTestCase
 		);
 	}
 	/**
+	 * Tests that autoloaders emit user errors so that execution never reaches
+	 * the point where the script dies with a fatal error.
 	 *
 	 * @test
 	 *
@@ -41,6 +45,14 @@ class TestIntegrationTest extends PhooxTestCase
 		}
 	}
 
+	/**
+	 * Dummy error handler
+	 *
+	 * @param int    $code    error code
+	 * @param string $message error message
+	 *
+	 * @return boolean
+	 */
 	public function dummy($code, $message)
 	{
 	}

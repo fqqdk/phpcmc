@@ -6,12 +6,20 @@
  */
 
 /**
- * Description of PackagingTest
+ * Test cases that test that the full building and packaging workflow is correct
  */
 class PackagingTest extends PhooxTestCase
 {
+	/**
+	 * @var PhpScriptRunner script runner
+	 */
 	private $runner;
 
+	/**
+	 * Sets up the fixtures
+	 *
+	 * @return void
+	 */
 	protected function setUp()
 	{
 		parent::setUp();
@@ -19,7 +27,11 @@ class PackagingTest extends PhooxTestCase
 	}
 
 	/**
+	 * Tests that ant can be called from the CLI
+	 *
 	 * @test
+	 *
+	 * @return void
 	 */
 	public function antIsAvailable() {
 		$output = $this->runAntTasks(array('-version'),array());
@@ -27,7 +39,12 @@ class PackagingTest extends PhooxTestCase
 	}
 
 	/**
+	 * Tests that a package can be assembled, and installed in a PEAR repository
+	 * and works from there
+	 *
 	 * @test
+	 *
+	 * @return void
 	 */
 	public function packageIsInstallable()
 	{
@@ -98,6 +115,14 @@ class PackagingTest extends PhooxTestCase
 		$fsDriver->unlink($pearConfigFile);
 	}
 
+	/**
+	 * Runs ant with the specified tasks and properties in a separate process
+	 *
+	 * @param array $tasks      the list of the tasks
+	 * @param array $properties the map of the properties
+	 *
+	 * @return string the output
+	 */
 	private function runAntTasks(array $tasks, array $properties)
 	{
 		$antProperties = array();
@@ -111,6 +136,13 @@ class PackagingTest extends PhooxTestCase
 			->runWith($this->runner);
 	}
 
+	/**
+	 * Runs the pear command with the supplied arguments
+	 *
+	 * @param array $args the arguments
+	 *
+	 * @return string the output
+	 */
 	private function runPear(array $args)
 	{
 		return ShellCommandBuilder::newScript('pear')
@@ -118,11 +150,30 @@ class PackagingTest extends PhooxTestCase
 			->runWith($this->runner);
 	}
 
+	/**
+	 * Runs 'pear install'
+	 *
+	 * @param string $pearConfigFile path to the config file
+	 * @param string $packageFile    path to the package file
+	 *
+	 * @return string the output
+	 */
 	private function runPearInstall($pearConfigFile, $packageFile)
 	{
 		return $this->runPear(array('-c', $pearConfigFile, 'install', $packageFile));
 	}
 
+	/**
+	 * Runs 'pear config-create' to create a separate pear repository for the
+	 * tests
+	 *
+	 * @param FileSystemDriver $fsDriver   the filesystem driver
+	 * @param string           $configFile the config file to create
+	 * @param string           $repoDir    the directory of the repository
+	 * @param boolean          $isWin      whether the underlying OS is windows
+	 *
+	 * @return string the output
+	 */
 	private function runPearConfigCreate($fsDriver, $configFile, $repoDir, $isWin)
 	{
 		$absRepoDir    = $fsDriver->absolute($repoDir);

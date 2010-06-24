@@ -1,5 +1,13 @@
 <?php
+/**
+ * Holds the PhpScriptRunnerIntegrationTest
+ *
+ * @author fqqdk <fqqdk@freemail.hu>
+ */
 
+/**
+ * Holds test cases for the script runner facilities
+ */
 class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 {
 	/**
@@ -7,21 +15,34 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	 */
 	private $runner;
 
+	/**
+	 * Sets up the fixtures
+	 *
+	 * @return void
+	 */
 	protected function setUp()
 	{
 		$this->runner = new PhpScriptRunner();
 	}
 
 	/**
+	 * Tests that the PHP script is actually executed
+	 *
 	 * @test
+	 *
+	 * @return void
 	 */
-	public function phpShouldBeRunAsBinary() {
+	public function phpScriptIsRun() {
 		$output = $this->runner->runPhpScriptFromStdin('<?php echo 42; ?'.'>');
 		$this->assertEquals(42, $output);
 	}
 
 	/**
+	 * Tests that the PHP script is called with the supplied arguments
+	 *
 	 * @test
+	 *
+	 * @return void
 	 */
 	public function scriptCallShouldPassArguments() {
 		$argv = array(42);
@@ -34,7 +55,11 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	}
 	
 	/**
+	 * Tests that the PHP script has $_ENV.
+	 *
 	 * @test
+	 *
+	 * @return void
 	 */
 	public function envIsAvailable()
 	{
@@ -53,7 +78,12 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	}
 
 	/**
+	 * Tests that the PHP script inherits the environment variables from the
+	 * parent process
+	 *
 	 * @test
+	 *
+	 * @return void
 	 */
 	public function scriptInheritsParentEnvByDefault()
 	{
@@ -62,12 +92,19 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	}
 
 	/**
+	 * Tests that the PHP script gets the supplied ini variables correctly
+	 *
 	 * @test
+	 *
+	 * @return void
 	 */
 	public function arbitraryIniVariableGetsPassed()
 	{
 		$output = $this->runner->runPhpScriptFromStdin(
 			'<?php echo ini_get("include_path"); ?'.'>',
+			// we use include_path as ini key because on lunix systems setting
+			// a nonexistent, dummy ini key does nothing and include_path will
+			// always exist for every PHP installation
 			array('include_path' => 'bar;baz')
 		);
 
@@ -75,7 +112,11 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	}
 
 	/**
+	 * Tests that the include path is correctly passed to the PHP script
+	 *
 	 * @test
+	 *
+	 * @return void
 	 */
 	public function includePathGetsPassedCorrectly()
 	{
@@ -89,9 +130,13 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	}
 
 	/**
+	 * Tests that the core escapeshellargs() function works as expected
+	 *
 	 * @test
+	 *
+	 * @return void
 	 */
-	public function escapeshellargsShouldWork()
+	public function escapeshellargsCorrectlyEscapesShellArguments()
 	{
 		$this->assertRegExp(
 			'#^([\'"])foo'.PATH_SEPARATOR.'bar\1$#',

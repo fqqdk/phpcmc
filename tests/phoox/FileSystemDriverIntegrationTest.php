@@ -1,15 +1,36 @@
 <?php
+/**
+ * Holds the FileSystemDriverIntegrationTest class
+ *
+ * @author fqqdk <fqqdk@freemail.hu>
+ */
 
+/**
+ * Holds test cases for the FileSystemDriver
+ */
 class FileSystemDriverIntegrationTest extends PhooxTestCase
 {
+	/**
+	 * Absolutizes and converts a path using the underlying OS's
+	 * directory separator
+	 *
+	 * @param string $path the path
+	 *
+	 * @return string
+	 */
 	private function path($path)
 	{
 		return FileSystemDriver::path($path);
 	}
+
 	/**
+	 * Tests that rmdir() can delete a directory
+	 *
 	 * @test
+	 *
+	 * @return void
 	 */
-	public function rmdirShouldWork()
+	public function rmdirDeletesADirectory()
 	{
 	    $dir  = WORK_DIR . 'dirToDelete';
 	    $file = WORK_DIR . 'dirToDelete/foo.txt';
@@ -30,7 +51,11 @@ class FileSystemDriverIntegrationTest extends PhooxTestCase
 	}
 
 	/**
+	 * Tests that delTree() deletes directories and files recursively
+	 *
 	 * @test
+	 *
+	 * @return void
 	 */
 	public function delTreeDeletesRecursively()
 	{
@@ -52,7 +77,11 @@ class FileSystemDriverIntegrationTest extends PhooxTestCase
 	}
 
 	/**
+	 * Tests that delTree() deletes recursive files
+	 *
 	 * @test
+	 *
+	 * @return void
 	 */
 	public function delTreeDeletesHiddenFiles()
 	{

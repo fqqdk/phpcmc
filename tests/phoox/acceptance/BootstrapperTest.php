@@ -6,10 +6,17 @@
  */
 
 /**
- * Description of BootstrapperTest
+ * Test cases for the common bootstrapper
  */
 class BootstrapperTest extends PhooxTestCase
 {
+	/**
+	 * Stops the execution of the process while prints debug information
+	 *
+	 * @param string $message the failure message
+	 *
+	 * @return void
+	 */
 	public static function foreignFail($message) {
 		ob_start();
 		debug_print_backtrace();
@@ -21,14 +28,15 @@ class BootstrapperTest extends PhooxTestCase
 	}
 
 	/**
-	 * 
-	 * @param string $method
-	 * @param array  $env
-	 * @param array  $includePath
+	 * Runs a function in a separate process
 	 *
-	 * @todo lint!
+	 * @param string $function    the function
+	 * @param string $file        a file that should be included for dependencies
+	 * @param array  $env         environment variables
+	 * @param array  $includePath include_path for the process
+	 * @param array  $argv        arguments to pass to the process
 	 *
-	 * @return void
+	 * @return string the output of the process
 	 */
 	private function runFunctionIsolated($function, $file, array $env=array(), array $includePath=array(), array $argv=array())
 	{
@@ -46,10 +54,12 @@ class BootstrapperTest extends PhooxTestCase
 		);
 
 		$runner = new PhpScriptRunner();
-		$runner->runPhpScriptFromStdin($script, $iniVars, $argv, $env);
+		return $runner->runPhpScriptFromStdin($script, $iniVars, $argv, $env);
 	}
 
 	/**
+	 * Tests that the bootstrapper sets classloaders and errorhandlers correctly
+	 *
 	 * @test
 	 *
 	 * @return void
@@ -81,7 +91,13 @@ class BootstrapperTest extends PhooxTestCase
 		$fsDriver->rmdir('bootstrapper');
 	}
 
-	public static function bootstrapped() {
+	/**
+	 * Helper method for the workflow test case.
+	 *
+	 * @return void
+	 */
+	public static function bootstrapped()
+	{
 		$workDir = $_ENV['WORK_DIR'];
 		require_once 'Bootstrapper.php';
 		$session = Bootstrapper::bootstrap(array(
@@ -98,14 +114,22 @@ class BootstrapperTest extends PhooxTestCase
 		new ThirdClass;
 
 		// errorhandlers shouldn't mess with the loaders
-		set_error_handler(array(__class__, 'foo'));
+		set_error_handler(array(__class__, 'mockErrorHandler'));
 		error_reporting(E_ALL | E_STRICT | E_DEPRECATED);
 		new FourthClass;
 
 		exit(1);
 	}
 
-	public static function foo($code, $message)
+	/**
+	 * Error handler function for the workflow test
+	 *
+	 * @param int    $code    the error code
+	 * @param string $message the error message
+	 *
+	 * @return boolean
+	 */
+	public static function mockErrorHandler($code, $message)
 	{
 		if (false !== strpos($message, 'Failed loading FourthClass')) {
 			exit (0);
@@ -113,6 +137,8 @@ class BootstrapperTest extends PhooxTestCase
 	}
 
 	/**
+	 * Tests that errorhandlers are in a stack-like structure
+	 *
 	 * @test
 	 *
 	 * @return void
@@ -131,6 +157,11 @@ class BootstrapperTest extends PhooxTestCase
 		$this->fail('Expected an error message with text "error 6" but none occured');
 	}
 
+	/**
+	 * Helper method for the error handler stack test case
+	 *
+	 * @return void
+	 */
 	public static function handlerWorkFlow()
 	{
 		$handler = new FakeHandlerStack();
@@ -155,17 +186,32 @@ class BootstrapperTest extends PhooxTestCase
 	}
 }
 
+/**
+ * Helper class for the error handler stack test case
+ */
 class FakeHandlerStack {
-	private $order = 0;
+	/**
+	 * @var int the number of calls to any of the handler methods
+	 */
+	private $callCount = 0;
 
-	private function assertOrder($func, $message, array $order) {
-		$errorId = $message{6};
+	/**
+	 * Asserts that the call to one errorhandler is
+	 *
+	 * @param string $method  the method that was called
+	 * @param string $message the error message
+	 * @param array $order    the expected callcounts for the function
+	 * @return <type>
+	 */
+	private function assertOrder($method, $message, array $order)
+	{
+		$errorId = substr($message, -1);
 
 		if (!is_numeric($errorId)) {
-			$this->fail('Unexpected error: ' . $message);
+			BootstrapperTest::foreignFail('Unexpected error: ' . $message);
 		}
 
-		if (in_array(++$this->order, $order)) {
+		if (in_array(++$this->callCount, $order)) {
 			return;
 		}
 
@@ -173,20 +219,44 @@ class FakeHandlerStack {
 			'Expected errorhandler %s '        . PHP_EOL .
 			'to be called at one of these: %s' . PHP_EOL .
 			'Actually called at %s',
-			$func, '(' . implode(',', $order) . ')', $errorId
+			$method, '(' . implode(',', $order) . ')', $errorId
 		));
 
 		exit(1);
 	}
 
+	/**
+	 * Error handler method number one
+	 *
+	 * @param int    $code    error code
+	 * @param string $message error message
+	 *
+	 * @return void
+	 */
 	public function first($code, $message) {
 		$this->assertOrder(__function__, $message, array(1, 3, 5));
 	}
 
+	/**
+	 * Error handler method number two
+	 *
+	 * @param int    $code    error code
+	 * @param string $message error message
+	 *
+	 * @return void
+	 */
 	public function second($code, $message) {
 		$this->assertOrder(__function__, $message, array(2));
 	}
 
+	/**
+	 * Error handler method number three
+	 *
+	 * @param int    $code    error code
+	 * @param string $message error message
+	 *
+	 * @return void
+	 */
 	public function third($code, $message) {
 		$this->assertOrder(__function__, $message, array(4));
 	}

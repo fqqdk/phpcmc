@@ -63,7 +63,7 @@
 
 	<target name        = "checkstyle"
 			description = "checks for standard violations"
-			depends     = "phpcs" />
+			depends     = "prepare, phpcs" />
 
 	<target name="build"      description="runs the build"                 depends="phpunit" />
 
@@ -183,9 +183,5 @@
 		<pear>
 			<arg line="install ${package.url}" />
 		</pear>
-	</target>
-	
-	<target name="tst">
-	    <echo message="${foo}" />
 	</target>
 </project>
