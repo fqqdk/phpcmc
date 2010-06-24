@@ -2,7 +2,7 @@
 /**
  * Holds the PackagingTest class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
@@ -33,7 +33,8 @@ class PackagingTest extends PhooxTestCase
 	 *
 	 * @return void
 	 */
-	public function antIsAvailable() {
+	public function antIsAvailable()
+	{
 		$output = $this->runAntTasks(array('-version'),array());
 		$this->assertRegExp('/Apache Ant version/',$output);
 	}
@@ -58,7 +59,7 @@ class PackagingTest extends PhooxTestCase
 		$binDir         = $repoDir . 'pear/bin';
 		$binFile        = $binDir . '/phpcmc';
 		$isWin          = 'win' === substr(strtolower(PHP_OS), 0, 3);
-		
+
 		$classDir       = 'classes';
 		$includeDir    = $repoDir . 'pear/php';
 

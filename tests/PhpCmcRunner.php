@@ -6,36 +6,58 @@
  */
 
 /**
- * Description of PhpCmcRunner
+ * Runner facility for the application
  */
 class PhpCmcRunner
 {
 	/**
-	 * @var PhpScriptRunner
+	 * @var PhpScriptRunner the script runner utility
 	 */
 	private $runner;
 
 	/**
-	 * @var Assert
+	 * @var Assert the assertion and constraint builder
 	 */
 	private $assert;
 
 	/**
-	 * @var string
+	 * @var string output of the script
 	 */
 	private $output;
 
+	/**
+	 * Constructor
+	 *
+	 * @param PhpScriptRunner $runner the script runner utility
+	 * @param Assert          $assert the assertion and constraint builder
+	 *
+	 * @return PhpCmcRunner
+	 */
 	public function __construct(PhpScriptRunner $runner, Assert $assert)
 	{
 		$this->runner   = $runner;
 		$this->assert   = $assert;
 	}
 
+	/**
+	 * Runs the application in the given directory
+	 *
+	 * @param string $cmcScript   the script
+	 * @param string $dir         the directory
+	 * @param string $includePath the include_path to pass to the script
+	 *
+	 * @return string
+	 */
 	public function runInDirectory($cmcScript, $dir, $includePath='.')
 	{
-		$this->output = $this->runner->runPhpScript($cmcScript, array($dir), $includePath);
+		return $this->output = $this->runner->runPhpScript($cmcScript, array($dir), $includePath);
 	}
 
+	/**
+	 * The output as it should be included in a failure message
+	 *
+	 * @return string
+	 */
 	private function getOutput()
 	{
 		$result = '';
@@ -45,6 +67,13 @@ class PhpCmcRunner
 		return $result;
 	}
 
+	/**
+	 * Asserts that the passed constraint evaluates for the output of the script
+	 *
+	 * @param PHPUnit_Framework_Constraint $constraint the constraint
+	 *
+	 * @return void
+	 */
 	public function outputShows($constraint)
 	{
 		$this->assert->that(

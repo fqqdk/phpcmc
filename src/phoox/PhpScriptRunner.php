@@ -20,6 +20,7 @@ class PhpScriptRunner implements ShellCommandRunner
 	 *                              on windows systems
 	 *
 	 * @return string the output of the script
+	 * @throws ForeignError
 	 */
 	public function run($shellCommand, $stdin='', array $env=array(), $bypassShell=true)
 	{

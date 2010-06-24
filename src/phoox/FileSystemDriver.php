@@ -2,7 +2,7 @@
 /**
  * Holds the FileSystemDriver class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
@@ -23,7 +23,7 @@ class FileSystemDriver
 	 *
 	 * @return FileSystemDriver
 	 */
-	public function  __construct($baseDir)
+	public function __construct($baseDir)
 	{
 		$this->baseDir = $baseDir;
 	}

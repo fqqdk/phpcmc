@@ -32,8 +32,8 @@ class FileSystemDriverIntegrationTest extends PhooxTestCase
 	 */
 	public function rmdirDeletesADirectory()
 	{
-	    $dir  = WORK_DIR . 'dirToDelete';
-	    $file = WORK_DIR . 'dirToDelete/foo.txt';
+		$dir  = WORK_DIR . 'dirToDelete';
+		$file = WORK_DIR . 'dirToDelete/foo.txt';
 
 		if (file_exists($file)) {
 			unlink($file);
@@ -45,7 +45,7 @@ class FileSystemDriverIntegrationTest extends PhooxTestCase
 		file_put_contents($file, 'lorem ipsum');
 		$fsDriver = new FileSystemDriver(WORK_DIR);
 		$fsDriver->rmdir('dirToDelete');
-		
+
 		$this->assertFalse(is_file($file), 'The file should have been deleted.');
 		$this->assertFalse(is_dir($dir), 'The dir should have been deleted');
 	}
@@ -115,14 +115,13 @@ class FileSystemDriverIntegrationTest extends PhooxTestCase
 
 		$fsDriver = new FileSystemDriver(WORK_DIR);
 		$fsDriver->delTree($dir);
-		
+
 		$this->assertFalse(is_file($hiddenFile));
 		$this->assertFalse(is_file($hiddenSubDirFile));
-		
+
 		$this->assertFalse(is_dir($hiddenSubDir));
 		$this->assertFalse(is_dir($dir));
 	}
-	
 }
 
 ?>

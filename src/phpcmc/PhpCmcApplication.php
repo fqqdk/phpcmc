@@ -2,7 +2,7 @@
 /**
  * Holds the PhpCmcApplication class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
@@ -10,11 +10,25 @@
  */
 class PhpCmcApplication
 {
-	public static function library() {
+	/**
+	 * The library directories for the application
+	 *
+	 * @return array
+	 */
+	public static function library()
+	{
 		return array(dirname(__file__) . '/');
 	}
 
-	public static function main(array $argv) {
+	/**
+	 * Main method that runs the application
+	 *
+	 * @param array $argv the CLI arguments
+	 *
+	 * @return void
+	 */
+	public static function main(array $argv)
+	{
 		echo sprintf('phpcmc %s by fqqdk', PHPCMC_VERSION) . PHP_EOL . PHP_EOL;
 
 		if (false == isset($argv[1])) {

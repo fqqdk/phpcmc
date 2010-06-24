@@ -2,7 +2,7 @@
 /**
  * Holds the BootstrapperTest class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
@@ -17,7 +17,8 @@ class BootstrapperTest extends PhooxTestCase
 	 *
 	 * @return void
 	 */
-	public static function foreignFail($message) {
+	public static function foreignFail($message)
+	{
 		ob_start();
 		debug_print_backtrace();
 		$trace = ob_get_contents();
@@ -38,7 +39,9 @@ class BootstrapperTest extends PhooxTestCase
 	 *
 	 * @return string the output of the process
 	 */
-	private function runFunctionIsolated($function, $file, array $env=array(), array $includePath=array(), array $argv=array())
+	private function runFunctionIsolated(
+		$function, $file, array $env=array(),
+		array $includePath=array(), array $argv=array())
 	{
 		$script = sprintf(
 			'<?php
@@ -75,7 +78,10 @@ class BootstrapperTest extends PhooxTestCase
 
 		$fsDriver->mkdir('bootstrapper');
 		$fsDriver->mkdir('bootstrapper/lib1');
-		$fsDriver->touch('bootstrapper/lib1/FirstClass.php', '<?php class FirstClass extends SecondClass {} ?'.'>');
+		$fsDriver->touch(
+			'bootstrapper/lib1/FirstClass.php',
+			'<?php class FirstClass extends SecondClass {} ?'.'>'
+		);
 		$fsDriver->mkdir('bootstrapper/lib2');
 		$fsDriver->touch('bootstrapper/lib2/SecondClass.php', '<?php class SecondClass {} ?'.'>');
 		$fsDriver->mkdir('bootstrapper/lib3');
@@ -189,7 +195,8 @@ class BootstrapperTest extends PhooxTestCase
 /**
  * Helper class for the error handler stack test case
  */
-class FakeHandlerStack {
+class FakeHandlerStack
+{
 	/**
 	 * @var int the number of calls to any of the handler methods
 	 */
@@ -200,8 +207,9 @@ class FakeHandlerStack {
 	 *
 	 * @param string $method  the method that was called
 	 * @param string $message the error message
-	 * @param array $order    the expected callcounts for the function
-	 * @return <type>
+	 * @param array  $order   the expected callcounts for the function
+	 *
+	 * @return void
 	 */
 	private function assertOrder($method, $message, array $order)
 	{
@@ -233,7 +241,8 @@ class FakeHandlerStack {
 	 *
 	 * @return void
 	 */
-	public function first($code, $message) {
+	public function first($code, $message)
+	{
 		$this->assertOrder(__function__, $message, array(1, 3, 5));
 	}
 
@@ -245,7 +254,8 @@ class FakeHandlerStack {
 	 *
 	 * @return void
 	 */
-	public function second($code, $message) {
+	public function second($code, $message)
+	{
 		$this->assertOrder(__function__, $message, array(2));
 	}
 
@@ -257,7 +267,8 @@ class FakeHandlerStack {
 	 *
 	 * @return void
 	 */
-	public function third($code, $message) {
+	public function third($code, $message)
+	{
 		$this->assertOrder(__function__, $message, array(4));
 	}
 }

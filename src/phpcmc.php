@@ -14,6 +14,10 @@
 require_once 'phoox/Bootstrapper.php';
 require_once 'phpcmc/PhpCmcApplication.php';
 
+/**
+ * @final the current version of the application
+ * @global
+ */
 define('PHPCMC_VERSION', '@package_version@');
 error_reporting(E_ALL);
 Bootstrapper::bootstrap(PhpCmcApplication::library());

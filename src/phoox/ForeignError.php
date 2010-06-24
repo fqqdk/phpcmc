@@ -2,7 +2,7 @@
 /**
  * Holds the ForeignError class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
@@ -44,7 +44,9 @@ class ForeignError extends Exception
 	}
 
 	/**
-	 * @return string the output of the process
+	 * The output of the process
+	 *
+	 * @return string
 	 */
 	public function getOutput()
 	{
@@ -52,7 +54,9 @@ class ForeignError extends Exception
 	}
 
 	/**
-	 * @return string the error output of the process
+	 * The error output of the process
+	 *
+	 * @return string
 	 */
 	public function getError()
 	{

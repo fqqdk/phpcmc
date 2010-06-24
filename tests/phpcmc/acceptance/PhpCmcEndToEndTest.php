@@ -2,11 +2,11 @@
 /**
  * Holds the OneClassFile class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
- * Description of OneClassFile
+ * End to end tests for the application
  *
  * @acceptance
  */
@@ -41,6 +41,8 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 	}
 
 	/**
+	 * Tests that the application collects classes from source directories
+	 * recursively
 	 * 
 	 * @test
 	 *
@@ -69,6 +71,15 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 		$fsDriver->rmdir('deepdir');
 	}
 
+	/**
+	 * Assertion checking that a line of string corresponds to a class entry in
+	 * the output of the application
+	 *
+	 * @param string $className     the name of the class
+	 * @param string $classFilePath the expected path to the class file
+	 *
+	 * @return PHPUnit_Framework_Constraint
+	 */
 	public static function aClassEntry($className, $classFilePath)
 	{
 		return PHPUnit_Framework_Assert::matchesRegularExpression(
@@ -79,11 +90,27 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 		);
 	}
 
+	/**
+	 * Generates regex pattern for a class entry
+	 *
+	 * @param string $className     the name of the class
+	 * @param string $classFilePath the expected path to the class file
+	 *
+	 * @return string
+	 */
 	public static function classEntryPattern($className, $classFilePath)
 	{
 		return '#.*'.preg_quote($className, '#').'.*'.preg_quote($classFilePath, '#').'.*#';
 	}
 
+	/**
+	 * Contraint that checks that the output of the application contains the
+	 * correct header line indicating e.g. the version and author
+	 *
+	 * @param string $version expected version number
+	 *
+	 * @return PHPUnit_Framework_Constraint
+	 */
 	public static function correctHeader($version)
 	{
 		return PHPUnit_Framework_Assert::stringContains(

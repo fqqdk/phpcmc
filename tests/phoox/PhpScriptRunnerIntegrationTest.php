@@ -32,7 +32,8 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	 *
 	 * @return void
 	 */
-	public function phpScriptIsRun() {
+	public function phpScriptIsRun()
+	{
 		$output = $this->runner->runPhpScriptFromStdin('<?php echo 42; ?'.'>');
 		$this->assertEquals(42, $output);
 	}
@@ -44,7 +45,8 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	 *
 	 * @return void
 	 */
-	public function scriptCallShouldPassArguments() {
+	public function scriptCallShouldPassArguments()
+	{
 		$argv = array(42);
 
 		$output = $this->runner->runPhpScriptFromStdin(
@@ -53,7 +55,7 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 
 		$this->assertEquals(42,$output);
 	}
-	
+
 	/**
 	 * Tests that the PHP script has $_ENV.
 	 *
@@ -108,7 +110,7 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 			array('include_path' => 'bar;baz')
 		);
 
-		$this->assertEquals("bar;baz", $output);
+		$this->assertEquals('bar;baz', $output);
 	}
 
 	/**

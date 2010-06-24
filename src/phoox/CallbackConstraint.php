@@ -2,7 +2,7 @@
 /**
  * Holds the Constraint class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
@@ -64,10 +64,22 @@ class CallbackConstraint extends PHPUnit_Framework_Constraint
 		);
 	}
 
+	/**
+	 * Generates a failure description
+	 *
+	 * @param mixed   $other   the object for which the assertion failed
+	 * @param string  $message additional failure message
+	 * @param boolean $not     whether the constraint was negated
+	 *
+	 * @return string
+	 */
 	protected function failureDescription($other, $message, $not)
 	{
 		if ($message) {
-			return $message . PHP_EOL . '(in other words: ' . $this->failureDescription($other, null, $not) . ')';
+			return sprintf(
+				$message . PHP_EOL . '(in other words: %s)',
+				$this->failureDescription($other, null, $not)
+			);
 		}
 
 		return sprintf(
@@ -77,11 +89,25 @@ class CallbackConstraint extends PHPUnit_Framework_Constraint
 		);
 	}
 
-	private function describe($value)
+	/**
+	 * Describes a variable in a human-readable form
+	 *
+	 * @param mixed $variable the variable
+	 *
+	 * @return string
+	 */
+	private function describe($variable)
 	{
-		return PHPUnit_Util_Type::shortenedString($value);
+		return PHPUnit_Util_Type::shortenedString($variable);
 	}
 
+	/**
+	 * Describes a callback in a human-readable form
+	 *
+	 * @param callable $callback the callback
+	 *
+	 * @return string
+	 */
 	private function describeCallback($callback)
 	{
 		if (null !== $this->name) {
@@ -96,6 +122,11 @@ class CallbackConstraint extends PHPUnit_Framework_Constraint
 		return $callback;
 	}
 
+	/**
+	 * Describes this constraint in a human-readable form
+	 *
+	 * @return string
+	 */
 	public function toString()
 	{
 		return 'is ' . $this->describeCallback($this->callback);

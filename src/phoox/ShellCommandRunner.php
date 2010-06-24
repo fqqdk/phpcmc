@@ -2,7 +2,7 @@
 /**
  * Holds the ShellCommandRunner class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
@@ -22,7 +22,7 @@ interface ShellCommandRunner
 	 *
 	 * @return string the output of the command
 	 */
-	public function run($shellCommand, $stdin='', array $env=array(), $bypassShell = true);
+	public function run($shellCommand, $stdin='', array $env=array(), $bypassShell=true);
 }
 
 ?>

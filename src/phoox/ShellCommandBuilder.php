@@ -2,7 +2,7 @@
 /**
  * Holds the ScriptBuilder class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
@@ -124,11 +124,12 @@ class ShellCommandBuilder
 	 * @param string $separator  the separator
 	 *
 	 * @return ShellCommandBuilder
+	 * @throws InvalidArgumentException
 	 */
 	public function addProperties(array $properties, $separator='=')
 	{
-	    if ($separator == ' ') {
-	        throw new InvalidArgumentException('use separate args instead');
+		if ($separator == ' ') {
+			throw new InvalidArgumentException('use separate args instead');
 		}
 
 		foreach ($properties as $propertyName => $propertyValue) {
@@ -163,7 +164,7 @@ class ShellCommandBuilder
 	 */
 	protected function isWindows()
 	{
-	    return false !== strpos(strtolower(PHP_OS), 'win');
+		return false !== strpos(strtolower(PHP_OS), 'win');
 	}
 
 	/**
