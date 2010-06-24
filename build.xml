@@ -89,7 +89,7 @@
 		<property name="uriAndOrChannel" value="&lt;channel&gt;pear.meza.hu&lt;/channel&gt;" />
 		<property name="package.dir"     value="${basedir}/build/package" />
 		<property name="package.url"     value="${package.dir}/phpcmc-${release.version}" />
-		<property name="phpcs.standard"  value="Ustream" />
+		<property name="phpcs.standard"  value="Angst" />
     </target>
 
 	<target name="phpmc.clean" depends="prepare">
