@@ -13,6 +13,33 @@
 class PhpCmcEndToEndTest extends PhooxTestCase
 {
 	/**
+	 * Script prints a fancy header
+	 * 
+	 * @test
+	 * 
+	 * @return void
+	 */
+	public function scriptEmitsCorrectHeader()
+	{
+		$fsDriver = new FileSystemDriver(WORK_DIR);
+
+		$fsDriver->rmdir('PhpCmcEndToEndTest/scriptEmitsCorrectHeader');
+		$fsDriver->mkdir('PhpCmcEndToEndTest/scriptEmitsCorrectHeader');
+
+		$assert = new Assert($this);
+		$driver = new PhpCmcRunner(new PhpScriptRunner(), $assert);
+
+		$driver->runInDirectory(
+			BASE_DIR . 'src/phpcmc.php',
+			$fsDriver->absolute('PhpCmcEndToEndTest/scriptEmitsCorrectHeader')
+		);
+
+		$driver->outputShows($this->correctHeader('@package_version@'));
+
+		$fsDriver->rmdir('PhpCmcEndToEndTest/scriptEmitsCorrectHeader');
+	}
+
+	/**
 	 * Script runs and reports files from a single directory
 	 * 
 	 * @test
@@ -33,7 +60,6 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 
 		$driver->runInDirectory(BASE_DIR . 'src/phpcmc.php', $fsDriver->absolute('flatdir'));
 
-		$driver->outputShows($this->correctHeader('@package_version@'));
 		$driver->outputShows($this->aClassEntry('SomeClass',  'flatdir'));
 		$driver->outputShows($this->aClassEntry('OtherClass', 'flatdir'));
 
@@ -64,11 +90,44 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 
 		$driver->runInDirectory(BASE_DIR . 'src/phpcmc.php', $fsDriver->absolute('deepdir'));
 
-		$driver->outputShows($this->correctHeader('@package_version@'));
 		$driver->outputShows(self::aClassEntry('SomeClass',  'deepdir/one'));
 		$driver->outputShows(self::aClassEntry('OtherClass', 'deepdir/two'));
 
 		$fsDriver->rmdir('deepdir');
+	}
+
+	/**
+	 * Tests that the application collects only classes from .php files
+	 *
+	 * @test
+	 *
+	 * @return void
+	 */
+	public function collectsOnlyPhpFiles()
+	{
+		$fsDriver = new FileSystemDriver(WORK_DIR);
+
+		$fsDriver->rmdir('PhpCmcEndToEndTest/collectsOnlyPhpFiles');
+		$fsDriver->mkdir('PhpCmcEndToEndTest/collectsOnlyPhpFiles');
+		$fsDriver->touch('PhpCmcEndToEndTest/collectsOnlyPhpFiles/SomeClass.php');
+		$fsDriver->touch('PhpCmcEndToEndTest/collectsOnlyPhpFiles/NotAClass.xml');
+
+		$assert = new Assert($this);
+		$driver = new PhpCmcRunner(new PhpScriptRunner(), $assert);
+
+		$driver->runInDirectory(
+			BASE_DIR . 'src/phpcmc.php',
+			$fsDriver->absolute('PhpCmcEndToEndTest/collectsOnlyPhpFiles')
+		);
+
+		$driver->outputShows(self::aClassEntry(
+			'SomeClass',     'PhpCmcEndToEndTest/collectsOnlyPhpFiles'
+		));
+		$driver->outputDoesNotShow(
+			$this->stringContains('NotAClass')
+		);
+
+		$fsDriver->rmdir('PhpCmcEndToEndTest/collectsOnlyPhpFiles');
 	}
 
 	/**
@@ -114,7 +173,7 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 	public static function correctHeader($version)
 	{
 		return PHPUnit_Framework_Assert::stringContains(
-			sprintf('phpcmc %s by fqqdk', $version)
+			sprintf('phpcmc %s by fqqdk, sebcsaba', $version)
 		);
 	}
 }

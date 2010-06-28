@@ -51,6 +51,11 @@ class Assert
 		$this->assert->assertThat($variable, $this->assert->equalTo($variable), $message);
 	}
 
+	public function logicalNot($constraint)
+	{
+		return $this->assert->logicalNot($constraint);
+	}
+
 	/**
 	 * Creates a callback constraint using the given callback
 	 *

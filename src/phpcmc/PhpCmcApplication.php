@@ -29,7 +29,7 @@ class PhpCmcApplication
 	 */
 	public static function main(array $argv)
 	{
-		echo sprintf('phpcmc %s by fqqdk', PHPCMC_VERSION) . PHP_EOL . PHP_EOL;
+		echo sprintf('phpcmc %s by fqqdk, sebcsaba', PHPCMC_VERSION) . PHP_EOL . PHP_EOL;
 
 		if (false == isset($argv[1])) {
 			trigger_error('the directory argument is mandatory');
@@ -41,9 +41,15 @@ class PhpCmcApplication
 		$it  = new RecursiveIteratorIterator($rec);
 
 		foreach ($it as $file) {
-			$className = $file->getBaseName('.php');
-			echo $className . ' ' . str_replace('\\', '/', dirname($file->getPathname())) . PHP_EOL;
+			if (self::isPhpClassFile($file)) {
+				$className = $file->getBaseName('.php');
+				echo $className . ' ' . str_replace('\\', '/', dirname($file->getPathname())) . PHP_EOL;
+			}
 		}
+	}
+
+	private static function isPhpClassFile(SplFileInfo $file) {
+		return '.php' === strtolower(substr($file->getPathname(), -4));
 	}
 }
 

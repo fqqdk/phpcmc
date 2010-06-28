@@ -82,6 +82,14 @@ class PhpCmcRunner
 			'Erroneous script output : ' . PHP_EOL . $this->getOutput() . PHP_EOL
 		);
 	}
+
+	public function outputDoesNotShow($constraint)
+	{
+		$this->assert->that(
+			$this->output,
+			$this->assert->logicalNot($constraint)
+		);
+	}
 }
 
 ?>
