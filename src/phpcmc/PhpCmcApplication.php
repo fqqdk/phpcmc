@@ -40,11 +40,17 @@ class PhpCmcApplication
 		$rec = new RecursiveDirectoryIterator($dir);
 		$it  = new RecursiveIteratorIterator($rec);
 
+		$classMap = array();
+
 		foreach ($it as $file) {
 			if (self::isPhpClassFile($file)) {
 				$className = $file->getBaseName('.php');
-				echo $className . ' ' . str_replace('\\', '/', dirname($file->getPathname())) . PHP_EOL;
+				$classMap[$className] = str_replace('\\', '/', dirname($file->getPathname()));
 			}
+		}
+
+		foreach ($classMap as $className => $path) {
+			echo $className . ' ' . $path . PHP_EOL;
 		}
 	}
 
