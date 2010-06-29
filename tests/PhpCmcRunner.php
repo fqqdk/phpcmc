@@ -83,6 +83,13 @@ class PhpCmcRunner
 		);
 	}
 
+	/**
+	 * Asserts that output of the script doesn't fulfill a constraint
+	 *
+	 * @param PHPUnit_Framework_Constraint $constraint the constraint
+	 *
+	 * @return void
+	 */
 	public function outputDoesNotShow($constraint)
 	{
 		$this->assert->that(

@@ -48,7 +48,15 @@ class PhpCmcApplication
 		}
 	}
 
-	private static function isPhpClassFile(SplFileInfo $file) {
+	/**
+	 * Determines whether a file contains a PHP class
+	 *
+	 * @param SplFileInfo $file the file
+	 *
+	 * @return boolean
+	 */
+	private static function isPhpClassFile(SplFileInfo $file)
+	{
 		return '.php' === strtolower(substr($file->getPathname(), -4));
 	}
 }

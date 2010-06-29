@@ -51,6 +51,13 @@ class Assert
 		$this->assert->assertThat($variable, $this->assert->equalTo($variable), $message);
 	}
 
+	/**
+	 * Negates a constraint
+	 *
+	 * @param PHPUnit_Framework_Constraint $constraint the constraint
+	 *
+	 * @return PHPUnit_Framework_Constraint
+	 */
 	public function logicalNot($constraint)
 	{
 		return $this->assert->logicalNot($constraint);
