@@ -21,6 +21,11 @@ class PhpCmcRunner
 	private $assert;
 
 	/**
+	 * @var string directory where the script runs
+	 */
+	private $directory = '.';
+
+	/**
 	 * @var string output of the script
 	 */
 	private $output;
@@ -40,13 +45,63 @@ class PhpCmcRunner
 	}
 
 	/**
+	 * Fluent builder method to supply directory
+	 *
+	 * @param string $directory the directory
+	 *
+	 * @return PhpCmcRunner
+	 */
+	public function on($directory)
+	{
+		$this->directory = $directory;
+
+		return $this;
+	}
+
+	/**
+	 * Runs the application
+	 *
+	 * @param string $theScript the path to the script
+	 *
+	 * @return string the output
+	 */
+	public function run($theScript)
+	{
+		return $this->runInDirectory($theScript, $this->directory);
+	}
+
+	/**
+	 * Tells the runner that the script should be run with default options
+	 *
+	 * @return PhpCmcRunner
+	 */
+	public function withDefaultOptions()
+	{
+		return $this;
+	}
+
+	/**
+	 * Sets the output format option that will be supplied to the script
+	 *
+	 * @param string $format the format
+	 *
+	 * @return PhpCmcRunner
+	 */
+	public function outputFormat($format)
+	{
+		$this->outputFormat = $format;
+
+		return $this;
+	}
+
+	/**
 	 * Runs the application in the given directory
 	 *
 	 * @param string $cmcScript   the script
 	 * @param string $dir         the directory
 	 * @param string $includePath the include_path to pass to the script
 	 *
-	 * @return string
+	 * @return string the output
 	 */
 	public function runInDirectory($cmcScript, $dir, $includePath='.')
 	{

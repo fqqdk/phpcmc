@@ -13,30 +13,100 @@
 class PhpCmcEndToEndTest extends PhooxTestCase
 {
 	/**
+	 * @var string the working directory of the script
+	 */
+	private $workDir;
+
+	/**
+	 * @var string the phpcmc script to run in the tests
+	 */
+	private $script;
+
+	/**
+	 * @var FileSystemDriver the filesystem driver
+	 */
+	private $fsDriver;
+
+	/**
+	 * @var Assert the assertion builder
+	 */
+	private $assert;
+
+	/**
+	 * @var PhpCmcRunner the script runner
+	 */
+	private $runner;
+
+	/**
+	 * Sets the fixtures up
+	 * 
+	 * @return void
+	 */
+	protected function setUp()
+	{
+		$this->workDir = get_class() . '/' . $this->name;
+		if ($this->dataName || 0 === $this->dataName) {
+			//TODO dataName should be escaped
+			$this->workDir .= '/' . $this->dataName;
+		}
+
+		$this->script   = BASE_DIR . 'src/phpcmc.php';
+		$this->fsDriver = new FileSystemDriver(WORK_DIR);
+		$this->assert   = new Assert($this);
+		$this->runner   = new PhpCmcRunner(new PhpScriptRunner(), $this->assert);
+
+	}
+
+	/**
+	 * Initializes the filesystem for a test
+	 *
+	 * @return void
+	 */
+	protected function initFileSystem()
+	{
+		$this->fsDriver->rmdir($this->workDir);
+		$this->fsDriver->mkdir($this->workDir);
+	}
+
+	/**
+	 * Cleans up directories used by the test
+	 *
+	 * @return void
+	 */
+	protected function cleanupOnSuccess()
+	{
+		$this->fsDriver->rmdir($this->workDir);
+	}
+
+	/**
+	 * The absolute path for the working directory of a test
+	 *
+	 * @return string
+	 */
+	protected function absoluteWorkDir()
+	{
+		return $this->fsDriver->absolute($this->workDir);
+	}
+
+	/**
 	 * Script prints a fancy header
 	 * 
 	 * @test
 	 * 
 	 * @return void
 	 */
-	public function scriptEmitsCorrectHeader()
+	public function defaultOutputEmitsCorrectHeader()
 	{
-		$fsDriver = new FileSystemDriver(WORK_DIR);
+		$this->initFileSystem();
 
-		$fsDriver->rmdir('PhpCmcEndToEndTest/scriptEmitsCorrectHeader');
-		$fsDriver->mkdir('PhpCmcEndToEndTest/scriptEmitsCorrectHeader');
+		$this->runner
+			->on($this->absoluteWorkDir())
+			->withDefaultOptions()
+			->run($this->script);
 
-		$assert = new Assert($this);
-		$driver = new PhpCmcRunner(new PhpScriptRunner(), $assert);
+		$this->runner->outputShows($this->correctHeader('@package_version@'));
 
-		$driver->runInDirectory(
-			BASE_DIR . 'src/phpcmc.php',
-			$fsDriver->absolute('PhpCmcEndToEndTest/scriptEmitsCorrectHeader')
-		);
-
-		$driver->outputShows($this->correctHeader('@package_version@'));
-
-		$fsDriver->rmdir('PhpCmcEndToEndTest/scriptEmitsCorrectHeader');
+		$this->cleanupOnSuccess();
 	}
 
 	/**
@@ -46,24 +116,22 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 	 * 
 	 * @return void
 	 */
-	public function collectsClassesFromDirectory()
+	public function collectsClasses()
 	{
-		$fsDriver = new FileSystemDriver(WORK_DIR);
+		$this->initFileSystem();
+		$this->fsDriver->mkdir($this->workDir. '/flatdir');
+		$this->fsDriver->touch($this->workDir. '/flatdir/SomeClass.php');
+		$this->fsDriver->touch($this->workDir. '/flatdir/OtherClass.php');
 
-		$fsDriver->rmdir('flatdir');
-		$fsDriver->mkdir('flatdir');
-		$fsDriver->touch('flatdir/SomeClass.php');
-		$fsDriver->touch('flatdir/OtherClass.php');
+		$this->runner
+			->on($this->absoluteWorkDir().'/flatdir')
+			->withDefaultOptions()
+			->run($this->script);
 
-		$assert = new Assert($this);
-		$driver = new PhpCmcRunner(new PhpScriptRunner(), $assert);
+		$this->runner->outputShows($this->aClassEntry('SomeClass',  'flatdir'));
+		$this->runner->outputShows($this->aClassEntry('OtherClass', 'flatdir'));
 
-		$driver->runInDirectory(BASE_DIR . 'src/phpcmc.php', $fsDriver->absolute('flatdir'));
-
-		$driver->outputShows($this->aClassEntry('SomeClass',  'flatdir'));
-		$driver->outputShows($this->aClassEntry('OtherClass', 'flatdir'));
-
-		$fsDriver->rmdir('flatdir');
+		$this->cleanupOnSuccess();
 	}
 
 	/**
@@ -76,24 +144,22 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 	 */
 	public function collectsClassesRecursively()
 	{
-		$fsDriver = new FileSystemDriver(WORK_DIR);
+		$this->initFileSystem();
+		$this->fsDriver->mkdir($this->workDir . '/deepdir');
+		$this->fsDriver->mkdir($this->workDir . '/deepdir/one');
+		$this->fsDriver->mkdir($this->workDir . '/deepdir/two');
+		$this->fsDriver->touch($this->workDir . '/deepdir/one/SomeClass.php');
+		$this->fsDriver->touch($this->workDir . '/deepdir/two/OtherClass.php');
 
-		$fsDriver->rmdir('deepdir');
-		$fsDriver->mkdir('deepdir');
-		$fsDriver->mkdir('deepdir/one');
-		$fsDriver->mkdir('deepdir/two');
-		$fsDriver->touch('deepdir/one/SomeClass.php');
-		$fsDriver->touch('deepdir/two/OtherClass.php');
+		$this->runner
+			->on($this->absoluteWorkDir().'/deepdir')
+			->withDefaultOptions()
+			->run($this->script);
 
-		$assert = new Assert($this);
-		$driver = new PhpCmcRunner(new PhpScriptRunner(), $assert);
+		$this->runner->outputShows(self::aClassEntry('SomeClass',  'deepdir/one'));
+		$this->runner->outputShows(self::aClassEntry('OtherClass', 'deepdir/two'));
 
-		$driver->runInDirectory(BASE_DIR . 'src/phpcmc.php', $fsDriver->absolute('deepdir'));
-
-		$driver->outputShows(self::aClassEntry('SomeClass',  'deepdir/one'));
-		$driver->outputShows(self::aClassEntry('OtherClass', 'deepdir/two'));
-
-		$fsDriver->rmdir('deepdir');
+		$this->cleanupOnSuccess();
 	}
 
 	/**
@@ -105,29 +171,20 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 	 */
 	public function collectsOnlyPhpFiles()
 	{
-		$fsDriver = new FileSystemDriver(WORK_DIR);
+		$this->initFileSystem();
+		$this->fsDriver->mkdir($this->workDir . '/dir');
+		$this->fsDriver->touch($this->workDir . '/dir/SomeClass.php');
+		$this->fsDriver->touch($this->workDir . '/dir/NotAClass.xml');
 
-		$fsDriver->rmdir('PhpCmcEndToEndTest/collectsOnlyPhpFiles');
-		$fsDriver->mkdir('PhpCmcEndToEndTest/collectsOnlyPhpFiles');
-		$fsDriver->touch('PhpCmcEndToEndTest/collectsOnlyPhpFiles/SomeClass.php');
-		$fsDriver->touch('PhpCmcEndToEndTest/collectsOnlyPhpFiles/NotAClass.xml');
+		$this->runner
+			->on($this->absoluteWorkDir())
+			->withDefaultOptions()
+			->run(BASE_DIR . 'src/phpcmc.php');
 
-		$assert = new Assert($this);
-		$driver = new PhpCmcRunner(new PhpScriptRunner(), $assert);
+		$this->runner->outputShows(self::aClassEntry('SomeClass', 'dir'));
+		$this->runner->outputDoesNotShow($this->stringContains('NotAClass'));
 
-		$driver->runInDirectory(
-			BASE_DIR . 'src/phpcmc.php',
-			$fsDriver->absolute('PhpCmcEndToEndTest/collectsOnlyPhpFiles')
-		);
-
-		$driver->outputShows(self::aClassEntry(
-			'SomeClass',     'PhpCmcEndToEndTest/collectsOnlyPhpFiles'
-		));
-		$driver->outputDoesNotShow(
-			$this->stringContains('NotAClass')
-		);
-
-		$fsDriver->rmdir('PhpCmcEndToEndTest/collectsOnlyPhpFiles');
+		$this->cleanupOnSuccess();
 	}
 
 	/**
@@ -139,7 +196,7 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 	 *
 	 * @return PHPUnit_Framework_Constraint
 	 */
-	public static function aClassEntry($className, $classFilePath)
+	public static function aClassEntry($className, $classFilePath='')
 	{
 		return PHPUnit_Framework_Assert::matchesRegularExpression(
 			self::classEntryPattern(
