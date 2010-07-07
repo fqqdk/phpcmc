@@ -26,13 +26,14 @@ class PhpCmcApplication
 	 * @param array $argv the CLI arguments
 	 *
 	 * @return void
+	 * @throws PhpCmcException
 	 */
 	public static function main(array $argv)
 	{
 		echo sprintf('phpcmc %s by fqqdk, sebcsaba', PHPCMC_VERSION) . PHP_EOL . PHP_EOL;
 
 		if (false == isset($argv[1])) {
-			trigger_error('the directory argument is mandatory');
+			throw new PhpCmcException('the directory argument is mandatory');
 		}
 
 		$dir = $argv[1];

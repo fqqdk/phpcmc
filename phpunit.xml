@@ -21,8 +21,6 @@
 	>
     <filter>
 		<whitelist>
-			<directory suffix=".php">src/angst</directory>
-			<directory suffix=".php">src/phoox</directory>
 			<directory suffix=".php">src/phpcmc</directory>
 		</whitelist>
     </filter>
@@ -37,10 +35,10 @@
 	</logging>
 
     <groups>
-		<exclude>
+		<!--exclude>
 			<group>integration</group>
 			<group>acceptance</group>
-		</exclude>
+		</exclude-->
     </groups>
 
 	<php>

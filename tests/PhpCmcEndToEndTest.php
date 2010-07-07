@@ -8,34 +8,34 @@
 /**
  * End to end tests for the application
  *
- * @acceptance
+ * @group acceptance
  */
 class PhpCmcEndToEndTest extends PhooxTestCase
 {
 	/**
 	 * @var string the working directory of the script
 	 */
-	private $workDir;
+	protected $workDir;
 
 	/**
 	 * @var string the phpcmc script to run in the tests
 	 */
-	private $script;
+	protected $script;
 
 	/**
 	 * @var FileSystemDriver the filesystem driver
 	 */
-	private $fsDriver;
+	protected $fsDriver;
 
 	/**
 	 * @var Assert the assertion builder
 	 */
-	private $assert;
+	protected $assert;
 
 	/**
 	 * @var PhpCmcRunner the script runner
 	 */
-	private $runner;
+	protected $runner;
 
 	/**
 	 * Sets the fixtures up
