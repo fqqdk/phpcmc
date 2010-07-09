@@ -87,21 +87,22 @@
 		<property file="version.properties" />
 		<property name="release.version" value="${version.major}.${version.minor}" />
 		<property name="uriAndOrChannel" value="&lt;channel&gt;pear.meza.hu&lt;/channel&gt;" />
-		<property name="package.dir"     value="${basedir}/build/package" />
+		<property name="target.dir"      value="${basedir}/build" />
+		<property name="package.dir"     value="${target.dir}/package" />
 		<property name="package.url"     value="${package.dir}/phpcmc-${release.version}" />
 		<property name="phpcs.standard"  value="Angst" />
     </target>
 
 	<target name="phpmc.clean" depends="prepare">
-		<delete dir="${basedir}/build"/>
+		<delete dir="${target.dir}"/>
 
-		<mkdir dir="${basedir}/build/work" />
-		<mkdir dir="${basedir}/build/logs" />
-        <mkdir dir="${basedir}/build/pirum" />
-		<mkdir dir="${basedir}/build/doc" />
-		<mkdir dir="${basedir}/build/package" />
-		<mkdir dir="${basedir}/build/checkstyle" />
-        <mkdir dir="${basedir}/build/coverage" />
+		<mkdir dir="${target.dir}/work" />
+		<mkdir dir="${target.dir}/logs" />
+        <mkdir dir="${target.dir}/pirum" />
+		<mkdir dir="${target.dir}/doc" />
+		<mkdir dir="${target.dir}/package" />
+		<mkdir dir="${target.dir}/checkstyle" />
+        <mkdir dir="${target.dir}/coverage" />
 	</target>
 
 	<target name = "phpunit">
@@ -124,7 +125,7 @@
 		<exec dir="${basedir}"
 			executable="phpdoc"
 			failonerror="false">
-			<arg line="-t ${basedir}/build/doc/ -o HTML:default:default -d ${basedir}/"/>
+			<arg line="-t ${target.dir}/doc/ -o HTML:default:default -d ${basedir}/"/>
 		</exec>
     </target>
 

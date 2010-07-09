@@ -90,7 +90,14 @@ class ApplicationTest extends PhpCmcEndToEndTest
 	 */
 	public function mainThrowsExceptionWhenNoDirectoryGiven()
 	{
-		PhpCmcApplication::main(array());
+		try {
+			ob_start();
+			PhpCmcApplication::main(array());
+			ob_end_clean();
+		} catch (Exception $e) {
+			ob_end_clean();
+			throw $e;
+		}
 	}
 
 	/**
