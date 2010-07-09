@@ -99,39 +99,6 @@ class ApplicationTest extends PhpCmcEndToEndTest
 			throw $e;
 		}
 	}
-
-	/**
-	 * Asserts that the script output fulfills the given constraint
-	 *
-	 * @param string                       $output     the script output
-	 * @param PHPUnit_Framework_Constraint $constraint the constraint
-	 *
-	 * @return void
-	 */
-	private function outputShows($output, $constraint)
-	{
-		$this->assert->that(
-			$output,
-			$constraint,
-			'Erroneous script output : ' . PHP_EOL . $this->getOutput($output) . PHP_EOL
-		);
-	}
-
-	/**
-	 * The output as it should be included in a failure message
-	 *
-	 * @param string $output the script output
-	 *
-	 * @return string
-	 */
-	private function getOutput($output)
-	{
-		$result = '';
-		foreach (explode(PHP_EOL, $output) as $line) {
-			$result .= '> ' . $line . PHP_EOL;
-		}
-		return $result;
-	}
 }
 
 ?>

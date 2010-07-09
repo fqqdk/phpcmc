@@ -26,6 +26,11 @@ class PhpCmcRunner
 	private $directory = '.';
 
 	/**
+	 * @var string the output format to specify
+	 */
+	private $outputFormat;
+
+	/**
 	 * @var string output of the script
 	 */
 	private $output;
@@ -105,7 +110,15 @@ class PhpCmcRunner
 	 */
 	public function runInDirectory($cmcScript, $dir, $includePath='.')
 	{
-		return $this->output = $this->runner->runPhpScript($cmcScript, array($dir), $includePath);
+		$args = array();
+
+		if (null !== $this->outputFormat) {
+			$args []= '-f' . $this->outputFormat;
+		}
+
+		$args []= $dir;
+
+		return $this->output = $this->runner->runPhpScript($cmcScript, $args, array(), $includePath);
 	}
 
 	/**

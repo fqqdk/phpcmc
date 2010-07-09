@@ -30,13 +30,21 @@ class PhpCmcApplication
 	 */
 	public static function main(array $argv)
 	{
-		echo sprintf('phpcmc %s by fqqdk, sebcsaba', PHPCMC_VERSION) . PHP_EOL . PHP_EOL;
+		$cmc = new self;
+		$cmc->run($argv);
+	}
 
-		if (false == isset($argv[1])) {
-			throw new PhpCmcException('the directory argument is mandatory');
-		}
-
-		$dir = $argv[1];
+	/**
+	 * Actually runs the application
+	 *
+	 * @param array $argv the arguments passed to the script
+	 *
+	 * @return void
+	 */
+	private function run(array $argv)
+	{
+		$dir    = $this->getDirectory($argv);
+		$format = $this->getFormat($argv);
 
 		$rec = new RecursiveDirectoryIterator($dir);
 		$it  = new RecursiveIteratorIterator($rec);
@@ -44,15 +52,59 @@ class PhpCmcApplication
 		$classMap = array();
 
 		foreach ($it as $file) {
-			if (self::isPhpClassFile($file)) {
-				$className = $file->getBaseName('.php');
+			if ($this->isPhpClassFile($file)) {
+				$className            = $file->getBaseName('.php');
 				$classMap[$className] = str_replace('\\', '/', dirname($file->getPathname()));
 			}
 		}
 
-		foreach ($classMap as $className => $path) {
-			echo $className . ' ' . $path . PHP_EOL;
+		if ('assoc' == $format) {
+			echo sprintf('<?php return %s; ?'.'>', var_export($classMap, true));
+		} else {
+			echo sprintf('phpcmc %s by fqqdk, sebcsaba', PHPCMC_VERSION) . PHP_EOL . PHP_EOL;
+			foreach ($classMap as $className => $path) {
+				echo $className . ' ' . $path . PHP_EOL;
+			}
 		}
+	}
+
+	/**
+	 * The output format argument
+	 *
+	 * @param array $argv the CLI arguments passed to the script
+	 *
+	 * @return string
+	 */
+	private function getFormat(array $argv)
+	{
+		if (count($argv) > 2) {
+			return 'assoc';
+		}
+
+		return 'summary';
+	}
+
+	/**
+	 * The directory argument passed to the script
+	 *
+	 * @param array $argv the arguments passed to the script
+	 *
+	 * @return string
+	 * @throws PhpCmcException
+	 */
+	private function getDirectory($argv)
+	{
+		if (count($argv) < 2) {
+			throw new PhpCmcException('the directory argument is mandatory');
+		}
+
+		$dirIndex = count($argv) - 1;
+
+		if ('-' === substr($argv[$dirIndex], 0, 1)) {
+			throw new PhpCmcException('the directory argument is mandatory');
+		}
+
+		return $argv[$dirIndex];
 	}
 
 	/**
@@ -62,7 +114,7 @@ class PhpCmcApplication
 	 *
 	 * @return boolean
 	 */
-	private static function isPhpClassFile(SplFileInfo $file)
+	private function isPhpClassFile(SplFileInfo $file)
 	{
 		return '.php' === strtolower(substr($file->getPathname(), -4));
 	}

@@ -96,16 +96,18 @@ class PhpScriptRunner implements ShellCommandRunner
 	 *
 	 * @param string $script      the script file
 	 * @param array  $args        arguments to pass to the script
+	 * @param array  $phpArgs     arguments to pass to the PHP cli
 	 * @param string $includePath include_path to pass to the script
 	 *
 	 * @return string output of the script
 	 */
-	public function runPhpScript($script, array $args=array(), $includePath)
+	public function runPhpScript($script, array $args=array(), array $phpArgs=array(), $includePath)
 	{
 		return ShellCommandBuilder::newPhp()
 			->addPhpProperty('-f', $script)
 			->addIniVars(array('include_path' => $includePath))
-			->addPhpArgs($args)
+			->addPhpArgs($phpArgs)
+			->addArgs($args)
 			->runWith($this);
 	}
 }

@@ -10,7 +10,7 @@
  *
  * @group acceptance
  */
-class PhpCmcEndToEndTest extends PhooxTestCase
+abstract class PhpCmcEndToEndTest extends PhooxTestCase
 {
 	/**
 	 * @var string the working directory of the script
@@ -89,105 +89,6 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 	}
 
 	/**
-	 * Script prints a fancy header
-	 * 
-	 * @test
-	 * 
-	 * @return void
-	 */
-	public function defaultOutputEmitsCorrectHeader()
-	{
-		$this->initFileSystem();
-
-		$this->runner
-			->on($this->absoluteWorkDir())
-			->withDefaultOptions()
-			->run($this->script);
-
-		$this->runner->outputShows($this->correctHeader('@package_version@'));
-
-		$this->cleanupOnSuccess();
-	}
-
-	/**
-	 * Script runs and reports files from a single directory
-	 * 
-	 * @test
-	 * 
-	 * @return void
-	 */
-	public function collectsClasses()
-	{
-		$this->initFileSystem();
-		$this->fsDriver->mkdir($this->workDir. '/flatdir');
-		$this->fsDriver->touch($this->workDir. '/flatdir/SomeClass.php');
-		$this->fsDriver->touch($this->workDir. '/flatdir/OtherClass.php');
-
-		$this->runner
-			->on($this->absoluteWorkDir().'/flatdir')
-			->withDefaultOptions()
-			->run($this->script);
-
-		$this->runner->outputShows($this->aClassEntry('SomeClass',  'flatdir'));
-		$this->runner->outputShows($this->aClassEntry('OtherClass', 'flatdir'));
-
-		$this->cleanupOnSuccess();
-	}
-
-	/**
-	 * Tests that the application collects classes from source directories
-	 * recursively
-	 * 
-	 * @test
-	 *
-	 * @return void
-	 */
-	public function collectsClassesRecursively()
-	{
-		$this->initFileSystem();
-		$this->fsDriver->mkdir($this->workDir . '/deepdir');
-		$this->fsDriver->mkdir($this->workDir . '/deepdir/one');
-		$this->fsDriver->mkdir($this->workDir . '/deepdir/two');
-		$this->fsDriver->touch($this->workDir . '/deepdir/one/SomeClass.php');
-		$this->fsDriver->touch($this->workDir . '/deepdir/two/OtherClass.php');
-
-		$this->runner
-			->on($this->absoluteWorkDir().'/deepdir')
-			->withDefaultOptions()
-			->run($this->script);
-
-		$this->runner->outputShows(self::aClassEntry('SomeClass',  'deepdir/one'));
-		$this->runner->outputShows(self::aClassEntry('OtherClass', 'deepdir/two'));
-
-		$this->cleanupOnSuccess();
-	}
-
-	/**
-	 * Tests that the application collects only classes from .php files
-	 *
-	 * @test
-	 *
-	 * @return void
-	 */
-	public function collectsOnlyPhpFiles()
-	{
-		$this->initFileSystem();
-		$this->fsDriver->mkdir($this->workDir . '/dir');
-		$this->fsDriver->touch($this->workDir . '/dir/SomeClass.php');
-		$this->fsDriver->touch($this->workDir . '/dir/NotAClass.xml');
-
-		$this->runner
-			->on($this->absoluteWorkDir())
-			->withDefaultOptions()
-			->run(BASE_DIR . 'src/phpcmc.php');
-
-		$this->runner->outputShows(self::aClassEntry('SomeClass', 'dir'));
-		$this->runner->outputDoesNotShow($this->stringContains('NotAClass'));
-
-		$this->cleanupOnSuccess();
-	}
-
-	/**
 	 * Assertion checking that a line of string corresponds to a class entry in
 	 * the output of the application
 	 *
@@ -232,6 +133,39 @@ class PhpCmcEndToEndTest extends PhooxTestCase
 		return PHPUnit_Framework_Assert::stringContains(
 			sprintf('phpcmc %s by fqqdk, sebcsaba', $version)
 		);
+	}
+
+	/**
+	 * Asserts that the script output fulfills the given constraint
+	 *
+	 * @param string                       $output     the script output
+	 * @param PHPUnit_Framework_Constraint $constraint the constraint
+	 *
+	 * @return void
+	 */
+	protected function outputShows($output, $constraint)
+	{
+		$this->assert->that(
+			$output,
+			$constraint,
+			'Erroneous script output : ' . PHP_EOL . $this->getOutput($output) . PHP_EOL
+		);
+	}
+
+	/**
+	 * The output as it should be included in a failure message
+	 *
+	 * @param string $output the script output
+	 *
+	 * @return string
+	 */
+	private function getOutput($output)
+	{
+		$result = '';
+		foreach (explode(PHP_EOL, $output) as $line) {
+			$result .= '> ' . $line . PHP_EOL;
+		}
+		return $result;
 	}
 }
 
