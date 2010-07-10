@@ -61,6 +61,7 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 	 * @expectedException PhpCmcException
 	 *
 	 * @return void
+	 * @throws Exception
 	 */
 	public function mainThrowsExceptionWhenNoDirectoryGiven()
 	{

@@ -2,7 +2,7 @@
 /**
  * Holds the PhpCmcMainRunner class
  *
- * @author fqqdk <fqqdk@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
@@ -23,6 +23,11 @@ class PhpCmcMainRunner extends PhpCmcRunner
 		return $this->runMainMethod($includePath);
 	}
 
+	/**
+	 * Assembles the arguments that will be passed to the application
+	 *
+	 * @return array
+	 */
 	protected function assembleArguments()
 	{
 		return array_merge(array('the_script_self'), parent::assembleArguments());
@@ -31,7 +36,10 @@ class PhpCmcMainRunner extends PhpCmcRunner
 	/**
 	 * Runs the application through the main method
 	 *
+	 * @param string $includePath the include path to set for the application's run
+	 *
 	 * @return string the output
+	 * @throws Exception
 	 */
 	private function runMainMethod($includePath)
 	{
@@ -48,21 +56,6 @@ class PhpCmcMainRunner extends PhpCmcRunner
 			throw $ex;
 		}
 		return $result;
-	}
-
-	/**
-	 * Runs the application in the given directory
-	 *
-	 * @param string $cmcScript   the script
-	 * @param string $dir         the directory
-	 * @param string $includePath the include_path to pass to the script
-	 *
-	 * @return string the output
-	 */
-	protected function runInDirectory($cmcScript, $dir, $includePath='.')
-	{
-
-		return $this->output = $this->runner->runPhpScript($cmcScript, $args, array(), $includePath);
 	}
 }
 

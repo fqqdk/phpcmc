@@ -134,7 +134,7 @@ abstract class PhpCmcEndToEndTest extends PhooxTestCase
 	 * Constraint checking that a summary with the exact number of classes found
 	 * is present in the output.
 	 *
-	 * @param int $classCount
+	 * @param int $classCount assumed count of classes
 	 *
 	 * @return PHPUnit_Framework_Constraint
 	 */

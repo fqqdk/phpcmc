@@ -67,6 +67,14 @@ class PhpCmcApplication
 		}
 	}
 
+	/**
+	 * Callculates the directory string that should be displayed for a class entry
+	 *
+	 * @param string      $dir  the base source directory
+	 * @param SplFileInfo $file the class file
+	 *
+	 * @return string
+	 */
 	private function getClassDirectory($dir, SplFileInfo $file)
 	{
 		$result = dirname($file->getPathname());

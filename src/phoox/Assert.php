@@ -75,20 +75,6 @@ class Assert
 		return new CallbackConstraint($callback);
 	}
 
-//	/**
-//	 * Asserts that a value is empty
-//	 *
-//	 * @param mixed  $variable the value to check
-//	 * @param string $message  additional failure description
-//	 *
-//	 * @return void
-//	 */
-//	public function isEmpty($variable, $message='')
-//	{
-//		$constraint = new CallbackConstraint($this->wrapPrimitiveCallback('empty'), 'empty');
-//		$this->assert->assertThat($variable, $constraint, $message);
-//	}
-
 	/**
 	 * Wraps a function-like php construct in an anonymous callback function
 	 *
@@ -106,6 +92,8 @@ class Assert
 	 *
 	 * @param string $method the method name
 	 * @param array  $args   the argument list
+	 *
+	 * @return mixed
 	 */
 	public function __call($method, array $args)
 	{
