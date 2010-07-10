@@ -18,16 +18,20 @@ class CliToolTest extends PhpCmcEndToEndTest
 	 *
 	 * @return void
 	 */
-	public function defaultOutputEmitsCorrectHeader()
+	public function defaultOutputIsSummaryFormat()
 	{
 		$this->initFileSystem();
+		$this->fsDriver->mkdir($this->workDir. '/summary');
+		$this->fsDriver->touch($this->workDir. '/summary/SomeClass.php');
+		$this->fsDriver->touch($this->workDir. '/summary/OtherClass.php');
 
 		$this->runner
 			->on($this->absoluteWorkDir())
 			->withDefaultOptions()
-			->run($this->script);
+			->run();
 
 		$this->runner->outputShows($this->correctHeader('@package_version@'));
+		$this->runner->outputShows($this->classSummary(2));
 
 		$this->cleanupOnSuccess();
 	}
@@ -44,85 +48,20 @@ class CliToolTest extends PhpCmcEndToEndTest
 		$this->requireIniSwitch('allow_url_include');
 
 		$this->initFileSystem();
-		$this->fsDriver->mkdir($this->workDir. '/flatdir');
-		$this->fsDriver->touch($this->workDir. '/flatdir/SomeClass.php');
-		$this->fsDriver->touch($this->workDir. '/flatdir/OtherClass.php');
+		$this->fsDriver->mkdir($this->workDir. '/assoc');
+		$this->fsDriver->touch($this->workDir. '/assoc/SomeClass.php');
+		$this->fsDriver->touch($this->workDir. '/assoc/OtherClass.php');
 
 		$output = $this->runner
-			->on($this->absoluteWorkDir().'/flatdir')
+			->on($this->absoluteWorkDir().'/assoc')
 			->outputFormat('assoc')
-			->run($this->script);
+			->run();
 
-		//is valid php
-		$this->assert->that(
-			count(token_get_all($output)), $this->greaterThan(1),
-			'output should be valid php'
-		);
-
-		ob_start();
-		$classMap = include 'data://application/php;encoding=utf-8,'.$output;
-		$generatedOutput = ob_get_contents();
-		ob_end_clean();
-
-		$this->assert->that($generatedOutput, $this->isEmpty());
-
-		$this->assert->that($classMap, $this->assoc(array(
-			'SomeClass'  => $this->stringContains('flatdir'),
-			'OtherClass' => $this->stringContains('flatdir'),
+		$this->runner->parseOutputAsAssoc();
+		$this->runner->classMapIs($this->assoc(array(
+			'SomeClass'  => $this->stringContains('assoc'),
+			'OtherClass' => $this->stringContains('assoc'),
 		)));
-
-		$this->cleanupOnSuccess();
-	}
-
-	/**
-	 * Tests that the application collects classes from source directories
-	 * recursively
-	 *
-	 * @test
-	 *
-	 * @return void
-	 */
-	public function collectsClassesRecursively()
-	{
-		$this->initFileSystem();
-		$this->fsDriver->mkdir($this->workDir . '/deepdir');
-		$this->fsDriver->mkdir($this->workDir . '/deepdir/one');
-		$this->fsDriver->mkdir($this->workDir . '/deepdir/two');
-		$this->fsDriver->touch($this->workDir . '/deepdir/one/SomeClass.php');
-		$this->fsDriver->touch($this->workDir . '/deepdir/two/OtherClass.php');
-
-		$this->runner
-			->on($this->absoluteWorkDir().'/deepdir')
-			->withDefaultOptions()
-			->run($this->script);
-
-		$this->runner->outputShows(self::aClassEntry('SomeClass',  'deepdir/one'));
-		$this->runner->outputShows(self::aClassEntry('OtherClass', 'deepdir/two'));
-
-		$this->cleanupOnSuccess();
-	}
-
-	/**
-	 * Tests that the application collects only classes from .php files
-	 *
-	 * @test
-	 *
-	 * @return void
-	 */
-	public function collectsOnlyPhpFiles()
-	{
-		$this->initFileSystem();
-		$this->fsDriver->mkdir($this->workDir . '/dir');
-		$this->fsDriver->touch($this->workDir . '/dir/SomeClass.php');
-		$this->fsDriver->touch($this->workDir . '/dir/NotAClass.xml');
-
-		$this->runner
-			->on($this->absoluteWorkDir())
-			->withDefaultOptions()
-			->run(BASE_DIR . 'src/phpcmc.php');
-
-		$this->runner->outputShows(self::aClassEntry('SomeClass', 'dir'));
-		$this->runner->outputDoesNotShow($this->stringContains('NotAClass'));
 
 		$this->cleanupOnSuccess();
 	}

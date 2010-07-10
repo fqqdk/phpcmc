@@ -18,11 +18,6 @@ abstract class PhpCmcEndToEndTest extends PhooxTestCase
 	protected $workDir;
 
 	/**
-	 * @var string the phpcmc script to run in the tests
-	 */
-	protected $script;
-
-	/**
 	 * @var FileSystemDriver the filesystem driver
 	 */
 	protected $fsDriver;
@@ -50,10 +45,10 @@ abstract class PhpCmcEndToEndTest extends PhooxTestCase
 			$this->workDir .= '/' . $this->dataName;
 		}
 
-		$this->script   = BASE_DIR . 'src/phpcmc.php';
+		$script         = BASE_DIR . 'src/phpcmc.php';
 		$this->fsDriver = new FileSystemDriver(WORK_DIR);
 		$this->assert   = new Assert($this);
-		$this->runner   = new PhpCmcRunner(new PhpScriptRunner(), $this->assert);
+		$this->runner   = new PhpCmcRunner($script, $this->assert);
 
 	}
 
@@ -132,6 +127,21 @@ abstract class PhpCmcEndToEndTest extends PhooxTestCase
 	{
 		return PHPUnit_Framework_Assert::stringContains(
 			sprintf('phpcmc %s by fqqdk, sebcsaba', $version)
+		);
+	}
+
+	/**
+	 * Constraint checking that a summary with the exact number of classes found
+	 * is present in the output.
+	 *
+	 * @param int $classCount
+	 *
+	 * @return PHPUnit_Framework_Constraint
+	 */
+	public static function classSummary($classCount)
+	{
+		return PHPUnit_Framework_Assert::stringContains(
+			sprintf('found %s classes', $classCount)
 		);
 	}
 

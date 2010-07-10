@@ -11,19 +11,9 @@
 class PhpCmcRunner
 {
 	/**
-	 * @var PhpScriptRunner the script runner utility
-	 */
-	private $runner;
-
-	/**
 	 * @var Assert the assertion and constraint builder
 	 */
 	private $assert;
-
-	/**
-	 * @var string directory where the script runs
-	 */
-	private $directory = '.';
 
 	/**
 	 * @var string the output format to specify
@@ -31,22 +21,37 @@ class PhpCmcRunner
 	private $outputFormat;
 
 	/**
+	 * @var array the classmap parsed from the output
+	 */
+	private $classMap;
+
+	/**
+	 * @var string the phpcmc script to run in the tests
+	 */
+	private $script;
+
+	/**
+	 * @var string directory where the script runs
+	 */
+	protected $directory = '.';
+
+	/**
 	 * @var string output of the script
 	 */
-	private $output;
+	protected $output;
 
 	/**
 	 * Constructor
 	 *
-	 * @param PhpScriptRunner $runner the script runner utility
-	 * @param Assert          $assert the assertion and constraint builder
+	 * @param string $script the script to run
+	 * @param Assert $assert the assertion and constraint builder
 	 *
 	 * @return PhpCmcRunner
 	 */
-	public function __construct(PhpScriptRunner $runner, Assert $assert)
+	public function __construct($script, Assert $assert)
 	{
-		$this->runner   = $runner;
-		$this->assert   = $assert;
+		$this->script = $script;
+		$this->assert = $assert;
 	}
 
 	/**
@@ -66,13 +71,14 @@ class PhpCmcRunner
 	/**
 	 * Runs the application
 	 *
-	 * @param string $theScript the path to the script
+	 * @param string $includePath the include path to be set for the application
+	 * @param string $theScript   the path to the script
 	 *
 	 * @return string the output
 	 */
-	public function run($theScript)
+	public function run($includePath='.', $theScript='')
 	{
-		return $this->runInDirectory($theScript, $this->directory);
+		return $this->runFromCli($includePath, $theScript);
 	}
 
 	/**
@@ -100,15 +106,11 @@ class PhpCmcRunner
 	}
 
 	/**
-	 * Runs the application in the given directory
+	 * Assembles the arguments to pass to the application
 	 *
-	 * @param string $cmcScript   the script
-	 * @param string $dir         the directory
-	 * @param string $includePath the include_path to pass to the script
-	 *
-	 * @return string the output
+	 * @return array
 	 */
-	public function runInDirectory($cmcScript, $dir, $includePath='.')
+	protected function assembleArguments()
 	{
 		$args = array();
 
@@ -116,9 +118,30 @@ class PhpCmcRunner
 			$args []= '-f' . $this->outputFormat;
 		}
 
-		$args []= $dir;
+		$args []= $this->directory;
 
-		return $this->output = $this->runner->runPhpScript($cmcScript, $args, array(), $includePath);
+		return $args;
+	}
+
+	/**
+	 * Runs the application in the given directory
+	 *
+	 * @param string $includePath the include_path to pass to the script
+	 * @param string $theScript   the script
+	 *
+	 * @return string the output
+	 */
+	protected function runFromCli($includePath='.', $theScript='')
+	{
+		if (empty($theScript)) {
+			$theScript = $this->script;
+		}
+
+		$args = $this->assembleArguments();
+
+		$runner = new PhpScriptRunner();
+
+		return $this->output = $runner->runPhpScript($theScript, $args, array(), $includePath);
 	}
 
 	/**
@@ -164,6 +187,57 @@ class PhpCmcRunner
 			$this->output,
 			$this->assert->logicalNot($constraint)
 		);
+	}
+
+	/**
+	 * Checks that output is tokenizable
+	 *
+	 * @return void
+	 */
+	protected function outputIsValidPhp()
+	{
+		$tokens = token_get_all($this->output);
+		$this->assert->that(
+			count($tokens), $this->assert->greaterThan(1),
+			sprintf('Output should be valid php, but found %s', PHP_EOL . $this->output)
+		);
+	}
+
+	/**
+	 * Attemts to parse script output as a php file containing an associative
+	 * array
+	 *
+	 * @param string $scriptOutput the output
+	 *
+	 * @return array the classmap
+	 */
+	public function parseOutputAsAssoc()
+	{
+		$this->outputIsValidPhp();
+		ob_start();
+
+		$this->classMap   = include 'data://application/php;encoding=utf-8,'.$this->output;
+		$sideEffectOutput = ob_get_contents();
+
+		ob_end_clean();
+
+		$this->assert->isEmpty($sideEffectOutput);
+
+		return $this->classMap;
+	}
+
+	/**
+	 * Checks that classmap fullfils the constraint
+	 *
+	 * @param mixed $constraint the constraint
+	 *
+	 * @return void
+	 */
+	public function classMapIs($constraint)
+	{
+		$constraint = $this->assert->wrap($constraint);
+
+		$this->assert->that($this->classMap, $constraint);
 	}
 }
 

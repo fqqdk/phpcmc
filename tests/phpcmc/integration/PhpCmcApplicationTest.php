@@ -10,7 +10,7 @@
  *
  * @group integration
  */
-class ApplicationTest extends PhpCmcEndToEndTest
+class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 {
 	/**
 	 * Sets up the fixtures
@@ -27,34 +27,8 @@ class ApplicationTest extends PhpCmcEndToEndTest
 			 */
 			define('PHPCMC_VERSION', 'dummy');
 		}
-	}
-	/**
-	 * Nomen est omen
-	 *
-	 * @test
-	 *
-	 * @return void
-	 */
-	public function mainMethodWorks()
-	{
-		$this->initFileSystem();
-		$this->fsDriver->mkdir($this->workDir. '/main');
-		$this->fsDriver->touch($this->workDir. '/main/SomeClass.php');
-		$this->fsDriver->touch($this->workDir. '/main/OtherClass.php');
 
-		$argv = array(
-			null,
-			$this->absoluteWorkDir().'/main'
-		);
-		ob_start();
-		PhpCmcApplication::main($argv);
-		$output = ob_get_contents();
-		ob_end_clean();
-
-		$this->outputShows($output, $this->aClassEntry('SomeClass',  'main'));
-		$this->outputShows($output, $this->aClassEntry('OtherClass', 'main'));
-
-		$this->cleanupOnSuccess();
+		$this->runner = new PhpCmcMainRunner('', new Assert($this));
 	}
 
 	/**
@@ -67,10 +41,10 @@ class ApplicationTest extends PhpCmcEndToEndTest
 	public function libraryIsSelfHosted()
 	{
 		$this->initFileSystem();
-		$this->fsDriver->mkdir($this->workDir. '/null');
+		$this->fsDriver->mkdir($this->workDir. '/dummy');
 		$argv = array(
 			null,
-			$this->absoluteWorkDir().'/null'
+			$this->absoluteWorkDir().'/dummy'
 		);
 		$library = PhpCmcApplication::library();
 
@@ -98,6 +72,63 @@ class ApplicationTest extends PhpCmcEndToEndTest
 			ob_end_clean();
 			throw $e;
 		}
+	}
+	/**
+	 * Tests that the application collects classes from source directories
+	 * recursively
+	 *
+	 * @test
+	 *
+	 * @return void
+	 */
+	public function collectsClassesRecursively()
+	{
+		$this->initFileSystem();
+		$this->fsDriver->mkdir($this->workDir . '/deepdir');
+		$this->fsDriver->mkdir($this->workDir . '/deepdir/one');
+		$this->fsDriver->mkdir($this->workDir . '/deepdir/two');
+		$this->fsDriver->touch($this->workDir . '/deepdir/one/SomeClass.php');
+		$this->fsDriver->touch($this->workDir . '/deepdir/two/OtherClass.php');
+
+		$this->runner
+			->on($this->absoluteWorkDir().'/deepdir')
+			->outputFormat('assoc')
+			->run();
+		$this->runner->parseOutputAsAssoc();
+		$this->runner->classMapIs($this->assoc(array(
+			'SomeClass'  => $this->stringContains('deepdir/one'),
+			'OtherClass' => $this->stringContains('deepdir/two'),
+		)));
+
+		$this->cleanupOnSuccess();
+	}
+
+	/**
+	 * Tests that the application collects only classes from .php files
+	 *
+	 * @test
+	 *
+	 * @return void
+	 */
+	public function collectsOnlyPhpFiles()
+	{
+		$this->initFileSystem();
+		$this->fsDriver->mkdir($this->workDir . '/mixed');
+		$this->fsDriver->touch($this->workDir . '/mixed/SomeClass.php');
+		$this->fsDriver->touch($this->workDir . '/mixed/NotAClass.xml');
+
+		$this->runner
+			->on($this->absoluteWorkDir())
+			->outputFormat('assoc')
+			->run();
+
+		$this->runner->parseOutputAsAssoc();
+		$this->runner->classMapIs($this->logicalAnd(
+			$this->arrayHasKeyWithValue('SomeClass', $this->stringContains('mixed')),
+			$this->logicalNot($this->arrayHasKey('NotAClass'))
+		));
+
+		$this->cleanupOnSuccess();
 	}
 }
 

@@ -51,6 +51,7 @@ class PhpCmcApplication
 
 		$classMap = array();
 
+
 		foreach ($it as $file) {
 			if ($this->isPhpClassFile($file)) {
 				$className            = $file->getBaseName('.php');
@@ -62,9 +63,7 @@ class PhpCmcApplication
 			echo sprintf('<?php return %s; ?'.'>', var_export($classMap, true));
 		} else {
 			echo sprintf('phpcmc %s by fqqdk, sebcsaba', PHPCMC_VERSION) . PHP_EOL . PHP_EOL;
-			foreach ($classMap as $className => $path) {
-				echo $className . ' ' . $path . PHP_EOL;
-			}
+			echo sprintf('found %s classes', count($classMap));
 		}
 	}
 

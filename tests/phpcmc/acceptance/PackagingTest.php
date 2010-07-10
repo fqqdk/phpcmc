@@ -99,17 +99,20 @@ class PackagingTest extends PhooxTestCase
 		$fsDriver->touch($classDir.'/SomeClass.php');
 		$fsDriver->touch($classDir.'/OtherClass.php');
 
-		$driver = new PhpCmcRunner($this->runner, new Assert($this));
-
-		$driver->runInDirectory(
-			$fsDriver->absolute($binFile),
-			$fsDriver->absolute($classDir),
-			$fsDriver->absolute($includeDir)
+		$driver = new PhpCmcRunner(
+			$fsDriver->absolute($binFile), new Assert($this)
 		);
 
-		$driver->outputShows(PhpCmcEndToEndTest::correctHeader($version));
-		$driver->outputShows(PhpCmcEndToEndTest::aClassEntry('SomeClass',  $classDir));
-		$driver->outputShows(PhpCmcEndToEndTest::aClassEntry('OtherClass', $classDir));
+		$driver
+			->on($fsDriver->absolute($classDir))
+			->outputFormat('assoc')
+			->run($fsDriver->absolute($includeDir));
+
+		$driver->parseOutputAsAssoc();
+		$driver->classMapIs($this->assoc(array(
+			'SomeClass'  => $this->stringContains($classDir),
+			'OtherClass' => $this->stringContains($classDir),
+		)));
 
 		$fsDriver->rmdir($targetDir);
 		$fsDriver->rmdir($repoDir);
