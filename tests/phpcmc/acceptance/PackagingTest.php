@@ -8,7 +8,7 @@
 /**
  * Test cases that test that the full building and packaging workflow is correct
  */
-class PackagingTest extends PhooxTestCase
+class PackagingTest extends ZetsuboTestCase
 {
 	/**
 	 * @var PhpScriptRunner script runner

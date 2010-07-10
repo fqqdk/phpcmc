@@ -1,14 +1,14 @@
 <?php
 /**
- * Holds the PhooxTest class
+ * Holds the ZetsuboTestCase class
  *
  * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
- * Common base class for test cases that want to utilize phoox functionality
+ * Common base class for test cases that want to utilize zetsubo functionality
  */
-class PhooxTestCase extends PHPUnit_Framework_TestCase
+class ZetsuboTestCase extends PHPUnit_Framework_TestCase
 {
 	/**
 	 * Gets the full path of the file that contains the class

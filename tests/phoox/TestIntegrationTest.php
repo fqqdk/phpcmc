@@ -9,7 +9,7 @@
  * Test cases that check that we don't destroy PHPUnit's internal behaviour
  * while amending it here and there
  */
-class TestIntegrationTest extends PhooxTestCase
+class TestIntegrationTest extends ZetsuboTestCase
 {
 	/**
 	 * Tests that the current error handler is PHPUnit's own error handler

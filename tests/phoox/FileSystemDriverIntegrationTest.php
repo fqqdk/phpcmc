@@ -8,7 +8,7 @@
 /**
  * Holds test cases for the FileSystemDriver
  */
-class FileSystemDriverIntegrationTest extends PhooxTestCase
+class FileSystemDriverIntegrationTest extends ZetsuboTestCase
 {
 	/**
 	 * Absolutizes and converts a path using the underlying OS's

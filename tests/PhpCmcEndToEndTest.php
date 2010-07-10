@@ -10,7 +10,7 @@
  *
  * @group acceptance
  */
-abstract class PhpCmcEndToEndTest extends PhooxTestCase
+abstract class PhpCmcEndToEndTest extends ZetsuboTestCase
 {
 	/**
 	 * @var string the working directory of the script

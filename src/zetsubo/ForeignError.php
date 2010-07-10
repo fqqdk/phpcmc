@@ -6,7 +6,7 @@
  */
 
 /**
- * ForeignError is a special exception used by the phoox framework to indicate
+ * ForeignError is a special exception used by the zetsubo framework to indicate
  * that an error is occured in a separate process
  */
 class ForeignError extends Exception

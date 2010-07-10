@@ -8,7 +8,7 @@
 /**
  * Holds test cases for the script runner facilities
  */
-class PhpScriptRunnerIntegrationTest extends PhooxTestCase
+class PhpScriptRunnerIntegrationTest extends ZetsuboTestCase
 {
 	/**
 	 * @var PhpScriptRunner the object under test

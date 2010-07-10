@@ -17,8 +17,8 @@
 -->
 
 <condition property="shell.task" value="win-shell" else="exec-shell"><os family="windows" /></condition>
-<import file="src/phoox/ant/${shell.task}.xml" />
-<import file="src/phoox/ant/php.xml" />
+<import file="src/zetsubo/ant/${shell.task}.xml" />
+<import file="src/zetsubo/ant/php.xml" />
 
 <target name="unimplemented">
 	<fail message="Unimplemented target!" />

@@ -8,7 +8,7 @@
 /**
  * Test cases for the common bootstrapper
  */
-class BootstrapperTest extends PhooxTestCase
+class BootstrapperTest extends ZetsuboTestCase
 {
 	/**
 	 * Stops the execution of the process while prints debug information
@@ -46,7 +46,7 @@ class BootstrapperTest extends PhooxTestCase
 		$script = sprintf(
 			'<?php
 				//HACK lying about static dependencies
-				class PhooxTestCase {}
+				class ZetsuboTestCase {}
 				require_once \'%s\';
 				%s();
 			?'.'>',
