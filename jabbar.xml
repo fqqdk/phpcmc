@@ -74,6 +74,7 @@
 				<file name="PhpCmcNamingConvention.php" role="php" />
 				<file name="FileBaseNameConvention.php" role="php" />
 				<file name="ParsingConvention.php"      role="php" />
+				<file name="OutputStream.php"           role="php" />
 			</dir>
 		</dir>
 	</contents>
