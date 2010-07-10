@@ -68,8 +68,12 @@
 				<file name="FileIncludeHandler.php" role="php" />
 			</dir>
 			<dir name="phpcmc">
-				<file name="PhpCmcException.php"   role="php" />
-				<file name="PhpCmcApplication.php" role="php" />
+				<file name="PhpCmcException.php"        role="php" />
+				<file name="PhpCmcApplication.php"      role="php" />
+				<file name="PhpCmcOptsParser.php"       role="php" />
+				<file name="PhpCmcNamingConvention.php" role="php" />
+				<file name="FileBaseNameConvention.php" role="php" />
+				<file name="ParsingConvention.php"      role="php" />
 			</dir>
 		</dir>
 	</contents>

@@ -135,6 +135,7 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 	/**
 	 * Tests that the application parses php files when the -nparse is given
 	 *
+	 * @test
 	 *
 	 * @return void
 	 */
@@ -144,15 +145,22 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 		$this->fsDriver->mkdir($this->workDir . '/parsing');
 		$this->fsDriver->touch(
 			$this->workDir . '/parsing/PhpFileWithoutClass.php',
-			'<?php // this file contains no classes ?>'
+			'<?php 
+				// this file contains no classes
+			?>'
+		);
+		$this->fsDriver->touch(
+			$this->workDir . '/parsing/PhpFileWithMultipleClasses.php',
+			'<?php
+				class SomeClass {}
+				class OtherClass {}
+			?>'
 		);
 		$this->fsDriver->touch(
 			$this->workDir . '/parsing/PhpFileWithSyntaxError.php',
-			'<?php class Foo class class ?>'
-		);
-		$this->fsDriver->touch(
-			$this->workDir . '/parsing/PhpMultipleClasses.php',
-			'<?php class SomeClass {} OtherClass {} ?>'
+			'<?php
+				class InvalidClass class class
+			?>'
 		);
 
 		$this->runner
@@ -163,10 +171,12 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 
 		$this->runner->parseOutputAsAssoc();
 		$this->runner->classMapIs($this->logicalAnd(
-			$this->arrayHasKeyWithValue('SomeClass', '/mixed/PhpMultipleClasses.php'),
-			$this->arrayHasKeyWithValue('OtherClass', '/mixed/PhpMultipleClasses.php'),
+			$this->arrayHasKeyWithValue('SomeClass', '/parsing/PhpFileWithMultipleClasses.php'),
+			$this->arrayHasKeyWithValue('OtherClass', '/parsing/PhpFileWithMultipleClasses.php'),
 			$this->logicalNot($this->arrayHasKey('PhpFileWithoutClass')),
-			$this->logicalNot($this->arrayHasKey('PhpFileWithSnytaxError'))
+			$this->logicalNot($this->arrayHasKey('PhpFileWithMultipleClasses')),
+			$this->logicalNot($this->arrayHasKey('PhpFileWithSnytaxError')),
+			$this->logicalNot($this->arrayHasKey('InvalidClass'))
 		));
 
 		$this->cleanupOnSuccess();

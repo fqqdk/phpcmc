@@ -11,6 +11,22 @@
 class ZetsuboTestCase extends PHPUnit_Framework_TestCase
 {
 	/**
+	 * @var Assert the assertion builder
+	 */
+	protected $assert;
+
+	/**
+	 * Sets the fixtures up
+	 *
+	 * @return void
+	 */
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->assert   = new Assert($this);
+	}
+
+	/**
 	 * Gets the full path of the file that contains the class
 	 *
 	 * @param string $className the name of the class

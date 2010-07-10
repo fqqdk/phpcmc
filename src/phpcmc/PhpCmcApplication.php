@@ -23,15 +23,15 @@ class PhpCmcApplication
 	/**
 	 * Main method that runs the application
 	 *
-	 * @param array $argv the CLI arguments
+	 * @param array $args the CLI arguments
 	 *
 	 * @return void
 	 * @throws PhpCmcException
 	 */
-	public static function main(array $argv)
+	public static function main(array $args)
 	{
 		$cmc = new self;
-		$cmc->run($argv);
+		$cmc->run($args);
 	}
 
 	/**
@@ -43,18 +43,22 @@ class PhpCmcApplication
 	 */
 	private function run(array $argv)
 	{
-		$dir    = $this->getSourceDirectory($argv);
-		$format = $this->getFormat($argv);
+		$optsParser = new PhpCmcOptsParser();
+		$opts       = $optsParser->parse($argv);
+
+		$dir    = $this->getSourceDirectory($opts);
+		$format = $this->getFormat($opts);
+		$naming = $this->getNamingConvention($opts);
 
 		$rec = new RecursiveDirectoryIterator($dir);
 		$it  = new RecursiveIteratorIterator($rec);
 
 		$classMap = array();
 
-
 		foreach ($it as $file) {
-			if ($this->isPhpClassFile($file)) {
-				$className            = $file->getBaseName('.php');
+			$classes = $naming->collectPhpClassesFrom($file);
+
+			foreach ($classes as $className) {
 				$classMap[$className] = $this->getClassDirectory($dir, $file);
 			}
 		}
@@ -65,6 +69,49 @@ class PhpCmcApplication
 			echo sprintf('phpcmc %s by fqqdk, sebcsaba', PHPCMC_VERSION) . PHP_EOL . PHP_EOL;
 			echo sprintf('found %s classes', count($classMap)) . PHP_EOL;
 		}
+	}
+
+
+	/**
+	 * The directory argument passed to the script
+	 *
+	 * @param array $opts the arguments passed to the script
+	 *
+	 * @return string
+	 * @throws PhpCmcException
+	 */
+	private function getSourceDirectory($opts)
+	{
+		return $opts['dir'];
+	}
+
+	/**
+	 * Retrie
+	 *
+	 * @param array $opts
+	 * @return <type>
+	 */
+	private function getNamingConvention(array $opts)
+	{
+		switch($opts['naming']) {
+			case 'filebasename': return new FileBaseNameConvention();
+			case 'parse'       : return new ParsingConvention();
+			default            : //fall-through
+		}
+
+		throw new PhpCmcException('Invalid naming convention');
+	}
+
+	/**
+	 * The output format argument
+	 *
+	 * @param array $opts the CLI arguments passed to the script
+	 *
+	 * @return string
+	 */
+	private function getFormat(array $opts)
+	{
+		return $opts['format'];
 	}
 
 	/**
@@ -82,57 +129,6 @@ class PhpCmcApplication
 		$result = str_replace($dir, '', $result);
 
 		return $result;
-	}
-
-	/**
-	 * The output format argument
-	 *
-	 * @param array $argv the CLI arguments passed to the script
-	 *
-	 * @return string
-	 */
-	private function getFormat(array $argv)
-	{
-		if (count($argv) > 2) {
-			return 'assoc';
-		}
-
-		return 'summary';
-	}
-
-	/**
-	 * The directory argument passed to the script
-	 *
-	 * @param array $argv the arguments passed to the script
-	 *
-	 * @return string
-	 * @throws PhpCmcException
-	 */
-	private function getSourceDirectory($argv)
-	{
-		if (count($argv) < 2) {
-			throw new PhpCmcException('the directory argument is mandatory');
-		}
-
-		$dirIndex = count($argv) - 1;
-
-		if ('-' === substr($argv[$dirIndex], 0, 1)) {
-			throw new PhpCmcException('the directory argument is mandatory');
-		}
-
-		return rtrim(str_replace('\\', '/', $argv[$dirIndex]), '/');
-	}
-
-	/**
-	 * Determines whether a file contains a PHP class
-	 *
-	 * @param SplFileInfo $file the file
-	 *
-	 * @return boolean
-	 */
-	private function isPhpClassFile(SplFileInfo $file)
-	{
-		return '.php' === strtolower(substr($file->getPathname(), -4));
 	}
 }
 
