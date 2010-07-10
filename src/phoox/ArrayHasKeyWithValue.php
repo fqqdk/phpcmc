@@ -37,6 +37,7 @@ class ArrayHasKeyWithValue extends PHPUnit_Framework_Constraint_ArrayHasKey
 	 * constraint is met, FALSE otherwise.
 	 *
 	 * @param mixed $other Value or object to evaluate.
+	 * 
 	 * @return bool
 	 */
 	public function evaluate($other)
@@ -51,16 +52,20 @@ class ArrayHasKeyWithValue extends PHPUnit_Framework_Constraint_ArrayHasKey
 	 *
 	 * @return string
 	 */
-    public function toString()
-    {
+	public function toString()
+	{
 		return parent::toString() . ' and the corresponding value '
 			. $this->valueConstraint->toString();
-    }
+	}
 
 	/**
-	 * @param mixed   $other
-	 * @param string  $description
-	 * @param boolean $not
+	 * Custom failure description of the constraint
+	 *
+	 * @param mixed   $other       the value that is checked
+	 * @param string  $description the description text
+	 * @param boolean $not         whether the constraint is negated
+	 *
+	 * @return string
 	 */
 	protected function customFailureDescription($other, $description, $not)
 	{
