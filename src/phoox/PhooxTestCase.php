@@ -33,7 +33,7 @@ class PhooxTestCase extends PHPUnit_Framework_TestCase
 	 *
 	 * @return PHPUnit_Framework_Constraint
 	 */
-	protected function assoc(array $constraintMap)
+	public function assoc(array $constraintMap)
 	{
 		$constraints = array();
 		foreach ($constraintMap as $arrayKey => $constraint) {
@@ -67,7 +67,7 @@ class PhooxTestCase extends PHPUnit_Framework_TestCase
 	 *
 	 * @return PHPUnit_Framework_Constraint
 	 */
-	protected function isEmpty()
+	public function isEmpty()
 	{
 		$callback = create_function('$arg', 'return empty($arg);');
 		return new CallbackConstraint($callback, 'empty');
@@ -80,7 +80,7 @@ class PhooxTestCase extends PHPUnit_Framework_TestCase
 	 * 
 	 * @return PHPUnit_Framework_Constraint
 	 */
-	protected function wrap($constraint)
+	public function wrap($constraint)
 	{
 		if ($constraint instanceof PHPUnit_Framework_Constraint) {
 			return $constraint;
