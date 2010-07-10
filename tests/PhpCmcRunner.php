@@ -46,6 +46,11 @@ class PhpCmcRunner
 	protected $output;
 
 	/**
+	 * @var string error output of the script
+	 */
+	protected $error;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $script the script to run
@@ -83,7 +88,36 @@ class PhpCmcRunner
 	 */
 	public function run($includePath='.', $theScript='')
 	{
-		return $this->runFromCli($includePath, $theScript);
+		try {
+			return $this->output = $this->runFromCli($includePath, $theScript);
+		} catch (ForeignError $ex) {
+			$this->output = $ex->getOutput();
+			$this->error  = $ex->getError();
+		}
+	}
+
+	/**
+	 * Runs the application in the given directory
+	 *
+	 * @param string          $includePath the include_path to pass to the script
+	 * @param string          $theScript   the script
+	 * @param PhpScriptRunner $runner      the script runner
+	 *
+	 * @return string the output
+	 */
+	protected function runFromCli($includePath='.', $theScript='', $runner=null)
+	{
+		if (empty($theScript)) {
+			$theScript = $this->script;
+		}
+
+		if (null === $runner) {
+			$runner = new PhpScriptRunner();
+		}
+
+		$args = $this->assembleArguments();
+
+		return $this->output = $runner->runPhpScript($theScript, $args, array(), $includePath);
 	}
 
 	/**
@@ -147,27 +181,6 @@ class PhpCmcRunner
 	}
 
 	/**
-	 * Runs the application in the given directory
-	 *
-	 * @param string $includePath the include_path to pass to the script
-	 * @param string $theScript   the script
-	 *
-	 * @return string the output
-	 */
-	protected function runFromCli($includePath='.', $theScript='')
-	{
-		if (empty($theScript)) {
-			$theScript = $this->script;
-		}
-
-		$args = $this->assembleArguments();
-
-		$runner = new PhpScriptRunner();
-
-		return $this->output = $runner->runPhpScript($theScript, $args, array(), $includePath);
-	}
-
-	/**
 	 * The output as it should be included in a failure message
 	 *
 	 * @return string
@@ -176,6 +189,20 @@ class PhpCmcRunner
 	{
 		$result = '';
 		foreach (explode(PHP_EOL, $this->output) as $line) {
+			$result .= '> ' . $line . PHP_EOL;
+		}
+		return $result;
+	}
+
+	/**
+	 * The output as it should be included in a failure message
+	 *
+	 * @return string
+	 */
+	private function getError()
+	{
+		$result = '';
+		foreach (explode(PHP_EOL, $this->error) as $line) {
 			$result .= '> ' . $line . PHP_EOL;
 		}
 		return $result;
@@ -193,7 +220,23 @@ class PhpCmcRunner
 		$this->assert->that(
 			$this->output,
 			$constraint,
-			'Erroneous script output : ' . PHP_EOL . $this->getOutput() . PHP_EOL
+			'Invalid script output : ' . PHP_EOL . $this->getOutput() . PHP_EOL
+		);
+	}
+
+	/**
+	 * Asserts that the passed constraint evaluates for the error output of the script
+	 *
+	 * @param PHPUnit_Framework_Constraint $constraint the constraint
+	 *
+	 * @return void
+	 */
+	public function errorContains($constraint)
+	{
+		$this->assert->that(
+			$this->error,
+			$constraint,
+			'Invalid script error output : ' . PHP_EOL . $this->getError() . PHP_EOL
 		);
 	}
 

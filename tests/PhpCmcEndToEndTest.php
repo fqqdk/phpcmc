@@ -110,6 +110,25 @@ abstract class PhpCmcEndToEndTest extends ZetsuboTestCase
 	}
 
 	/**
+	 * Generates regex pattern for an error entry
+	 *
+	 * @param string $className      the duplicate class
+	 * @param string $firstFilePath  path to the first location of the class
+	 * @param string $secondFilePath path to the location of the duplicate class
+	 *
+	 * @return string
+	 */
+	public static function duplicateErrorEntryPattern($className, $firstFilePath, $secondFilePath)
+	{
+		return sprintf(
+			'#Duplicate class %s in .*%s, first defined in .*%s#',
+			preg_quote($className, '#'),
+			preg_quote($firstFilePath, '#'),
+			preg_quote($secondFilePath, '#')
+		);
+	}
+
+	/**
 	 * Contraint that checks that the output of the application contains the
 	 * correct header line indicating e.g. the version and author
 	 *

@@ -65,6 +65,59 @@ class CliToolTest extends PhpCmcEndToEndTest
 
 		$this->cleanupOnSuccess();
 	}
+
+	/**
+	 * Nomen est omen
+	 *
+	 * @test
+	 *
+	 * @return void
+	 */
+	public function duplicateClassesAreReportedOnStdErr()
+	{
+		$this->initFileSystem();
+		$this->fsDriver->mkdir($this->workDir . '/duplicate');
+		$this->fsDriver->touch(
+			$this->workDir . '/duplicate/SomeFileWithSomeClass.php',
+			'<?php
+				class SomeClass {}
+			?>'
+		);
+		$this->fsDriver->touch(
+			$this->workDir . '/duplicate/OtherFileWithSomeClass.php',
+			'<?php
+				class SomeClass {}
+			?>'
+		);
+
+		$this->runner
+			->on($this->absoluteWorkDir())
+			->outputFormat('assoc')
+			->namingConvention('parse')
+			->run();
+
+		$this->runner->parseOutputAsAssoc();
+		$this->runner->errorContains(
+			$this->logicalOr(
+				$this->matchesRegularExpression(
+					$this->duplicateErrorEntryPattern(
+						'SomeClass',
+						'duplicate/SomeFileWithSomeClass.php',
+						'duplicate/OtherFileWithSomeClass.php'
+					)
+				),
+				$this->matchesRegularExpression(
+					$this->duplicateErrorEntryPattern(
+						'SomeClass',
+						'duplicate/OtherFileWithSomeClass.php',
+						'duplicate/SomeFileWithSomeClass.php'
+					)
+				)
+			)
+		);
+
+		$this->cleanupOnSuccess();
+	}
 }
 
 ?>

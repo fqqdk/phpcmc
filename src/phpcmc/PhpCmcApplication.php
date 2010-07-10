@@ -11,6 +11,16 @@
 class PhpCmcApplication
 {
 	/**
+	 * @var OutputStream output stream
+	 */
+	private $output;
+
+	/**
+	 * @var OutputStream output stream
+	 */
+	private $error;
+
+	/**
 	 * The library directories for the application
 	 *
 	 * @return array
@@ -30,8 +40,25 @@ class PhpCmcApplication
 	 */
 	public static function main(array $args)
 	{
-		$cmc = new self;
+		$output = new OutputStream();
+		$error  = new OutputStream(STDERR);
+
+		$cmc = new self($output, $error);
 		$cmc->run($args);
+	}
+
+	/**
+	 * Constructor
+	 *
+	 * @param OutputStream $output output stream
+	 * @param OutputStream $error  error stream
+	 *
+	 * @return PhpCmcApplication
+	 */
+	public function  __construct(OutputStream $output, OutputStream $error)
+	{
+		$this->output = $output;
+		$this->error  = $error;
 	}
 
 	/**
@@ -41,7 +68,7 @@ class PhpCmcApplication
 	 *
 	 * @return void
 	 */
-	private function run(array $argv)
+	public function run(array $argv)
 	{
 		$optsParser = new PhpCmcOptsParser();
 		$opts       = $optsParser->parse($argv);
@@ -59,15 +86,23 @@ class PhpCmcApplication
 			$classes = $naming->collectPhpClassesFrom($file);
 
 			foreach ($classes as $className) {
-				$classMap[$className] = $this->getClassDirectory($dir, $file);
+				$location = $this->getClassDirectory($dir, $file);
+				if (isset($classMap[$className])) {
+					$message = sprintf(
+						'Duplicate class %s in %s, first defined in %s',
+						$className, $classMap[$className], $location
+					);
+					$this->error->write($message . PHP_EOL);
+				}
+				$classMap[$className] = $location;
 			}
 		}
 
 		if ('assoc' == $format) {
-			echo sprintf('<?php return %s; ?'.'>', var_export($classMap, true));
+			$this->output->write(sprintf('<?php return %s; ?'.'>', var_export($classMap, true)));
 		} else {
-			echo sprintf('phpcmc %s by fqqdk, sebcsaba', PHPCMC_VERSION) . PHP_EOL . PHP_EOL;
-			echo sprintf('found %s classes', count($classMap)) . PHP_EOL;
+			$this->output->write(sprintf('phpcmc %s by fqqdk, sebcsaba', PHPCMC_VERSION) . PHP_EOL . PHP_EOL);
+			$this->output->write(sprintf('found %s classes', count($classMap)) . PHP_EOL);
 		}
 	}
 
