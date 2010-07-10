@@ -51,7 +51,7 @@
 
 	<target name        = "deploy"
 			description = "deploys package to the repository"
-			depends     = "package, jabbar-deploy" />
+			depends     = "prepare, jabbar-deploy" />
 
 	<target name        = "release"
 			description = "releases the project"
@@ -89,7 +89,7 @@
 		<property name="uriAndOrChannel" value="&lt;channel&gt;pear.meza.hu&lt;/channel&gt;" />
 		<property name="target.dir"      value="${basedir}/build" />
 		<property name="package.dir"     value="${target.dir}/package" />
-		<property name="package.url"     value="${package.dir}/phpcmc-${release.version}" />
+		<property name="package.url"     value="${package.dir}/phpcmc-${release.version}.tgz" />
 		<property name="phpcs.standard"  value="Angst" />
     </target>
 
@@ -180,7 +180,7 @@
 
 	<target name="jabbar-deploy" depends="prepare">
 		<pear>
-			<arg line="install ${package.url}" />
+			<arg line="-v install -f ${package.url}" />
 		</pear>
 	</target>
 
