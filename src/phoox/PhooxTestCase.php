@@ -2,7 +2,7 @@
 /**
  * Holds the PhooxTest class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
@@ -71,6 +71,65 @@ class PhooxTestCase extends PHPUnit_Framework_TestCase
 	{
 		$callback = create_function('$arg', 'return empty($arg);');
 		return new CallbackConstraint($callback, 'empty');
+	}
+
+	/**
+	 * Autowraps a value in an EqualTo constraint
+	 *
+	 * @param mixed $constraint the value
+	 * 
+	 * @return PHPUnit_Framework_Constraint
+	 */
+	protected function wrap($constraint)
+	{
+		if ($constraint instanceof PHPUnit_Framework_Constraint) {
+			return $constraint;
+		}
+
+		return $this->equalTo($constraint);
+	}
+
+	/**
+	 * Skips the test if an ini setting doesn't fulfill a constraint
+	 *
+	 * @param string $iniKey          the ini setting's key
+	 * @param mixed  $valueConstraint the constraint on the value for the ini setting
+	 *
+	 * @return void
+	 */
+	protected function requireIniSetting($iniKey, $valueConstraint)
+	{
+		$valueConstraint = $this->wrap($valueConstraint);
+
+		$iniValue = ini_get($iniKey);
+		if ($valueConstraint->evaluate($iniValue)) {
+			return;
+		};
+
+		$message = 'this test needs ini setting "%s" set to a value that %s, but %s found';
+
+		$this->markTestSkipped(sprintf(
+			$message, $iniKey, $valueConstraint->toString(), 
+			PHPUnit_Util_Type::shortenedExport($iniValue)
+		));
+	}
+
+	/**
+	 * Skips the test if a "boolean type" ini switch isn't turned on
+	 *
+	 * @param string $iniKey the ini setting's key
+	 *
+	 * @return void
+	 */
+	protected function requireIniSwitch($iniKey)
+	{
+		if (ini_get($iniKey)) {
+			return;
+		}
+
+		$message = 'this test needs ini setting "%s" turned on';
+
+		$this->markTestSkipped(sprintf($message, $iniKey));
 	}
 }
 

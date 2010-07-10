@@ -69,6 +69,7 @@ class BootstrapperTest extends PhooxTestCase
 	 */
 	public function bootstrapperWorkflowIsSound()
 	{
+		$this->requireIniSetting('variables_order', $this->stringContains('E'));
 		$fsDriver = new FileSystemDriver(WORK_DIR);
 		try {
 			$fsDriver->rmdir('bootstrapper');

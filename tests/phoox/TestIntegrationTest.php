@@ -2,7 +2,7 @@
 /**
  * Holds the TestIntegrationTest class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**

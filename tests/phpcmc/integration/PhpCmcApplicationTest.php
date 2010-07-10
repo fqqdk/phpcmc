@@ -2,7 +2,7 @@
 /**
  * Holds the ApplicationTest class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**

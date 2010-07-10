@@ -2,7 +2,7 @@
 /**
  * Holds the CliToolTest class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
@@ -41,6 +41,8 @@ class CliToolTest extends PhpCmcEndToEndTest
 	 */
 	public function specifiedAssociativeOutputFormatIsRespected()
 	{
+		$this->requireIniSwitch('allow_url_include');
+
 		$this->initFileSystem();
 		$this->fsDriver->mkdir($this->workDir. '/flatdir');
 		$this->fsDriver->touch($this->workDir. '/flatdir/SomeClass.php');

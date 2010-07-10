@@ -2,7 +2,7 @@
 /**
  * Holds the ArrayHasKeyWithValue class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**

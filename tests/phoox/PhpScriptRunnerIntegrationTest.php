@@ -65,10 +65,7 @@ class PhpScriptRunnerIntegrationTest extends PhooxTestCase
 	 */
 	public function envIsAvailable()
 	{
-		$this->assertContains(
-			'E', ini_get('variables_order'),
-			'env vars should be registered in the php.ini'
-		);
+		$this->requireIniSetting('variables_order', $this->stringContains('E'));
 		$output = $this->runner->runPhpScriptFromStdin(
 			'<?php echo $_ENV["foo"]; ?'.'>',
 			array(),
