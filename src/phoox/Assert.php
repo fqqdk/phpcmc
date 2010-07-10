@@ -76,18 +76,6 @@ class Assert
 	}
 
 	/**
-	 * Wraps a function-like php construct in an anonymous callback function
-	 *
-	 * @param string $construct the php construct ('empty', 'isset', etc)
-	 *
-	 * @return callable
-	 */
-	private function wrapPrimitiveCallback($construct)
-	{
-		return create_function('$value', 'return '.$construct.'($value);');
-	}
-
-	/**
 	 * Proxy method to delegate to underlying assert object
 	 *
 	 * @param string $method the method name

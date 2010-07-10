@@ -63,7 +63,7 @@ class PhpCmcApplication
 			echo sprintf('<?php return %s; ?'.'>', var_export($classMap, true));
 		} else {
 			echo sprintf('phpcmc %s by fqqdk, sebcsaba', PHPCMC_VERSION) . PHP_EOL . PHP_EOL;
-			echo sprintf('found %s classes', count($classMap));
+			echo sprintf('found %s classes', count($classMap)) . PHP_EOL;
 		}
 	}
 
