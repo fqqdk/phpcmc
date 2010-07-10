@@ -95,9 +95,9 @@ class PackagingTest extends PhooxTestCase
 		);
 
 		$fsDriver->rmdir($classDir);
-		$fsDriver->mkdir($classDir);
-		$fsDriver->touch($classDir.'/SomeClass.php');
-		$fsDriver->touch($classDir.'/OtherClass.php');
+		$fsDriver->mkdir($classDir.'/base');
+		$fsDriver->touch($classDir.'/base/SomeClass.php');
+		$fsDriver->touch($classDir.'/base/OtherClass.php');
 
 		$driver = new PhpCmcRunner(
 			$fsDriver->absolute($binFile), new Assert($this)
@@ -110,8 +110,8 @@ class PackagingTest extends PhooxTestCase
 
 		$driver->parseOutputAsAssoc();
 		$driver->classMapIs($this->assoc(array(
-			'SomeClass'  => $this->stringContains($classDir),
-			'OtherClass' => $this->stringContains($classDir),
+			'SomeClass'  => '/base/',
+			'OtherClass' => '/base/',
 		)));
 
 		$fsDriver->rmdir($targetDir);

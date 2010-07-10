@@ -53,14 +53,14 @@ class CliToolTest extends PhpCmcEndToEndTest
 		$this->fsDriver->touch($this->workDir. '/assoc/OtherClass.php');
 
 		$output = $this->runner
-			->on($this->absoluteWorkDir().'/assoc')
+			->on($this->absoluteWorkDir())
 			->outputFormat('assoc')
 			->run();
 
 		$this->runner->parseOutputAsAssoc();
 		$this->runner->classMapIs($this->assoc(array(
-			'SomeClass'  => $this->stringContains('assoc'),
-			'OtherClass' => $this->stringContains('assoc'),
+			'SomeClass'  => '/assoc/',
+			'OtherClass' => '/assoc/',
 		)));
 
 		$this->cleanupOnSuccess();

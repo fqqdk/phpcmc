@@ -43,7 +43,7 @@ class PhpCmcApplication
 	 */
 	private function run(array $argv)
 	{
-		$dir    = $this->getDirectory($argv);
+		$dir    = $this->getSourceDirectory($argv);
 		$format = $this->getFormat($argv);
 
 		$rec = new RecursiveDirectoryIterator($dir);
@@ -55,7 +55,7 @@ class PhpCmcApplication
 		foreach ($it as $file) {
 			if ($this->isPhpClassFile($file)) {
 				$className            = $file->getBaseName('.php');
-				$classMap[$className] = str_replace('\\', '/', dirname($file->getPathname()));
+				$classMap[$className] = $this->getClassDirectory($dir, $file);
 			}
 		}
 
@@ -65,6 +65,15 @@ class PhpCmcApplication
 			echo sprintf('phpcmc %s by fqqdk, sebcsaba', PHPCMC_VERSION) . PHP_EOL . PHP_EOL;
 			echo sprintf('found %s classes', count($classMap));
 		}
+	}
+
+	private function getClassDirectory($dir, SplFileInfo $file)
+	{
+		$result = dirname($file->getPathname());
+		$result = str_replace('\\', '/', $result);
+		$result = str_replace($dir, '', $result);
+
+		return rtrim($result, '/') . '/';
 	}
 
 	/**
@@ -91,7 +100,7 @@ class PhpCmcApplication
 	 * @return string
 	 * @throws PhpCmcException
 	 */
-	private function getDirectory($argv)
+	private function getSourceDirectory($argv)
 	{
 		if (count($argv) < 2) {
 			throw new PhpCmcException('the directory argument is mandatory');
@@ -103,7 +112,7 @@ class PhpCmcApplication
 			throw new PhpCmcException('the directory argument is mandatory');
 		}
 
-		return $argv[$dirIndex];
+		return rtrim(str_replace('\\', '/', $argv[$dirIndex]), '/');
 	}
 
 	/**

@@ -55,9 +55,7 @@ class PhooxTestCase extends PHPUnit_Framework_TestCase
 	 */
 	protected function arrayHasKeyWithValue($arrayKey, $valueConstraint)
 	{
-		if (!$valueConstraint instanceof PHPUnit_Framework_Constraint) {
-			$valueConstraint = $this->equalTo($valueConstraint);
-		}
+		$valueConstraint = $this->wrap($valueConstraint);
 
 		return new ArrayHasKeyWithValue($arrayKey, $valueConstraint);
 	}

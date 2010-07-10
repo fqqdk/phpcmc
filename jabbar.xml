@@ -68,6 +68,7 @@
 				<file name="FileIncludeHandler.php" role="php" />
 			</dir>
 			<dir name="phpcmc">
+				<file name="PhpCmcException.php"   role="php" />
 				<file name="PhpCmcApplication.php" role="php" />
 			</dir>
 		</dir>

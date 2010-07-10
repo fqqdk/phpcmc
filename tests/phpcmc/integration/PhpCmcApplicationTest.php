@@ -91,13 +91,13 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 		$this->fsDriver->touch($this->workDir . '/deepdir/two/OtherClass.php');
 
 		$this->runner
-			->on($this->absoluteWorkDir().'/deepdir')
+			->on($this->absoluteWorkDir())
 			->outputFormat('assoc')
 			->run();
 		$this->runner->parseOutputAsAssoc();
 		$this->runner->classMapIs($this->assoc(array(
-			'SomeClass'  => $this->stringContains('deepdir/one'),
-			'OtherClass' => $this->stringContains('deepdir/two'),
+			'SomeClass'  => '/deepdir/one/',
+			'OtherClass' => '/deepdir/two/',
 		)));
 
 		$this->cleanupOnSuccess();
@@ -124,7 +124,7 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 
 		$this->runner->parseOutputAsAssoc();
 		$this->runner->classMapIs($this->logicalAnd(
-			$this->arrayHasKeyWithValue('SomeClass', $this->stringContains('mixed')),
+			$this->arrayHasKeyWithValue('SomeClass', '/mixed/'),
 			$this->logicalNot($this->arrayHasKey('NotAClass'))
 		));
 
