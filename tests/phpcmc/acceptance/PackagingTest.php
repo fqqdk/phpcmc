@@ -110,8 +110,8 @@ class PackagingTest extends ZetsuboTestCase
 
 		$driver->parseOutputAsAssoc();
 		$driver->classMapIs($this->assoc(array(
-			'SomeClass'  => '/base/',
-			'OtherClass' => '/base/',
+			'SomeClass'  => '/base/SomeClass.php',
+			'OtherClass' => '/base/OtherClass.php',
 		)));
 
 		$fsDriver->rmdir($targetDir);

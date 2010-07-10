@@ -21,6 +21,11 @@ class PhpCmcRunner
 	private $outputFormat;
 
 	/**
+	 * @var string the naming convention to specify
+	 */
+	private $namingConvention;
+
+	/**
 	 * @var array the classmap parsed from the output
 	 */
 	private $classMap;
@@ -106,6 +111,20 @@ class PhpCmcRunner
 	}
 
 	/**
+	 * Sets the naming convention option that will be supplied to the script
+	 *
+	 * @param string $namingConvention the naming convention
+	 *
+	 * @return PhpCmcRunner
+	 */
+	public function namingConvention($namingConvention)
+	{
+		$this->namingConvention = $namingConvention;
+
+		return $this;
+	}
+
+	/**
 	 * Assembles the arguments to pass to the application
 	 *
 	 * @return array
@@ -116,6 +135,10 @@ class PhpCmcRunner
 
 		if (null !== $this->outputFormat) {
 			$args []= '-f' . $this->outputFormat;
+		}
+
+		if (null !== $this->namingConvention) {
+			$args []= '-n' . $this->namingConvention;
 		}
 
 		$args []= $this->directory;

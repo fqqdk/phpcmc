@@ -77,11 +77,11 @@ class PhpCmcApplication
 	 */
 	private function getClassDirectory($dir, SplFileInfo $file)
 	{
-		$result = dirname($file->getPathname());
+		$result = $file->getPathname();
 		$result = str_replace('\\', '/', $result);
 		$result = str_replace($dir, '', $result);
 
-		return rtrim($result, '/') . '/';
+		return $result;
 	}
 
 	/**

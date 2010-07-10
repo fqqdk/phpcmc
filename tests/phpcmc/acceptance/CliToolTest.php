@@ -59,8 +59,8 @@ class CliToolTest extends PhpCmcEndToEndTest
 
 		$this->runner->parseOutputAsAssoc();
 		$this->runner->classMapIs($this->assoc(array(
-			'SomeClass'  => '/assoc/',
-			'OtherClass' => '/assoc/',
+			'SomeClass'  => '/assoc/SomeClass.php',
+			'OtherClass' => '/assoc/OtherClass.php',
 		)));
 
 		$this->cleanupOnSuccess();

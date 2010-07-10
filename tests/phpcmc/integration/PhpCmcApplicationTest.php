@@ -97,8 +97,8 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 			->run();
 		$this->runner->parseOutputAsAssoc();
 		$this->runner->classMapIs($this->assoc(array(
-			'SomeClass'  => '/deepdir/one/',
-			'OtherClass' => '/deepdir/two/',
+			'SomeClass'  => '/deepdir/one/SomeClass.php',
+			'OtherClass' => '/deepdir/two/OtherClass.php',
 		)));
 
 		$this->cleanupOnSuccess();
@@ -125,8 +125,48 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 
 		$this->runner->parseOutputAsAssoc();
 		$this->runner->classMapIs($this->logicalAnd(
-			$this->arrayHasKeyWithValue('SomeClass', '/mixed/'),
+			$this->arrayHasKeyWithValue('SomeClass', '/mixed/SomeClass.php'),
 			$this->logicalNot($this->arrayHasKey('NotAClass'))
+		));
+
+		$this->cleanupOnSuccess();
+	}
+
+	/**
+	 * Tests that the application parses php files when the -nparse is given
+	 *
+	 *
+	 * @return void
+	 */
+	public function parseNamingConventionParsesTheFiles()
+	{
+		$this->initFileSystem();
+		$this->fsDriver->mkdir($this->workDir . '/parsing');
+		$this->fsDriver->touch(
+			$this->workDir . '/parsing/PhpFileWithoutClass.php',
+			'<?php // this file contains no classes ?>'
+		);
+		$this->fsDriver->touch(
+			$this->workDir . '/parsing/PhpFileWithSyntaxError.php',
+			'<?php class Foo class class ?>'
+		);
+		$this->fsDriver->touch(
+			$this->workDir . '/parsing/PhpMultipleClasses.php',
+			'<?php class SomeClass {} OtherClass {} ?>'
+		);
+
+		$this->runner
+			->on($this->absoluteWorkDir())
+			->outputFormat('assoc')
+			->namingConvention('parse')
+			->run();
+
+		$this->runner->parseOutputAsAssoc();
+		$this->runner->classMapIs($this->logicalAnd(
+			$this->arrayHasKeyWithValue('SomeClass', '/mixed/PhpMultipleClasses.php'),
+			$this->arrayHasKeyWithValue('OtherClass', '/mixed/PhpMultipleClasses.php'),
+			$this->logicalNot($this->arrayHasKey('PhpFileWithoutClass')),
+			$this->logicalNot($this->arrayHasKey('PhpFileWithSnytaxError'))
 		));
 
 		$this->cleanupOnSuccess();
