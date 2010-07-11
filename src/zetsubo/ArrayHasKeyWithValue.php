@@ -70,7 +70,7 @@ class ArrayHasKeyWithValue extends PHPUnit_Framework_Constraint_ArrayHasKey
 	protected function customFailureDescription($other, $description, $not)
 	{
 		return sprintf(
-			'Failed asserting that %s %s.',
+			'Failed asserting that %s'.PHP_EOL.' %s.',
 			PHPUnit_Util_Type::shortenedExport($other),
 			$this->toString()
 		);

@@ -279,6 +279,7 @@ class PhpCmcRunner
 	 */
 	public function parseOutputAsAssoc()
 	{
+		$this->assert->requireIniSwitch('allow_url_include');
 		$this->outputIsValidPhp();
 		ob_start();
 

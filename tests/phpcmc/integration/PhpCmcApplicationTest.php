@@ -147,20 +147,20 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 			$this->workDir . '/parsing/PhpFileWithoutClass.php',
 			'<?php 
 				// this file contains no classes
-			?>'
+			?'.'>'
 		);
 		$this->fsDriver->touch(
 			$this->workDir . '/parsing/PhpFileWithMultipleClasses.php',
 			'<?php
 				class SomeClass {}
 				class OtherClass {}
-			?>'
+			?'.'>'
 		);
 		$this->fsDriver->touch(
 			$this->workDir . '/parsing/PhpFileWithSyntaxError.php',
 			'<?php
 				class InvalidClass class class
-			?>'
+			?'.'>'
 		);
 
 		$this->runner

@@ -111,7 +111,7 @@ class ZetsuboTestCase extends PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	protected function requireIniSetting($iniKey, $valueConstraint)
+	public function requireIniSetting($iniKey, $valueConstraint)
 	{
 		$valueConstraint = $this->wrap($valueConstraint);
 
@@ -135,7 +135,7 @@ class ZetsuboTestCase extends PHPUnit_Framework_TestCase
 	 *
 	 * @return void
 	 */
-	protected function requireIniSwitch($iniKey)
+	public function requireIniSwitch($iniKey)
 	{
 		if (ini_get($iniKey)) {
 			return;

@@ -160,8 +160,8 @@ class PhpCmcApplication
 	private function getClassDirectory($dir, SplFileInfo $file)
 	{
 		$result = $file->getPathname();
-		$result = str_replace('\\', '/', $result);
 		$result = str_replace($dir, '', $result);
+		$result = str_replace('\\', '/', $result);
 
 		return $result;
 	}

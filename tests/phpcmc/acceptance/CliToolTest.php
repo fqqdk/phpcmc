@@ -45,8 +45,6 @@ class CliToolTest extends PhpCmcEndToEndTest
 	 */
 	public function specifiedAssociativeOutputFormatIsRespected()
 	{
-		$this->requireIniSwitch('allow_url_include');
-
 		$this->initFileSystem();
 		$this->fsDriver->mkdir($this->workDir. '/assoc');
 		$this->fsDriver->touch($this->workDir. '/assoc/SomeClass.php');
@@ -81,13 +79,13 @@ class CliToolTest extends PhpCmcEndToEndTest
 			$this->workDir . '/duplicate/SomeFileWithSomeClass.php',
 			'<?php
 				class SomeClass {}
-			?>'
+			?'.'>'
 		);
 		$this->fsDriver->touch(
 			$this->workDir . '/duplicate/OtherFileWithSomeClass.php',
 			'<?php
 				class SomeClass {}
-			?>'
+			?'.'>'
 		);
 
 		$this->runner
