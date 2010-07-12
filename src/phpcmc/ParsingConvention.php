@@ -44,7 +44,7 @@ class ParsingConvention implements PhpCmcNamingConvention
 		$result = array();
 
 		foreach ($tokens as $index => $token) {
-			if (T_CLASS === $token[self::CODE]) {
+			if (T_CLASS === $token[self::CODE] || T_INTERFACE === $token[self::CODE]) {
 
 				$className = $this->findClassName($tokens, $index + 1);
 				if (null !== $className) {

@@ -159,7 +159,7 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 			$this->workDir . '/parsing/PhpFileWithMultipleClasses.php',
 			'<?php
 				class SomeClass {}
-				class OtherClass {}
+				interface OtherClass {}
 			?'.'>'
 		);
 		$this->fsDriver->touch(
