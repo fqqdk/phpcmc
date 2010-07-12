@@ -10,8 +10,17 @@
  */
 class PhpCmcMainRunner extends PhpCmcRunner
 {
+	/**
+	 * @var PhpCmcApplication the application under test
+	 */
 	private $app;
 
+	/**
+	 * Constructor
+	 *
+	 * @param PhpCmcApplication $app    the application under test
+	 * @param Assert            $assert assertion builder
+	 */
 	public function __construct(PhpCmcApplication $app, Assert $assert)
 	{
 		parent::__construct('', $assert);

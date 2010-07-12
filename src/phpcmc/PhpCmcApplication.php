@@ -55,7 +55,7 @@ class PhpCmcApplication
 	 *
 	 * @return PhpCmcApplication
 	 */
-	public function  __construct(OutputStream $output, OutputStream $error)
+	public function __construct(OutputStream $output, OutputStream $error)
 	{
 		$this->output = $output;
 		$this->error  = $error;
@@ -101,11 +101,32 @@ class PhpCmcApplication
 		if ('assoc' == $format) {
 			$this->output->write(sprintf('<?php return %s; ?'.'>', var_export($classMap, true)));
 		} else {
-			$this->output->write(sprintf('phpcmc %s by fqqdk, sebcsaba', PHPCMC_VERSION) . PHP_EOL . PHP_EOL);
-			$this->output->write(sprintf('found %s classes', count($classMap)) . PHP_EOL);
+			$this->output->write($this->getSummaryHeader());
+			$this->output->write($this->getSummaryFooter(count($classMap)));
 		}
 	}
 
+	/**
+	 * The summary header
+	 *
+	 * @return string
+	 */
+	private function getSummaryHeader()
+	{
+		return sprintf('phpcmc %s by fqqdk, sebcsaba', PHPCMC_VERSION) . PHP_EOL . PHP_EOL;
+	}
+
+	/**
+	 * The summary footer
+	 *
+	 * @param integer $classCount number of classes found
+	 *
+	 * @return string
+	 */
+	private function getSummaryFooter($classCount)
+	{
+		return sprintf('found %s classes', $classCount) . PHP_EOL;
+	}
 
 	/**
 	 * The directory argument passed to the script
@@ -121,10 +142,12 @@ class PhpCmcApplication
 	}
 
 	/**
-	 * Retrie
+	 * Retrieves the naming convention
 	 *
-	 * @param array $opts
-	 * @return <type>
+	 * @param array $opts options parsed from the command line
+	 *
+	 * @return PhpCmcNamingConvention
+	 * @throws PhpCmcException
 	 */
 	private function getNamingConvention(array $opts)
 	{

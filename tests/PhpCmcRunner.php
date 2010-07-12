@@ -273,8 +273,6 @@ class PhpCmcRunner
 	 * Attemts to parse script output as a php file containing an associative
 	 * array
 	 *
-	 * @param string $scriptOutput the output
-	 *
 	 * @return array the classmap
 	 */
 	public function parseOutputAsAssoc()

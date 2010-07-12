@@ -11,15 +11,30 @@
 class PhpLinter
 {
 	/**
-	 * @var OutputStream
+	 * @var OutputStream the error stream to report parse errors to
 	 */
 	private $stderr;
 
+	/**
+	 * Constructor
+	 *
+	 * @param OutputStream $stderr the error stream to report parse errors to
+	 *
+	 * @return PhpLinter
+	 */
 	public function __construct(OutputStream $stderr)
 	{
 		$this->stderr = $stderr;
 	}
 
+	/**
+	 * Checks the PHP syntax of the file
+	 *
+	 * @param SplFileInfo $file the file
+	 *
+	 * @return boolean false if the file contains syntax errors
+	 * @throws PhpCmcException if 'php -l' can't be run on the file
+	 */
 	public function checkSyntax(SplFileInfo $file)
 	{
 		$shellCommand = 'php -l ' .escapeshellarg($file->getPathname());

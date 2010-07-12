@@ -12,7 +12,14 @@
  */
 class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 {
+	/**
+	 * @var OutputStream output stream of the application
+	 */
 	private $outputStream;
+
+	/**
+	 * @var OutputStream error stream of the application
+	 */
 	private $errorStream;
 
 	/**

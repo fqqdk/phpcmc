@@ -10,14 +10,27 @@
  */
 class PhpLinterTest extends PhpCmcEndToEndTest
 {
+	/**
+	 * @var resource handle to the memory stream that is used instead of stderr
+	 */
 	private $mem;
 
+	/**
+	 * Sets up the fixtures
+	 *
+	 * @return void
+	 */
 	protected function setUp()
 	{
 		parent::setUp();
 		$this->mem = fopen('php://memory', 'w');
 	}
 
+	/**
+	 * Tears down the fixtures
+	 *
+	 * @return void
+	 */
 	protected function tearDown()
 	{
 		parent::tearDown();

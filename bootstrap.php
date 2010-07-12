@@ -32,7 +32,11 @@ function __bootstrap()
 }
 
 /**
+ * Shutdown function
+ *
  * @todo implement
+ *
+ * @return void
  */
 function __shutdown()
 {

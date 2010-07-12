@@ -147,9 +147,14 @@ abstract class ZetsuboTestCase extends PHPUnit_Framework_TestCase
 	}
 
 	/**
-	 * Mocks a class
+	 * Mocks a class the way classes should be mocked by default:
+	 * - no parent constructor or clone calls
+	 * - autoloader is called if the class is not loaded yet
 	 *
-	 * @return object
+	 * @param string $className the class to mock
+	 * @param array  $methods   the methods to mock
+	 *
+	 * @return object the mock object
 	 */
 	public function mock($className, array $methods=array())
 	{

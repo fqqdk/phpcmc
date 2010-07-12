@@ -91,7 +91,14 @@
 		<property name="package.dir"     value="${target.dir}/package" />
 		<property name="package.url"     value="${package.dir}/phpcmc-${release.version}.tgz" />
 		<property name="phpcs.standard"  value="Angst" />
-    </target>
+
+		<fileset id="php.all" dir = "${basedir}">
+			<include name="src/**/*.php" />
+			<include name="tests/**/*.php" />
+			<include name="*.php" />
+		</fileset>
+		<pathconvert property="php.all.arg" refid="php.all" pathsep=" " />
+	</target>
 
 	<target name="phpmc.clean" depends="prepare">
 		<delete dir="${target.dir}"/>
@@ -113,12 +120,17 @@
 		<phpcs 
 			standard  = "${phpcs.standard}"
 			outputdir ="build/checkstyle">
-
-			<fileset dir = "${basedir}">
-				<include name="src/**/*.php" />
-				<include name="tests/**/*.php" />
-			</fileset>
+			<fileset refid="php.all" />
 		</phpcs>
+	</target>
+
+	<target name = "phpcs-dev" depends = "prepare">
+		<shell executable="phpcs" failonerror="true">
+			<arg value = "--standard=${phpcs.standard}" />
+			<arg value = "--extensions=php" />
+			<arg line  = "${php.all.arg}" />
+		</shell>
+
 	</target>
 
     <target name="phpdoc" depends="unimplemented">

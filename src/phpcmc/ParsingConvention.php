@@ -10,14 +10,35 @@
  */
 class ParsingConvention implements PhpCmcNamingConvention
 {
-	const CODE    = 0;
+	/**
+	 * @final integer index of the token code in a token array
+	 */
+	const CODE = 0;
+
+	/**
+	 * @final integer index of the token content in a token array
+	 */
 	const CONTENT = 1;
 
-	private $skipTokenCodes = array(
-		T_COMMENT, T_WHITESPACE
-	);
+	/**
+	 * @var array Tokens to be expected after a class token, that precede the classname
+	 */
+	private $skipTokenCodes = array(T_COMMENT, T_WHITESPACE);
 
-	public function  __construct(PhpLinter $linter) {
+	/**
+	 * @var PhpLinter the linter
+	 */
+	private $linter;
+
+	/**
+	 * Constructor
+	 *
+	 * @param PhpLinter $linter the linter
+	 *
+	 * @return ParsingConvention
+	 */
+	public function  __construct(PhpLinter $linter)
+	{
 		$this->linter = $linter;
 	}
 
@@ -56,6 +77,14 @@ class ParsingConvention implements PhpCmcNamingConvention
 		return $result;
 	}
 
+	/**
+	 * Finds the classname after the class token has been detected
+	 *
+	 * @param array   $tokens the token stream
+	 * @param integer $index  the index from which the searching should start
+	 *
+	 * @return string the classname or null if none has been found
+	 */
 	private function findClassName(array $tokens, $index)
 	{
 		for ($i = $index; $i < count($tokens); ++$i) {
