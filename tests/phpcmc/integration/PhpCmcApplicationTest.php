@@ -175,7 +175,7 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 			$this->arrayHasKeyWithValue('OtherClass', '/parsing/PhpFileWithMultipleClasses.php'),
 			$this->logicalNot($this->arrayHasKey('PhpFileWithoutClass')),
 			$this->logicalNot($this->arrayHasKey('PhpFileWithMultipleClasses')),
-			$this->logicalNot($this->arrayHasKey('PhpFileWithSnytaxError')),
+			$this->logicalNot($this->arrayHasKey('PhpFileWithSyntaxError')),
 			$this->logicalNot($this->arrayHasKey('InvalidClass'))
 		));
 

@@ -130,7 +130,7 @@ class PhpCmcApplication
 	{
 		switch($opts['naming']) {
 			case 'filebasename': return new FileBaseNameConvention();
-			case 'parse'       : return new ParsingConvention();
+			case 'parse'       : return new ParsingConvention(new PhpLinter($this->error));
 			default            : //fall-through
 		}
 

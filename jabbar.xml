@@ -73,6 +73,7 @@
 				<file name="PhpCmcOptsParser.php"       role="php" />
 				<file name="PhpCmcNamingConvention.php" role="php" />
 				<file name="FileBaseNameConvention.php" role="php" />
+				<file name="PhpLinter.php"              role="php" />
 				<file name="ParsingConvention.php"      role="php" />
 				<file name="OutputStream.php"           role="php" />
 			</dir>

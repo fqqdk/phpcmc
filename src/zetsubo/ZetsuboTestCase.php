@@ -8,7 +8,7 @@
 /**
  * Common base class for test cases that want to utilize zetsubo functionality
  */
-class ZetsuboTestCase extends PHPUnit_Framework_TestCase
+abstract class ZetsuboTestCase extends PHPUnit_Framework_TestCase
 {
 	/**
 	 * @var Assert the assertion builder
@@ -144,6 +144,16 @@ class ZetsuboTestCase extends PHPUnit_Framework_TestCase
 		$message = 'this test needs ini setting "%s" turned on';
 
 		$this->markTestSkipped(sprintf($message, $iniKey));
+	}
+
+	/**
+	 * Mocks a class
+	 *
+	 * @return object
+	 */
+	public function mock($className, array $methods=array())
+	{
+		return $this->getMock($className, $methods, array(), '', false, false, true);
 	}
 }
 

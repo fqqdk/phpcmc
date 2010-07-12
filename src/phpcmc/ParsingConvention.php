@@ -17,6 +17,10 @@ class ParsingConvention implements PhpCmcNamingConvention
 		T_COMMENT, T_WHITESPACE
 	);
 
+	public function  __construct(PhpLinter $linter) {
+		$this->linter = $linter;
+	}
+
 	/**
 	 * Collects the PHP classes from a file
 	 *
@@ -26,13 +30,7 @@ class ParsingConvention implements PhpCmcNamingConvention
 	 */
 	public function collectPhpClassesFrom(SplFileInfo $file)
 	{
-		$lint = shell_exec(sprintf(
-			'php -l %s 2>%s',
-			$file->getPathname(),
-			$this->isWindows() ? 'NUL' : '/dev/null'
-		));
-
-		if (false === strpos($lint, 'No syntax errors detected')) {
+		if (false == $this->linter->checkSyntax($file)) {
 			return array();
 		}
 
@@ -56,11 +54,6 @@ class ParsingConvention implements PhpCmcNamingConvention
 		}
 
 		return $result;
-	}
-
-	private function isWindows()
-	{
-		return 0 === strpos(strtolower(PHP_OS), 'win');
 	}
 
 	private function findClassName(array $tokens, $index)
