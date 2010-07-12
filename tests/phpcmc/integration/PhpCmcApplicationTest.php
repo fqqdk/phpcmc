@@ -12,6 +12,9 @@
  */
 class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 {
+	private $outputStream;
+	private $errorStream;
+
 	/**
 	 * Sets up the fixtures
 	 *
@@ -28,7 +31,10 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 			define('PHPCMC_VERSION', 'dummy');
 		}
 
-		$this->runner = new PhpCmcMainRunner('', new Assert($this));
+		$this->outputStream = new OutputStream();
+		$this->errorStream  = $this->mock('OutputStream', array('write'));
+		$this->app    = new PhpCmcApplication($this->outputStream, $this->errorStream);
+		$this->runner = new PhpCmcMainRunner($this->app, new Assert($this));
 	}
 
 	/**
@@ -162,6 +168,8 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 				class InvalidClass class class
 			?'.'>'
 		);
+
+		$this->errorStream->expects($this->atLeastOnce())->method('write')->with($this->anything());
 
 		$this->runner
 			->on($this->absoluteWorkDir())

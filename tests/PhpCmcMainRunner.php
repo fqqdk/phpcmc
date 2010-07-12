@@ -10,6 +10,14 @@
  */
 class PhpCmcMainRunner extends PhpCmcRunner
 {
+	private $app;
+
+	public function __construct(PhpCmcApplication $app, Assert $assert)
+	{
+		parent::__construct('', $assert);
+		$this->app = $app;
+	}
+
 	/**
 	 * Runs the application
 	 *
@@ -46,7 +54,7 @@ class PhpCmcMainRunner extends PhpCmcRunner
 		$oldIncludePath = set_include_path($includePath);
 		ob_start();
 		try {
-			PhpCmcApplication::main($this->assembleArguments());
+			$this->app->run($this->assembleArguments());
 			$result = $this->output = ob_get_contents();
 			ob_end_clean();
 			set_include_path($oldIncludePath);
