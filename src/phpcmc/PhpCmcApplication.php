@@ -11,6 +11,11 @@
 class PhpCmcApplication
 {
 	/**
+	 * @var array class map for autoloading
+	 */
+	private static $classMap;
+
+	/**
 	 * @var OutputStream output stream
 	 */
 	private $output;
@@ -38,19 +43,39 @@ class PhpCmcApplication
 	 * @return void
 	 * @throws PhpCmcException
 	 */
-	public static function main(array $args)
+	public static function main(array $args, $classMapFile)
 	{
-		error_reporting(E_ALL);
-		if (false == class_exists('Bootstrapper', false)) {
-			require_once 'angst/Bootstrapper.php';
+		if ('${classmap}' == $classMapFile) {
+			if (false == class_exists('Bootstrapper', false)) {
+				require_once 'angst/Bootstrapper.php';
+			}
+			Bootstrapper::bootstrap(self::library());
+		} else {
+			self::$classMap = require $classMapFile;
+			spl_autoload_register(array(__class__, 'autoload'));
 		}
-		Bootstrapper::bootstrap(self::library());
 
 		$output = new OutputStream();
 		$error  = new OutputStream(STDERR);
 
 		$cmc = new self($output, $error);
 		$cmc->run($args);
+	}
+
+	/**
+	 * Autoloads a class
+	 *
+	 * @param string $className the class name
+	 *
+	 * @return boolean
+	 */
+	public static function autoload($className)
+	{
+		if (false == isset(self::$classMap[$className])) {
+			return false;
+		}
+		include_once self::$classMap[$className];
+		return true;
 	}
 
 	/**
@@ -133,7 +158,7 @@ class PhpCmcApplication
 	private function getFormatter(array $opts, $dir)
 	{
 		switch($opts['format']) {
-			case 'assoc'   : return new VarExportFormatter($dir);
+			case 'assoc'   : return new VarExportFormatter($dir, $opts['prefix']);
 			case 'summary' : return new SummaryFormatter;
 			default        : //fall-through
 		}

@@ -13,11 +13,13 @@ class PhpCmcOptsParser
 	private $options = array(
 		'f' => 'format',
 		'n' => 'naming',
+		'p' => 'prefix'
 	);
 
 	private $defaults = array(
 		'format' => 'summary',
 		'naming' => 'filebasename',
+		'prefix' => '',
 	);
 
 	private $validate = array(

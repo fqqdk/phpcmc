@@ -11,10 +11,12 @@
 class VarExportFormatter implements OutputFormatter
 {
 	private $baseDir;
+	private $prefix;
 
-	public function __construct($baseDir)
+	public function __construct($baseDir, $prefix)
 	{
 		$this->baseDir = $baseDir;
+		$this->prefix  = $prefix;
 	}
 
 	public function header()
@@ -27,7 +29,7 @@ class VarExportFormatter implements OutputFormatter
 		return sprintf(
 			'"%s" => "%s",'.PHP_EOL,
 			$className,
-			$this->getRelativeDirectory($file)
+			$this->prefix . $this->getRelativeDirectory($file)
 		);
 	}
 

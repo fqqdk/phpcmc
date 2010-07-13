@@ -59,14 +59,9 @@
 				<tasks:replace from="@php_bin@" to="php_bin" type="pear-config" />
 				<tasks:replace from="@bin_dir@" to="bin_dir" type="pear-config" />
 			</file>
-			<dir name="angst">
-				<file name="Bootstrapper.php"       role="php" />
-				<file name="ClassLoader.php"        role="php" />
-				<file name="DirLoader.php"          role="php" />
-				<file name="LoaderSession.php"      role="php" />
-				<file name="ErrorHandler.php"       role="php" />
-				<file name="FileIncludeHandler.php" role="php" />
-			</dir>
+
+			<file name="phpcmc.classmap.php" role="php" baseinstalldir="/" />
+
 			<dir name="phpcmc">
 				<file name="ClassMapCollector.php"      role="php" />
 				<file name="FileBaseNameConvention.php" role="php" />

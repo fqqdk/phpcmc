@@ -19,6 +19,6 @@ require_once 'phpcmc/PhpCmcApplication.php';
  */
 define('PHPCMC_VERSION',  '@package_version@');
 
-PhpCmcApplication::main($_SERVER['argv'], '@serialized_classmap@');
+PhpCmcApplication::main($_SERVER['argv'], '${classmap}');
 
 ?>

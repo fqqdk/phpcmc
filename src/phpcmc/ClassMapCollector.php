@@ -37,6 +37,8 @@ class ClassMapCollector
 		}
 
 		$this->listener->searchCompleted();
+
+		return $allClasses;
 	}
 }
 

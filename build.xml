@@ -164,26 +164,31 @@
 		<delete dir="${package.dir}" />
 		<mkdir dir="${package.dir}" />
 
+		<property name="classmap" value="phpcmc.classmap.php" />
+
+		<!-- sources -->
+		<copy todir="${package.dir}">
+			<fileset dir="${basedir}/src">
+				<include name="phpcmc/**" />
+			</fileset>
+		</copy>
+
+		<php file="${basedir}/src/phpcmc.php" includepath="${basedir}/src">
+			<arg value="-fassoc" />
+			<arg value="-nfilebasename" />
+			<arg value="-pphpcmc" />
+			<arg value="${package.dir}/phpcmc" />
+			<redirector logError = "yes" output = "${package.dir}/${classmap}" />
+		</php>
+
 		<!-- scripts -->
 		<copy todir="${package.dir}">
 			<fileset dir="${basedir}/src">
 				<include name="*.*" />
 			</fileset>
-		</copy>
-
-		<!-- sources -->
-		<copy todir="${package.dir}">
-			<fileset dir="${basedir}/src">
-				<include name="**" />
-				<exclude name="*.*" />
-			</fileset>
-		</copy>
-
-		<!-- tests -->
-		<copy todir="${package.dir}/tests">
-			<fileset dir="${basedir}/tests">
-				<include name="**" />
-			</fileset>
+			<filterchain>
+				<expandproperties />
+			</filterchain>
 		</copy>
 	</target>
 
