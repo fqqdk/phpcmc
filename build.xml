@@ -85,12 +85,14 @@
 			<format property="time" pattern="HH:mm:ss" />
 		</tstamp>
 		<property file="version.properties" />
-		<property name="release.version" value="${version.major}.${version.minor}" />
-		<property name="uriAndOrChannel" value="&lt;channel&gt;pear.meza.hu&lt;/channel&gt;" />
-		<property name="target.dir"      value="${basedir}/build" />
-		<property name="package.dir"     value="${target.dir}/package" />
-		<property name="package.url"     value="${package.dir}/phpcmc-${release.version}.tgz" />
-		<property name="phpcs.standard"  value="Angst" />
+		<property name="release.version"   value="${version.major}.${version.minor}" />
+		<property name="uriAndOrChannel"   value="&lt;channel&gt;pear.meza.hu&lt;/channel&gt;" />
+		<property name="target.dir"        value="${basedir}/build" />
+		<property name="package.dir"       value="${target.dir}/package" />
+		<property name="package.url"       value="${package.dir}/phpcmc-${release.version}.tgz" />
+		<property name="phpcs.standard"    value="Angst" />
+		<property name="phpcpd.min-lines"  value="3" />
+		<property name="phpcpd.min-tokens" value="5" />
 
 		<fileset id="php.all" dir = "${basedir}">
 			<include name="src/**/*.php" />
@@ -117,7 +119,7 @@
 	</target>
 
 	<target name = "phpcs">
-		<phpcs 
+		<phpcs
 			standard  = "${phpcs.standard}"
 			outputdir ="build/checkstyle">
 			<fileset refid="php.all" />
@@ -125,7 +127,7 @@
 	</target>
 
 	<target name = "phpcs-dev" depends = "prepare">
-		<shell executable="phpcs" failonerror="true">
+		<shell executable="phpcs" failonerror = "true">
 			<arg value = "--standard=${phpcs.standard}" />
 			<arg value = "--extensions=php" />
 			<arg line  = "${php.all.arg}" />
@@ -133,7 +135,16 @@
 
 	</target>
 
-    <target name="phpdoc" depends="unimplemented">
+	<target name = "phpcpd-dev" depends = "prepare">
+		<shell executable="phpcpd" failonerror = "false">
+			<arg value = "--min-lines"  /><arg value="${phpcpd.min-lines}"  />
+			<arg value = "--min-tokens" /><arg value="${phpcpd.min-tokens}" />
+			<arg line  = "${php.all.arg}" />
+		</shell>
+
+	</target>
+
+    <target name="phpdoc" depends = "unimplemented">
 		<exec dir="${basedir}"
 			executable="phpdoc"
 			failonerror="false">
@@ -141,13 +152,13 @@
 		</exec>
     </target>
 
-	<target name="bump">
+	<target name = "bump">
 		<propertyfile file="version.properties">
 			<entry key="version.minor" operation="+" value="1" default="0" type="int" />
 		</propertyfile>
 	</target>
 
-	<target name="explode-pear" depends="prepare">
+	<target name = "explode-pear" depends = "prepare">
 		<echo message="generating package with version ${release.version}" />
 
 		<delete dir="${package.dir}" />
