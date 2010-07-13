@@ -68,13 +68,16 @@
 				<file name="FileIncludeHandler.php" role="php" />
 			</dir>
 			<dir name="phpcmc">
+				<file name="ClassMapGenerator.php"      role="php" />
 				<file name="PhpCmcException.php"        role="php" />
 				<file name="PhpCmcApplication.php"      role="php" />
+				<file name="PhpCmcErrorListener.php"    role="php" />
 				<file name="PhpCmcOptsParser.php"       role="php" />
 				<file name="PhpCmcNamingConvention.php" role="php" />
 				<file name="FileBaseNameConvention.php" role="php" />
 				<file name="PhpLinter.php"              role="php" />
 				<file name="ParsingConvention.php"      role="php" />
+				<file name="StreamErrorListener.php"    role="php" />
 				<file name="OutputStream.php"           role="php" />
 			</dir>
 		</dir>

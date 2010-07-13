@@ -86,23 +86,9 @@ class PhpCmcApplication
 		$rec = new RecursiveDirectoryIterator($dir);
 		$it  = new RecursiveIteratorIterator($rec);
 
-		$classMap = array();
+		$cmc = new ClassMapGenerator(new StreamErrorListener($this->error));
 
-		foreach ($it as $file) {
-			$classes = $naming->collectPhpClassesFrom($file);
-
-			foreach ($classes as $className) {
-				$location = $this->getClassDirectory($dir, $file);
-				if (isset($classMap[$className])) {
-					$message = sprintf(
-						'Duplicate class %s in %s, first defined in %s',
-						$className, $classMap[$className], $location
-					);
-					$this->error->write($message . PHP_EOL);
-				}
-				$classMap[$className] = $location;
-			}
-		}
+		$classMap = $cmc->generateClassMap($it, $naming, $dir);
 
 		if ('assoc' == $format) {
 			$this->output->write(sprintf('<?php return %s; ?'.'>', var_export($classMap, true)));
@@ -176,23 +162,6 @@ class PhpCmcApplication
 	private function getFormat(array $opts)
 	{
 		return $opts['format'];
-	}
-
-	/**
-	 * Callculates the directory string that should be displayed for a class entry
-	 *
-	 * @param string      $dir  the base source directory
-	 * @param SplFileInfo $file the class file
-	 *
-	 * @return string
-	 */
-	private function getClassDirectory($dir, SplFileInfo $file)
-	{
-		$result = $file->getPathname();
-		$result = str_replace($dir, '', $result);
-		$result = str_replace('\\', '/', $result);
-
-		return $result;
 	}
 }
 

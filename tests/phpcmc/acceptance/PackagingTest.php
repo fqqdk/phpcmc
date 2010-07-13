@@ -112,6 +112,7 @@ class PackagingTest extends ZetsuboTestCase
 			->outputFormat('assoc')
 			->run($driver);
 
+		$output->errorContains($this->isEmpty());
 		$output->parsedOutputIs($this->assoc(array(
 			'SomeClass'  => '/base/SomeClass.php',
 			'OtherClass' => '/base/OtherClass.php',
