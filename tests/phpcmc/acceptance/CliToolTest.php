@@ -127,15 +127,15 @@ class CliToolTest extends PhpCmcEndToEndTest
 				$this->matchesRegularExpression(
 					$this->duplicateErrorEntryPattern(
 						'SomeClass',
-						'duplicate/SomeFileWithSomeClass.php',
-						'duplicate/OtherFileWithSomeClass.php'
+						'duplicate'.DIRECTORY_SEPARATOR.'SomeFileWithSomeClass.php',
+						'duplicate'.DIRECTORY_SEPARATOR.'OtherFileWithSomeClass.php'
 					)
 				),
 				$this->matchesRegularExpression(
 					$this->duplicateErrorEntryPattern(
 						'SomeClass',
-						'duplicate/OtherFileWithSomeClass.php',
-						'duplicate/SomeFileWithSomeClass.php'
+						'duplicate'.DIRECTORY_SEPARATOR.'OtherFileWithSomeClass.php',
+						'duplicate'.DIRECTORY_SEPARATOR.'SomeFileWithSomeClass.php'
 					)
 				)
 			)
