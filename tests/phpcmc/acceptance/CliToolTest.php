@@ -16,6 +16,11 @@ class CliToolTest extends PhpCmcEndToEndTest
 	private $runner;
 
 	/**
+	 * @var string the include_path
+	 */
+	private $includePath;
+
+	/**
 	 * Sets up the fixtures
 	 *
 	 * @return void
@@ -23,7 +28,8 @@ class CliToolTest extends PhpCmcEndToEndTest
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->runner = new PhpCmcIsolatedRunner(
+		$this->includePath = BASE_DIR . '/src';
+		$this->runner      = new PhpCmcIsolatedRunner(
 			new PhpScriptRunner(), BASE_DIR . 'src/phpcmc.php'
 		);
 	}
@@ -44,9 +50,10 @@ class CliToolTest extends PhpCmcEndToEndTest
 
 		$output = $this->builder
 			->on($this->absoluteWorkDir())
-			->withDefaultOptions()
+			->includePath($this->includePath)
 			->run($this->runner);
 
+		$output->errorContains($this->isEmpty());
 		$output->outputShows($this->correctHeader('@package_version@'));
 		$output->outputShows($this->classSummary(2));
 
@@ -69,9 +76,11 @@ class CliToolTest extends PhpCmcEndToEndTest
 
 		$output = $this->builder
 			->on($this->absoluteWorkDir())
+			->includePath($this->includePath)
 			->outputFormat('assoc')
 			->run($this->runner);
 
+		$output->errorContains($this->isEmpty());
 		$output->parsedOutputIs($this->assoc(array(
 			'SomeClass'  => '/assoc/SomeClass.php',
 			'OtherClass' => '/assoc/OtherClass.php',
@@ -106,6 +115,7 @@ class CliToolTest extends PhpCmcEndToEndTest
 
 		$output = $this->builder
 			->on($this->absoluteWorkDir())
+			->includePath($this->includePath)
 			->outputFormat('assoc')
 			->namingConvention('parse')
 			->run($this->runner);

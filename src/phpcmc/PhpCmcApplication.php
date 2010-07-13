@@ -40,6 +40,12 @@ class PhpCmcApplication
 	 */
 	public static function main(array $args)
 	{
+		error_reporting(E_ALL);
+		if (false == class_exists('Bootstrapper', false)) {
+			require_once 'angst/Bootstrapper.php';
+		}
+		Bootstrapper::bootstrap(self::library());
+
 		$output = new OutputStream();
 		$error  = new OutputStream(STDERR);
 

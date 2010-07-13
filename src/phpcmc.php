@@ -11,7 +11,6 @@
  * We need the bootstrapper that sets the classloaders and the
  * CMC library. These will be packaged separately.
  */
-require_once 'angst/Bootstrapper.php';
 require_once 'phpcmc/PhpCmcApplication.php';
 
 /**
@@ -19,8 +18,6 @@ require_once 'phpcmc/PhpCmcApplication.php';
  * @global
  */
 define('PHPCMC_VERSION', '@package_version@');
-error_reporting(E_ALL);
-Bootstrapper::bootstrap(PhpCmcApplication::library());
 PhpCmcApplication::main($_SERVER['argv']);
 
 ?>
