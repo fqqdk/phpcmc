@@ -7,6 +7,8 @@
 
 /**
  * Description of CliToolTest
+ *
+ * @group endtoend
  */
 class CliToolTest extends PhpCmcEndToEndTest
 {

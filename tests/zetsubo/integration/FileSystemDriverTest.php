@@ -1,14 +1,16 @@
 <?php
 /**
- * Holds the FileSystemDriverIntegrationTest class
+ * Holds the FileSystemDriverTest class
  *
  * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
  * Holds test cases for the FileSystemDriver
+ *
+ * @group integration
  */
-class FileSystemDriverIntegrationTest extends ZetsuboTestCase
+class FileSystemDriverTest extends ZetsuboTestCase
 {
 	/**
 	 * Absolutizes and converts a path using the underlying OS's

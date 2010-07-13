@@ -7,6 +7,8 @@
 
 /**
  * Description of PhpCmcGetOptTest
+ *
+ * @group micro
  */
 class PhpCmcGetOptTest extends ZetsuboTestCase
 {

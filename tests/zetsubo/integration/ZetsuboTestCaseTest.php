@@ -1,6 +1,6 @@
 <?php
 /**
- * Holds the TestIntegrationTest class
+ * Holds the ZetsuboTestCaseTest class
  *
  * @author fqqdk <fqqdk@freemail.hu>
  */
@@ -8,8 +8,10 @@
 /**
  * Test cases that check that we don't destroy PHPUnit's internal behaviour
  * while amending it here and there
+ *
+ * @group integration
  */
-class TestIntegrationTest extends ZetsuboTestCase
+class ZetsuboTestCaseTest extends ZetsuboTestCase
 {
 	/**
 	 * Tests that the current error handler is PHPUnit's own error handler

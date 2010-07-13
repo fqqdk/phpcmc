@@ -1,14 +1,16 @@
 <?php
 /**
- * Holds the PhpScriptRunnerIntegrationTest
+ * Holds the PhpScriptRunnerTest
  *
  * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
  * Holds test cases for the script runner facilities
+ *
+ * @group integration
  */
-class PhpScriptRunnerIntegrationTest extends ZetsuboTestCase
+class PhpScriptRunnerTest extends ZetsuboTestCase
 {
 	/**
 	 * @var PhpScriptRunner the object under test

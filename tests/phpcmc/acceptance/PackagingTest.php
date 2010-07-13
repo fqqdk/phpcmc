@@ -7,6 +7,8 @@
 
 /**
  * Test cases that test that the full building and packaging workflow is correct
+ *
+ * @group endtoend
  */
 class PackagingTest extends ZetsuboTestCase
 {

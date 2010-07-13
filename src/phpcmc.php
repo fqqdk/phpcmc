@@ -18,6 +18,7 @@ require_once 'phpcmc/PhpCmcApplication.php';
  * @global
  */
 define('PHPCMC_VERSION', '@package_version@');
+
 PhpCmcApplication::main($_SERVER['argv']);
 
 ?>

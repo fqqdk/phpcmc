@@ -7,6 +7,8 @@
 
 /**
  * Description of ParsingConventionTest
+ *
+ * @group micro
  */
 class ParsingConventionTest extends ZetsuboTestCase
 {

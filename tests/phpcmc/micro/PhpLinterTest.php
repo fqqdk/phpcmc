@@ -7,6 +7,8 @@
 
 /**
  * Description of PhpLinterTest
+ *
+ * @group micro
  */
 class PhpLinterTest extends PhpCmcEndToEndTest
 {

@@ -7,6 +7,8 @@
 
 /**
  * Test cases for the common bootstrapper
+ *
+ * @group endtoend
  */
 class BootstrapperTest extends ZetsuboTestCase
 {
