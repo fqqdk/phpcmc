@@ -17,8 +17,8 @@ require_once 'phpcmc/PhpCmcApplication.php';
  * @final the current version of the application
  * @global
  */
-define('PHPCMC_VERSION', '@package_version@');
+define('PHPCMC_VERSION',  '@package_version@');
 
-PhpCmcApplication::main($_SERVER['argv']);
+PhpCmcApplication::main($_SERVER['argv'], '@serialized_classmap@');
 
 ?>

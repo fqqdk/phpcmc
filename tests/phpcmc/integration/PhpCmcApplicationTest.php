@@ -58,27 +58,6 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 		$actualDir   = rtrim($library[0], DIRECTORY_SEPARATOR . '/');
 		$this->assertEquals($expectedDir, $actualDir);
 	}
-
-	/**
-	 * Nomen est omen
-	 *
-	 * @test
-	 * @expectedException PhpCmcException
-	 *
-	 * @return void
-	 * @throws Exception
-	 */
-	public function mainThrowsExceptionWhenNoDirectoryGiven()
-	{
-		try {
-			ob_start();
-			PhpCmcApplication::main(array());
-			ob_end_clean();
-		} catch (Exception $e) {
-			ob_end_clean();
-			throw $e;
-		}
-	}
 	/**
 	 * Tests that the application collects classes from source directories
 	 * recursively
@@ -185,6 +164,21 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 		$output->errorContains('/Parse error/');
 
 		$this->cleanupOnSuccess();
+	}
+
+	/**
+	 * Nomen est omen
+	 *
+	 * @test
+	 * @expectedException PhpCmcException
+	 *
+	 * @return void
+	 * @throws Exception
+	 */
+	public function runThrowsExceptionWhenNoDirectoryGiven()
+	{
+		$app = new PhpCmcApplication(new SpyStream(), new SpyStream());
+		$app->run(array());
 	}
 }
 
