@@ -13,7 +13,6 @@
 			<arg value="display_errors='stderr'" />
 			<arg value="-f" />
 			<arg value="@{file}" />
-			<arg value="--" />
 			<args />
 		</shell>
 	</sequential>

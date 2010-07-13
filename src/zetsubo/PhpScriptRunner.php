@@ -91,6 +91,19 @@ class PhpScriptRunner implements ShellCommandRunner
 			->runWith($this, $scriptContent, $env);
 	}
 
+	public function runPhpScriptWithPrepend($script, array $args=array(), array $phpArgs=array(), $includePath='.', $prependFile=null)
+	{
+		return ShellCommandBuilder::newPhp()
+			->addPhpProperty('-f', $script)
+			->addIniVars(array(
+				'include_path'      => $includePath,
+				'auto_prepend_file' => $prependFile
+			))
+			->addPhpArgs($phpArgs)
+			->addArgs($args)
+			->runWith($this);
+	}
+
 	/**
 	 * Runs a PHP script file
 	 *

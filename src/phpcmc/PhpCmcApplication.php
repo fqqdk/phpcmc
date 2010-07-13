@@ -13,7 +13,7 @@ class PhpCmcApplication
 	/**
 	 * @var array class map for autoloading
 	 */
-	private static $classMap;
+	private static $classMap = array();
 
 	/**
 	 * @var OutputStream output stream
@@ -35,6 +35,16 @@ class PhpCmcApplication
 		return array(dirname(__file__) . '/');
 	}
 
+	private static function bootstrap()
+	{
+		if ('@package_version@' == PHPCMC_VERSION) {
+			return false;
+		}
+
+		self::$classMap = require 'phpcmc.classmap.php';
+		spl_autoload_register(array(__class__, 'autoload'));
+	}
+
 	/**
 	 * Main method that runs the application
 	 *
@@ -43,17 +53,9 @@ class PhpCmcApplication
 	 * @return void
 	 * @throws PhpCmcException
 	 */
-	public static function main(array $args, $classMapFile)
+	public static function main(array $args)
 	{
-		if ('${classmap}' == $classMapFile) {
-			if (false == class_exists('Bootstrapper', false)) {
-				require_once 'angst/Bootstrapper.php';
-			}
-			Bootstrapper::bootstrap(self::library());
-		} else {
-			self::$classMap = require $classMapFile;
-			spl_autoload_register(array(__class__, 'autoload'));
-		}
+		self::bootstrap();
 
 		$output = new OutputStream();
 		$error  = new OutputStream(STDERR);

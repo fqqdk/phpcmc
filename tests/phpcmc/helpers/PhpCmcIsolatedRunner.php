@@ -45,8 +45,9 @@ class PhpCmcIsolatedRunner implements PhpCmcRunner
 	public function run($includePath, array $args)
 	{
 		try {
-			$output = $this->runner->runPhpScript(
-				$this->script, $args, array(), $includePath
+			$output = $this->runner->runPhpScriptWithPrepend(
+				$this->script, $args, array(), $includePath,
+				BOOTSTRAP_FILE
 			);
 			return array($output, '');
 		} catch (ForeignError $ex) {

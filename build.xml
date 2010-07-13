@@ -174,6 +174,8 @@
 		</copy>
 
 		<php file="${basedir}/src/phpcmc.php" includepath="${basedir}/src">
+			<arg value="-d" /><arg value="auto_prepend_file=${basedir}/bootstrap.php" />
+			<arg value="--" />
 			<arg value="-fassoc" />
 			<arg value="-nfilebasename" />
 			<arg value="-pphpcmc" />
@@ -186,9 +188,6 @@
 			<fileset dir="${basedir}/src">
 				<include name="*.*" />
 			</fileset>
-			<filterchain>
-				<expandproperties />
-			</filterchain>
 		</copy>
 	</target>
 
