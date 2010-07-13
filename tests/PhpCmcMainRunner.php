@@ -8,71 +8,32 @@
 /**
  * Description of PhpCmcMainRunner
  */
-class PhpCmcMainRunner extends PhpCmcRunner
+class PhpCmcMainRunner implements PhpCmcRunner
 {
-	/**
-	 * @var PhpCmcApplication the application under test
-	 */
-	private $app;
-
-	/**
-	 * Constructor
-	 *
-	 * @param PhpCmcApplication $app    the application under test
-	 * @param Assert            $assert assertion builder
-	 */
-	public function __construct(PhpCmcApplication $app, Assert $assert)
-	{
-		parent::__construct('', $assert);
-		$this->app = $app;
-	}
-
 	/**
 	 * Runs the application
 	 *
 	 * @param string $includePath the include path to be set for the application
-	 * @param string $theScript   the path to the script
-	 *
-	 * @return string the output
-	 */
-	public function run($includePath='.', $theScript='')
-	{
-		return $this->runMainMethod($includePath);
-	}
-
-	/**
-	 * Assembles the arguments that will be passed to the application
+	 * @param array  $args        arguments to pass to the application
 	 *
 	 * @return array
 	 */
-	protected function assembleArguments()
+	public function run($includePath, array $args)
 	{
-		return array_merge(array('the_script_self'), parent::assembleArguments());
-	}
-
-	/**
-	 * Runs the application through the main method
-	 *
-	 * @param string $includePath the include path to set for the application's run
-	 *
-	 * @return string the output
-	 * @throws Exception
-	 */
-	private function runMainMethod($includePath)
-	{
+		$args = array_merge(array('the_script_self'), $args);
 		$oldIncludePath = set_include_path($includePath);
-		ob_start();
 		try {
-			$this->app->run($this->assembleArguments());
-			$result = $this->output = ob_get_contents();
-			ob_end_clean();
+			$outputStream = new SpyStream();
+			$errorStream  = new SpyStream();
+			$app = new PhpCmcApplication($outputStream, $errorStream);
+			$app->run($args);
 			set_include_path($oldIncludePath);
 		} catch (Exception $ex) {
-			ob_end_clean();
 			set_include_path($oldIncludePath);
 			throw $ex;
 		}
-		return $result;
+
+		return array($outputStream->getContents(), $errorStream->getContents());
 	}
 }
 

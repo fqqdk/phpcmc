@@ -10,6 +10,23 @@
  */
 class CliToolTest extends PhpCmcEndToEndTest
 {
+	/**
+	 * @var PhpCmcIsolatedRunner the application runner
+	 */
+	private $runner;
+
+	/**
+	 * Sets up the fixtures
+	 *
+	 * @return void
+	 */
+	protected function setUp()
+	{
+		parent::setUp();
+		$this->runner = new PhpCmcIsolatedRunner(
+			new PhpScriptRunner(), BASE_DIR . 'src/phpcmc.php'
+		);
+	}
 
 	/**
 	 * Script prints a fancy header
@@ -25,13 +42,13 @@ class CliToolTest extends PhpCmcEndToEndTest
 		$this->fsDriver->touch($this->workDir. '/summary/SomeClass.php');
 		$this->fsDriver->touch($this->workDir. '/summary/OtherClass.php');
 
-		$this->runner
+		$output = $this->builder
 			->on($this->absoluteWorkDir())
 			->withDefaultOptions()
-			->run();
+			->run($this->runner);
 
-		$this->runner->outputShows($this->correctHeader('@package_version@'));
-		$this->runner->outputShows($this->classSummary(2));
+		$output->outputShows($this->correctHeader('@package_version@'));
+		$output->outputShows($this->classSummary(2));
 
 		$this->cleanupOnSuccess();
 	}
@@ -50,13 +67,12 @@ class CliToolTest extends PhpCmcEndToEndTest
 		$this->fsDriver->touch($this->workDir. '/assoc/SomeClass.php');
 		$this->fsDriver->touch($this->workDir. '/assoc/OtherClass.php');
 
-		$output = $this->runner
+		$output = $this->builder
 			->on($this->absoluteWorkDir())
 			->outputFormat('assoc')
-			->run();
+			->run($this->runner);
 
-		$this->runner->parseOutputAsAssoc();
-		$this->runner->classMapIs($this->assoc(array(
+		$output->parsedOutputIs($this->assoc(array(
 			'SomeClass'  => '/assoc/SomeClass.php',
 			'OtherClass' => '/assoc/OtherClass.php',
 		)));
@@ -88,14 +104,13 @@ class CliToolTest extends PhpCmcEndToEndTest
 			?'.'>'
 		);
 
-		$this->runner
+		$output = $this->builder
 			->on($this->absoluteWorkDir())
 			->outputFormat('assoc')
 			->namingConvention('parse')
-			->run();
+			->run($this->runner);
 
-		$this->runner->parseOutputAsAssoc();
-		$this->runner->errorContains(
+		$output->errorContains(
 			$this->logicalOr(
 				$this->matchesRegularExpression(
 					$this->duplicateErrorEntryPattern(

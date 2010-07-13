@@ -99,17 +99,18 @@ class PackagingTest extends ZetsuboTestCase
 		$fsDriver->touch($classDir.'/base/SomeClass.php');
 		$fsDriver->touch($classDir.'/base/OtherClass.php');
 
-		$driver = new PhpCmcRunner(
-			$fsDriver->absolute($binFile), new Assert($this)
+		$builder = new PhpCmcBuilder(new Assert($this));
+		$driver  = new PhpCmcIsolatedRunner(
+			$this->runner, $fsDriver->absolute($binFile)
 		);
 
-		$driver
+		$output = $builder
 			->on($fsDriver->absolute($classDir))
+			->includePath($fsDriver->absolute($includeDir))
 			->outputFormat('assoc')
-			->run($fsDriver->absolute($includeDir));
+			->run($driver);
 
-		$driver->parseOutputAsAssoc();
-		$driver->classMapIs($this->assoc(array(
+		$output->parsedOutputIs($this->assoc(array(
 			'SomeClass'  => '/base/SomeClass.php',
 			'OtherClass' => '/base/OtherClass.php',
 		)));

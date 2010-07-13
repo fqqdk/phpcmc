@@ -101,7 +101,7 @@ class PhpScriptRunner implements ShellCommandRunner
 	 *
 	 * @return string output of the script
 	 */
-	public function runPhpScript($script, array $args=array(), array $phpArgs=array(), $includePath)
+	public function runPhpScript($script, array $args=array(), array $phpArgs=array(), $includePath='.')
 	{
 		return ShellCommandBuilder::newPhp()
 			->addPhpProperty('-f', $script)

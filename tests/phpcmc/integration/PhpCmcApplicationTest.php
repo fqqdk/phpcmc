@@ -13,14 +13,9 @@
 class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 {
 	/**
-	 * @var OutputStream output stream of the application
+	 * @var PhpCmcMainRunner the application runner
 	 */
-	private $outputStream;
-
-	/**
-	 * @var OutputStream error stream of the application
-	 */
-	private $errorStream;
+	private $runner;
 
 	/**
 	 * Sets up the fixtures
@@ -38,10 +33,7 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 			define('PHPCMC_VERSION', 'dummy');
 		}
 
-		$this->outputStream = new OutputStream();
-		$this->errorStream  = $this->mock('OutputStream', array('write'));
-		$this->app    = new PhpCmcApplication($this->outputStream, $this->errorStream);
-		$this->runner = new PhpCmcMainRunner($this->app, new Assert($this));
+		$this->runner = new PhpCmcMainRunner();
 	}
 
 	/**
@@ -104,12 +96,12 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 		$this->fsDriver->touch($this->workDir . '/deepdir/one/SomeClass.php');
 		$this->fsDriver->touch($this->workDir . '/deepdir/two/OtherClass.php');
 
-		$this->runner
+		$output = $this->builder
 			->on($this->absoluteWorkDir())
 			->outputFormat('assoc')
-			->run();
-		$this->runner->parseOutputAsAssoc();
-		$this->runner->classMapIs($this->assoc(array(
+			->run($this->runner);
+
+		$output->parsedOutputIs($this->assoc(array(
 			'SomeClass'  => '/deepdir/one/SomeClass.php',
 			'OtherClass' => '/deepdir/two/OtherClass.php',
 		)));
@@ -131,13 +123,12 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 		$this->fsDriver->touch($this->workDir . '/mixed/SomeClass.php');
 		$this->fsDriver->touch($this->workDir . '/mixed/NotAClass.xml');
 
-		$this->runner
+		$output = $this->builder
 			->on($this->absoluteWorkDir())
 			->outputFormat('assoc')
-			->run();
+			->run($this->runner);
 
-		$this->runner->parseOutputAsAssoc();
-		$this->runner->classMapIs($this->logicalAnd(
+		$output->parsedOutputIs($this->logicalAnd(
 			$this->arrayHasKeyWithValue('SomeClass', '/mixed/SomeClass.php'),
 			$this->logicalNot($this->arrayHasKey('NotAClass'))
 		));
@@ -176,16 +167,13 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 			?'.'>'
 		);
 
-		$this->errorStream->expects($this->atLeastOnce())->method('write')->with($this->anything());
-
-		$this->runner
+		$output = $this->builder
 			->on($this->absoluteWorkDir())
 			->outputFormat('assoc')
 			->namingConvention('parse')
-			->run();
+			->run($this->runner);
 
-		$this->runner->parseOutputAsAssoc();
-		$this->runner->classMapIs($this->logicalAnd(
+		$output->parsedOutputIs($this->logicalAnd(
 			$this->arrayHasKeyWithValue('SomeClass', '/parsing/PhpFileWithMultipleClasses.php'),
 			$this->arrayHasKeyWithValue('OtherClass', '/parsing/PhpFileWithMultipleClasses.php'),
 			$this->logicalNot($this->arrayHasKey('PhpFileWithoutClass')),
@@ -193,6 +181,8 @@ class PhpCmcApplicationTest extends PhpCmcEndToEndTest
 			$this->logicalNot($this->arrayHasKey('PhpFileWithSyntaxError')),
 			$this->logicalNot($this->arrayHasKey('InvalidClass'))
 		));
+
+		$output->errorContains('/Parse error/');
 
 		$this->cleanupOnSuccess();
 	}

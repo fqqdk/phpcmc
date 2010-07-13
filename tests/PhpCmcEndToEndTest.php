@@ -23,9 +23,9 @@ abstract class PhpCmcEndToEndTest extends ZetsuboTestCase
 	protected $fsDriver;
 
 	/**
-	 * @var PhpCmcRunner the script runner
+	 * @var PhpCmcBuilder the script runner
 	 */
-	protected $runner;
+	protected $builder;
 
 	/**
 	 * Sets the fixtures up
@@ -41,9 +41,8 @@ abstract class PhpCmcEndToEndTest extends ZetsuboTestCase
 			$this->workDir .= '/' . $this->dataName;
 		}
 
-		$script         = BASE_DIR . 'src/phpcmc.php';
 		$this->fsDriver = new FileSystemDriver(WORK_DIR);
-		$this->runner   = new PhpCmcRunner($script, $this->assert);
+		$this->builder  = new PhpCmcBuilder($this->assert);
 	}
 
 	/**
