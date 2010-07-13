@@ -35,9 +35,9 @@ class PhpCmcApplication
 		return array(dirname(__file__) . '/');
 	}
 
-	private static function bootstrap()
+	public static function bootstrap()
 	{
-		if ('@package_version@' == PHPCMC_VERSION) {
+		if (false == defined('PHPCMC_VERSION') || '@package_version@' == PHPCMC_VERSION) {
 			return false;
 		}
 
@@ -107,15 +107,18 @@ class PhpCmcApplication
 		$opts       = $optsParser->parse($argv);
 
 		$dir       = $this->getSourceDirectory($opts);
-		$naming    = $this->getNamingConvention($opts);
 		$formatter = $this->getFormatter($opts, $dir);
+		$listener  = new StreamListener($this->output, $this->error, $formatter);
+		$linter    = new PhpLinter($listener);
+		$naming    = $this->getNamingConvention($opts, $linter);
 
-		$rec = new RecursiveDirectoryIterator($dir);
-		$it  = new RecursiveIteratorIterator($rec);
+		$cmc = new ClassMapCollector($listener);
 
-		$cmc = new ClassMapCollector(new StreamListener($this->output, $this->error, $formatter));
-
-		$classMap = $cmc->collect($it, $naming, $dir);
+		try {
+			$cmc->collect(new ClassFileIterator($dir), $naming, $dir);
+		} catch(UnexpectedValueException $ex) {
+			$this->error->write('Cant walk directory: '. $dir);
+		}
 	}
 
 	/**
@@ -139,11 +142,11 @@ class PhpCmcApplication
 	 * @return PhpCmcNamingConvention
 	 * @throws PhpCmcException
 	 */
-	private function getNamingConvention(array $opts)
+	private function getNamingConvention(array $opts, $linter)
 	{
 		switch($opts['naming']) {
 			case 'filebasename': return new FileBaseNameConvention();
-			case 'parse'       : return new ParsingConvention(new PhpLinter($this->error));
+			case 'parse'       : return new ParsingConvention($linter);
 			default            : //fall-through
 		}
 

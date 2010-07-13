@@ -11,6 +11,11 @@
 class Bootstrapper
 {
 	/**
+	 * @var LoaderSession session of classloaders
+	 */
+	private static $loaderSession;
+
+	/**
 	 * Bootstrap functionality for PHPUnit tests
 	 *
 	 * Sets up autoloaders.
@@ -30,16 +35,23 @@ class Bootstrapper
 		require_once $angstDir . 'FileIncludeHandler.php';
 		require_once $angstDir . 'DirLoader.php';
 
-		$loaderSession = new LoaderSession(new FileIncludeHandler());
+		self::$loaderSession = new LoaderSession(new FileIncludeHandler());
 
-		spl_autoload_register(array($loaderSession, 'start'));
-		spl_autoload_register(array($loaderSession, 'stop'));
+		spl_autoload_register(array(self::$loaderSession, 'start'));
+		spl_autoload_register(array(self::$loaderSession, 'stop'));
 
 		foreach ($library as $dir) {
-			$loaderSession->append(new DirLoader($loaderSession, $dir, $file));
+			self::$loaderSession->append(new DirLoader(self::$loaderSession, $dir, $file));
 		}
 
-		return $loaderSession;
+		return self::$loaderSession;
+	}
+
+	public static function destroy()
+	{
+		self::$loaderSession->destroy();
+		spl_autoload_unregister(array(self::$loaderSession, 'start'));
+		spl_autoload_unregister(array(self::$loaderSession, 'stop'));
 	}
 }
 

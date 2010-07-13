@@ -158,6 +158,18 @@ class LoaderSession {
 		include_once $fileName;
 		$this->handler->stopIncluding($fileName);
 	}
+
+	/**
+	 * Removes classloaders
+	 *
+	 * @return void
+	 */
+	public function destroy()
+	{
+		foreach ($this->loaders as $loader) {
+			$this->remove($loader);
+		}
+	}
 }
 
 ?>

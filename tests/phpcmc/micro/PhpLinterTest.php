@@ -15,7 +15,7 @@ class PhpLinterTest extends PhpCmcEndToEndTest
 	/**
 	 * @var resource handle to the memory stream that is used instead of stderr
 	 */
-	private $mem;
+	private $listener;
 
 	/**
 	 * Sets up the fixtures
@@ -25,19 +25,9 @@ class PhpLinterTest extends PhpCmcEndToEndTest
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->mem = fopen('php://memory', 'w');
+		$this->listener = $this->mock('PhpCmcListener', get_class_methods('PhpCmcListener'));
 	}
 
-	/**
-	 * Tears down the fixtures
-	 *
-	 * @return void
-	 */
-	protected function tearDown()
-	{
-		parent::tearDown();
-		fclose($this->mem);
-	}
 	/**
 	 * Nomen est omen
 	 *
@@ -48,7 +38,7 @@ class PhpLinterTest extends PhpCmcEndToEndTest
 	public function checksTheSyntaxOfAFile()
 	{
 		$file   = new SplFileInfo(__file__);
-		$linter = new PhpLinter(new OutputStream($this->mem));
+		$linter = new PhpLinter($this->listener);
 
 		$this->assert->that($linter->checkSyntax($file), $this->isTrue());
 	}
@@ -64,7 +54,7 @@ class PhpLinterTest extends PhpCmcEndToEndTest
 	{
 		$file = 'syntaxerror.php';
 		$this->fsDriver->touch($file, '<?php this is invalid ?'.'>');
-		$linter = new PhpLinter(new OutputStream($this->mem));
+		$linter = new PhpLinter($this->listener);
 
 		$result = $linter->checkSyntax(new SplFileInfo($this->fsDriver->absolute($file)));
 

@@ -13,7 +13,7 @@ class PhpLinter
 	/**
 	 * @var OutputStream the error stream to report parse errors to
 	 */
-	private $stderr;
+	private $listener;
 
 	/**
 	 * Constructor
@@ -22,9 +22,9 @@ class PhpLinter
 	 *
 	 * @return PhpLinter
 	 */
-	public function __construct(OutputStream $stderr)
+	public function __construct(PhpCmcListener $listener)
 	{
-		$this->stderr = $stderr;
+		$this->listener = $listener;
 	}
 
 	/**
@@ -52,7 +52,7 @@ class PhpLinter
 
 		$output = stream_get_contents($pipes[1]);
 		$errors = stream_get_contents($pipes[2]);
-		$this->stderr->write($errors);
+		$this->listener->error($errors);
 
 		fclose($pipes[0]);
 		fclose($pipes[1]);

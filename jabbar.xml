@@ -63,11 +63,14 @@
 			<file name="phpcmc.classmap.php" role="php" baseinstalldir="/" />
 
 			<dir name="phpcmc">
+				<file name="ApiListener.php"            role="php" />
+				<file name="ClassFileIterator.php"      role="php" />
 				<file name="ClassMapCollector.php"      role="php" />
 				<file name="FileBaseNameConvention.php" role="php" />
 				<file name="OutputFormatter.php"        role="php" />
 				<file name="OutputStream.php"           role="php" />
 				<file name="ParsingConvention.php"      role="php" />
+				<file name="PhpCmcApi.php"              role="php" />
 				<file name="PhpCmcApplication.php"      role="php" />
 				<file name="PhpCmcException.php"        role="php" />
 				<file name="PhpCmcListener.php"         role="php" />

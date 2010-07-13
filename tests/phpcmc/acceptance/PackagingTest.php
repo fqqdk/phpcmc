@@ -98,8 +98,8 @@ class PackagingTest extends ZetsuboTestCase
 
 		$fsDriver->rmdir($classDir);
 		$fsDriver->mkdir($classDir.'/base');
-		$fsDriver->touch($classDir.'/base/SomeClass.php');
-		$fsDriver->touch($classDir.'/base/OtherClass.php');
+		$fsDriver->touch($classDir.'/base/SomeClass.php',  '<?php class SomeClass  {} ?'.'>');
+		$fsDriver->touch($classDir.'/base/OtherClass.php', '<?php class OtherClass {} ?'.'>');
 
 		$builder = new PhpCmcBuilder(new Assert($this));
 		$driver  = new PhpCmcIsolatedRunner(
@@ -117,6 +117,22 @@ class PackagingTest extends ZetsuboTestCase
 			'SomeClass'  => '/base/SomeClass.php',
 			'OtherClass' => '/base/OtherClass.php',
 		)));
+
+		$this->runner->runPhpScriptFromStdin(
+			sprintf('
+				<?php
+					define("PHPCMC_VERSION", "dummy");
+					require_once "phpcmc/PhpCmcApi.php";
+					PhpCmcApi::registerLoaderOverSourceDir("%s");
+
+					$foo = new SomeClass;
+					$bar = new OtherClass;
+				?>
+			', $fsDriver->absolute($classDir.'/base')
+			), array(
+				'include_path'      => $fsDriver->absolute($repoDir.'pear/php')
+			)
+		);
 
 		$fsDriver->rmdir($targetDir);
 		$fsDriver->rmdir($repoDir);
