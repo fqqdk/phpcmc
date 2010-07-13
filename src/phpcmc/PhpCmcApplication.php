@@ -79,45 +79,16 @@ class PhpCmcApplication
 		$optsParser = new PhpCmcOptsParser();
 		$opts       = $optsParser->parse($argv);
 
-		$dir    = $this->getSourceDirectory($opts);
-		$format = $this->getFormat($opts);
-		$naming = $this->getNamingConvention($opts);
+		$dir       = $this->getSourceDirectory($opts);
+		$naming    = $this->getNamingConvention($opts);
+		$formatter = $this->getFormatter($opts, $dir);
 
 		$rec = new RecursiveDirectoryIterator($dir);
 		$it  = new RecursiveIteratorIterator($rec);
 
-		$cmc = new ClassMapGenerator(new StreamErrorListener($this->error));
+		$cmc = new ClassMapCollector(new StreamListener($this->output, $this->error, $formatter));
 
-		$classMap = $cmc->generateClassMap($it, $naming, $dir);
-
-		if ('assoc' == $format) {
-			$this->output->write(sprintf('<?php return %s; ?'.'>', var_export($classMap, true)));
-		} else {
-			$this->output->write($this->getSummaryHeader());
-			$this->output->write($this->getSummaryFooter(count($classMap)));
-		}
-	}
-
-	/**
-	 * The summary header
-	 *
-	 * @return string
-	 */
-	private function getSummaryHeader()
-	{
-		return sprintf('phpcmc %s by fqqdk, sebcsaba', PHPCMC_VERSION) . PHP_EOL . PHP_EOL;
-	}
-
-	/**
-	 * The summary footer
-	 *
-	 * @param integer $classCount number of classes found
-	 *
-	 * @return string
-	 */
-	private function getSummaryFooter($classCount)
-	{
-		return sprintf('found %s classes', $classCount) . PHP_EOL;
+		$classMap = $cmc->collect($it, $naming, $dir);
 	}
 
 	/**
@@ -159,9 +130,15 @@ class PhpCmcApplication
 	 *
 	 * @return string
 	 */
-	private function getFormat(array $opts)
+	private function getFormatter(array $opts, $dir)
 	{
-		return $opts['format'];
+		switch($opts['format']) {
+			case 'assoc'   : return new VarExportFormatter($dir);
+			case 'summary' : return new SummaryFormatter;
+			default        : //fall-through
+		}
+
+		throw new PhpCmcException(sprintf('Invalid formatter: %s', $opts['format']));
 	}
 }
 

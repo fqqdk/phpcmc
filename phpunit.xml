@@ -37,7 +37,7 @@
     <groups>
 		<!--exclude>
 			<group>integration</group>
-			<group>acceptance</group>
+			<group>endtoend</group>
 		</exclude-->
     </groups>
 
