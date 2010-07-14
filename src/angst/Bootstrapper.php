@@ -47,6 +47,11 @@ class Bootstrapper
 		return self::$loaderSession;
 	}
 
+	/**
+	 * Removes the registered classloaders from the test
+	 *
+	 * @return void
+	 */
 	public static function destroy()
 	{
 		self::$loaderSession->destroy();

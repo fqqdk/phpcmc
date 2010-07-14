@@ -18,7 +18,7 @@ class PhpLinter
 	/**
 	 * Constructor
 	 *
-	 * @param OutputStream $stderr the error stream to report parse errors to
+	 * @param OutputStream $listener listener to report errors to
 	 *
 	 * @return PhpLinter
 	 */

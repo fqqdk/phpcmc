@@ -10,8 +10,16 @@
  */
 class ApiTest extends PhpCmcEndToEndTest
 {
+	/**
+	 * @var PhpScriptRunner php script runner
+	 */
 	private $runner;
 
+	/**
+	 * Sets up the fixtures
+	 *
+	 * @return void
+	 */
 	public function setUp()
 	{
 		parent::setUp();
@@ -43,7 +51,7 @@ class ApiTest extends PhpCmcEndToEndTest
 				<?php
 					require_once "phpcmc/PhpCmcApi.php";
 
-					PhpCmcApi::registerLoaderOverSourceDir("%s");
+					PhpCmcApi::registerLoaderFor("%s");
 					Bootstrapper::destroy();
 
 					$foo = new SomeClass;

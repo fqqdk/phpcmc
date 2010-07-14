@@ -10,8 +10,28 @@
  */
 interface OutputFormatter
 {
+	/**
+	 * The header of the output
+	 *
+	 * @return string
+	 */
 	public function header();
-	public function classEntry($file, $className);
+
+	/**
+	 * One formatted class entry
+	 *
+	 * @param string $className the class
+	 * @param string $file      the file
+	 *
+	 * @return string
+	 */
+	public function classEntry($className, $file);
+
+	/**
+	 * The footer of the output
+	 *
+	 * @return string
+	 */
 	public function footer();
 }
 

@@ -11,7 +11,7 @@
 class PhpCmcApplication
 {
 	/**
-	 * @var array class map for autoloading
+	 * @var array classmap for autoloading
 	 */
 	private static $classMap = array();
 
@@ -35,6 +35,12 @@ class PhpCmcApplication
 		return array(dirname(__file__) . '/');
 	}
 
+	/**
+	 * Bootstraps the application:
+	 * - registers autoloaders
+	 *
+	 * @return void
+	 */
 	public static function bootstrap()
 	{
 		if (false == defined('PHPCMC_VERSION') || '@package_version@' == PHPCMC_VERSION) {
@@ -137,12 +143,13 @@ class PhpCmcApplication
 	/**
 	 * Retrieves the naming convention
 	 *
-	 * @param array $opts options parsed from the command line
+	 * @param array     $opts   options parsed from the command line
+	 * @param PhpLinter $linter linter
 	 *
 	 * @return PhpCmcNamingConvention
 	 * @throws PhpCmcException
 	 */
-	private function getNamingConvention(array $opts, $linter)
+	private function getNamingConvention(array $opts, PhpLinter $linter)
 	{
 		switch($opts['naming']) {
 			case 'filebasename': return new FileBaseNameConvention();
@@ -156,9 +163,11 @@ class PhpCmcApplication
 	/**
 	 * The output format argument
 	 *
-	 * @param array $opts the CLI arguments passed to the script
+	 * @param array  $opts the CLI arguments passed to the script
+	 * @param string $dir  the directory
 	 *
 	 * @return string
+	 * @throws PhpCmcException
 	 */
 	private function getFormatter(array $opts, $dir)
 	{

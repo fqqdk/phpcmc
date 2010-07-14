@@ -123,7 +123,7 @@ class PackagingTest extends ZetsuboTestCase
 				<?php
 					define("PHPCMC_VERSION", "dummy");
 					require_once "phpcmc/PhpCmcApi.php";
-					PhpCmcApi::registerLoaderOverSourceDir("%s");
+					PhpCmcApi::registerLoaderFor("%s");
 
 					$foo = new SomeClass;
 					$bar = new OtherClass;

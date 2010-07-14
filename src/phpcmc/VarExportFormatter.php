@@ -2,7 +2,7 @@
 /**
  * Holds the VarExportFormatter.php class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
@@ -10,21 +10,47 @@
  */
 class VarExportFormatter implements OutputFormatter
 {
+	/**
+	 * @var string base directory to strip off the file paths
+	 */
 	private $baseDir;
+
+	/**
+	 * @var string prefix to add to the beginning of the paths
+	 */
 	private $prefix;
 
+	/**
+	 * Constructor
+	 *
+	 * @param string $baseDir base directory to strip off the file paths
+	 * @param string $prefix  prefix to add to the beginning of the paths
+	 */
 	public function __construct($baseDir, $prefix)
 	{
 		$this->baseDir = $baseDir;
 		$this->prefix  = $prefix;
 	}
 
+	/**
+	 * The header of the output
+	 *
+	 * @return string
+	 */
 	public function header()
 	{
 		return '<?php return array(' . PHP_EOL;
 	}
 
-	public function classEntry($file, $className)
+	/**
+	 * One formatted class entry
+	 *
+	 * @param string $className the class
+	 * @param string $file      the file
+	 *
+	 * @return string
+	 */
+	public function classEntry($className, $file)
 	{
 		return sprintf(
 			'"%s" => "%s",'.PHP_EOL,
@@ -33,6 +59,11 @@ class VarExportFormatter implements OutputFormatter
 		);
 	}
 
+	/**
+	 * The footer of the output
+	 *
+	 * @return string
+	 */
 	public function footer()
 	{
 		return '); ?'.'>';
@@ -45,9 +76,9 @@ class VarExportFormatter implements OutputFormatter
 	 *
 	 * @return string
 	 */
-	private function getRelativeDirectory(SplFileInfo $file)
+	private function getRelativeDirectory($file)
 	{
-		$result = $file->getPathname();
+		$result = $file;
 		$result = str_replace($this->baseDir, '', $result);
 		$result = str_replace('\\', '/', $result);
 
