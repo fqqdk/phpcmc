@@ -3,3 +3,4 @@ from certain source directories,
 using predefined and pluggable class-file naming conventions
 and prints them in various output formats,
 meanwhile reporting certain anomalies, like duplicate classes.
+test
