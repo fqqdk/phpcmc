@@ -42,8 +42,33 @@ class RecursiveDirectoryWalker implements FileWalker
 
 	public function walk(FileWalkListener $listener)
 	{
-		foreach ($this->getIterator() as $file) {
-			$listener->foundFile($file);
+		$h     = opendir($this->dir);
+		$files = array();
+		$dirs  = array();
+		while ($file = readdir($h)) {
+			if (is_dir($this->dir . DIRECTORY_SEPARATOR . $file)) {
+				if ($file == '.' || $file == '..') {
+					continue;
+				}
+				$dirs []= $file;
+			} else {
+				$files []= $file;
+			}
+		}
+
+		closedir($h);
+		sort($dirs);
+		sort($files);
+
+		foreach ($dirs as $dir) {
+			$full = $this->dir . DIRECTORY_SEPARATOR . $dir;
+			$listener->foundFile(new SplFileInfo($full));
+			$innerWalker = new self($full);
+			$innerWalker->walk($listener);
+		}
+
+		foreach ($files as $file) {
+			$listener->foundFile(new SplFileInfo($file));
 		}
 	}
 }
