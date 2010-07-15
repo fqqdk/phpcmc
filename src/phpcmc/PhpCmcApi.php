@@ -30,7 +30,7 @@ class PhpCmcApi
 		$naming = new ParsingConvention(new PhpLinter($listener));
 
 		try {
-			$classMap  = $collector->collect(new ClassFileIterator($dir), $naming, $dir);
+			$classMap  = $collector->collect(new RecursiveDirectoryWalker($dir), $naming, $dir);
 		} catch (UnexpectedValueException $ex) {
 			throw new PhpCmcException('Cannot walk directory: '. $dir);
 		}

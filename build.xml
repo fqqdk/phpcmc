@@ -173,6 +173,13 @@
 			</fileset>
 		</copy>
 
+		<php file="${basedir}/src/jabbar.php" includepath="${basedir}/src">
+			<arg value="-d" /><arg value="auto_prepend_file=${basedir}/bootstrap.php" />
+			<arg value="--" />
+			<arg value="${package.dir}" />
+			<redirector logError = "yes" outputProperty="jabbar.files" />
+		</php>
+
 		<php file="${basedir}/src/phpcmc.php" includepath="${basedir}/src">
 			<arg value="-d" /><arg value="auto_prepend_file=${basedir}/bootstrap.php" />
 			<arg value="--" />

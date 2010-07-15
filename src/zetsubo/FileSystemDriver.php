@@ -75,7 +75,11 @@ class FileSystemDriver
 	 */
 	public function mkdir($dir)
 	{
-		mkdir($this->path($this->baseDir . $dir), 0777, true);
+		$path = $this->path($this->baseDir . $dir);
+		if (file_exists($path) && is_dir($path)) {
+			return;
+		}
+		mkdir($path, 0777, true);
 	}
 
 	/**
@@ -88,6 +92,8 @@ class FileSystemDriver
 	 */
 	public function touch($file, $contents='')
 	{
+		$dir = dirname($file);
+		$this->mkdir($dir);
 		$fileName = $this->path($this->baseDir . $file);
 		touch($fileName);
 		if (!empty($contents)) {

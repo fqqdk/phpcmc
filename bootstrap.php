@@ -29,7 +29,17 @@ function __bootstrap()
 	/**
 	 * @final source directory of the application
 	 */
-	define('SRC_DIR',         BASE_DIR . 'src/phpcmc/');
+	define('SRC_DIR',         BASE_DIR . 'src/');
+
+	/**
+	 * @final source directory of the application
+	 */
+	define('PHPCMC_DIR',      BASE_DIR . 'src/phpcmc/');
+
+	/**
+	 * @final source directory of the application
+	 */
+	define('JABBAR_DIR',      BASE_DIR . 'src/jabbar/');
 
 	/**
 	 * @final source directory of the Zetsubo framework
@@ -40,11 +50,6 @@ function __bootstrap()
 	 * @final source directory of the Angst framework
 	 */
 	define('ANGST_DIR',       BASE_DIR . 'src/angst/');
-
-	/**
-	 * @final source directory of the common test helpers for the application
-	 */
-	define('TEST_HELPER_DIR', BASE_DIR . 'tests/phpcmc/helpers/');
 
 	/**
 	 * @final working directory of the package
@@ -58,7 +63,11 @@ function __bootstrap()
 
 	require_once ANGST_DIR . 'Bootstrapper.php';
 
-	$library = array(SRC_DIR, ANGST_DIR, ZETSUBO_DIR, TEST_HELPER_DIR);
+	$library = array(
+		PHPCMC_DIR, JABBAR_DIR, ANGST_DIR, ZETSUBO_DIR,
+		BASE_DIR . 'tests/phpcmc/helpers/',
+		BASE_DIR . 'tests/jabbar/helpers/',
+	);
 	$session = Bootstrapper::bootstrap($library, __file__);
 
 	register_shutdown_function('__shutdown');

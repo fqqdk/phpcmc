@@ -35,7 +35,7 @@ abstract class PhpCmcEndToEndTest extends ZetsuboTestCase
 	protected function setUp()
 	{
 		parent::setUp();
-		$this->workDir = get_class() . '/' . $this->name;
+		$this->workDir = get_class($this) . '/' . $this->name;
 		if ($this->dataName || 0 === $this->dataName) {
 			//TODO dataName should be escaped
 			$this->workDir .= '/' . $this->dataName;

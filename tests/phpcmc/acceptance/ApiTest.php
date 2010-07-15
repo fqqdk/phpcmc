@@ -59,7 +59,7 @@ class ApiTest extends PhpCmcEndToEndTest
 				?>
 			', $this->fsDriver->absolute($this->workDir . '/clientsources')
 			), array(
-				'include_path'      => realpath(SRC_DIR.'../'),
+				'include_path'      => realpath(SRC_DIR),
 				'auto_prepend_file' => BOOTSTRAP_FILE
 			)
 		);

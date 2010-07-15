@@ -121,7 +121,7 @@ class PhpCmcApplication
 		$cmc = new ClassMapCollector($listener);
 
 		try {
-			$cmc->collect(new ClassFileIterator($dir), $naming, $dir);
+			$cmc->collect(new RecursiveDirectoryWalker($dir), $naming, $dir);
 		} catch(UnexpectedValueException $ex) {
 			$this->error->write('Cant walk directory: '. $dir);
 		}
