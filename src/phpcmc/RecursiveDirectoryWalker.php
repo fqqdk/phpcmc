@@ -28,18 +28,12 @@ class RecursiveDirectoryWalker implements FileWalker
 	}
 
 	/**
-	 * Delegated iterator
+	 * Walks a set of files and notifies the FileWalkListener
 	 *
-	 * @return Iterator
+	 * @param FileWalkListener $listener the listener
+	 *
+	 * @return void
 	 */
-	private function getIterator()
-	{
-		return new RecursiveIteratorIterator(
-			new RecursiveDirectoryIterator($this->dir),
-			RecursiveIteratorIterator::SELF_FIRST
-		);
-	}
-
 	public function walk(FileWalkListener $listener)
 	{
 		$h     = opendir($this->dir);

@@ -164,11 +164,6 @@ abstract class ZetsuboTestCase extends PHPUnit_Framework_TestCase
 
 		return $this->getMock($className, $methods, array(), '', false, false, true);
 	}
-
-	public function name($name)
-	{
-		return new NameConstraint($name);
-	}
 }
 
 ?>

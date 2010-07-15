@@ -8,11 +8,19 @@
 /**
  * Description of RecursiveDirectoryWalkerTest
  */
-class RecursiveDirectoryWalkerTest extends PhpCmcEndToEndTest implements FileWalkListener
+class RecursiveDirectoryWalkerTest extends PhpCmcEndToEndTest
+implements FileWalkListener
 {
+	/**
+	 * @var array collection of the yet walked directories
+	 */
 	private $found = array();
+
+	/**
+	 * @var array expected order of the walk
+	 */
 	private $files = array(
-		 'c', '2', 'foo', '1', 'a', 'b'
+		'c', '2', 'foo', '1', 'a', 'b'
 	);
 
 	/**
@@ -43,7 +51,15 @@ class RecursiveDirectoryWalkerTest extends PhpCmcEndToEndTest implements FileWal
 		$this->cleanupOnSuccess();
 	}
 
-	public function foundFile(SplFileInfo $file) {
+	/**
+	 * Self-shunted mocked method
+	 *
+	 * @param SplFileInfo $file the file being walked
+	 *
+	 * @return void
+	 */
+	public function foundFile(SplFileInfo $file)
+	{
 		array_push($this->found, $file->getPathname());
 
 		$this->assert->that($file->getFilename(), $this->notDot(), var_export($this->found, true));
@@ -52,6 +68,11 @@ class RecursiveDirectoryWalkerTest extends PhpCmcEndToEndTest implements FileWal
 		), var_export($this->found, true));
 	}
 
+	/**
+	 * Constrains that a directory is not a special 'dot' directory (. or ..)
+	 *
+	 * @return PHPUnit_Framework_Constraint
+	 */
 	private function notDot()
 	{
 		return $this->logicalAnd(

@@ -2,7 +2,7 @@
 /**
  * Holds the Jabbar.php class
  *
- * @author fqqdk <simon.csaba@ustream.tv>
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
@@ -10,6 +10,13 @@
  */
 class Jabbar
 {
+	/**
+	 * The entry point of the application
+	 *
+	 * @param array $argv arguments passed on the command line
+	 *
+	 * @return void
+	 */
 	public static function main(array $argv)
 	{
 		require_once 'phpcmc/PhpCmcApplication.php';
@@ -22,69 +29,57 @@ class Jabbar
 		$app->run($argv);
 	}
 
+	/**
+	 * Runs the application
+	 *
+	 * @param array $argv arguments passed on the command line
+	 *
+	 * @return void
+	 */
 	public function run(array $argv)
 	{
 		$xml = new XMLWriter();
+		$xml->openMemory();
 
 		$builder = new PearXmlBuilder($xml);
 
-		$builder->start();
 		$builder->process(new RecursiveDirectoryWalker($argv[1]));
-		$builder->finish();
 
 		echo $this->prettifyXmlString($xml->flush());
 	}
 
-    public static function prettifyXmlString($string)
-    {
-        /**
-         * put each element on it's own line
-         */
-        $string =preg_replace("/>\s*</",">\n<",$string);
+	/**
+	 * Prettifies the xml output
+	 *
+	 * @param string $string the xml string
+	 *
+	 * @return string
+	 */
+	public static function prettifyXmlString($string)
+	{
+		$string = preg_replace('/>\s*</','>'."\n".'<',$string);
 
-        /**
-         * each element to own array
-         */
-        $xmlArray = explode("\n",$string);
+		$xmlArray = explode("\n",$string);
 
-        /**
-         * holds indentation
-         */
-        $currIndent = 1;
+		$currIndent = 1;
 
-        /**
-         * set xml element first by shifting of initial element
-         */
-        $string = array_shift($xmlArray) . "\n";
+		$string = array_shift($xmlArray) . "\n";
 
-        foreach($xmlArray as $element) {
-            /** find open only tags... add name to stack, and print to string
-             * increment currIndent
-             */
+		foreach ($xmlArray as $element) {
+			if (preg_match('/^<([\w])+[^>\/]*>$/U',$element)) {
+				$string .=  str_repeat("\t", $currIndent) . $element . "\n";
+				$currIndent ++;
+			} else if ( preg_match('/^<\/.+>$/',$element)) {
+				$currIndent --;
+				$string .=  str_repeat("\t", $currIndent) . $element . "\n";
+			} else {
+				$string .=  str_repeat("\t", $currIndent) . $element . "\n";
+			}
+		}
 
-            if (preg_match('/^<([\w])+[^>\/]*>$/U',$element)) {
-                $string .=  str_repeat("\t", $currIndent) . $element . "\n";
-                $currIndent ++;
-            }
+		return $string;
 
-            /**
-             * find standalone closures, decrement currindent, print to string
-             */
-            elseif ( preg_match('/^<\/.+>$/',$element)) {
-                $currIndent --;
-                $string .=  str_repeat("\t", $currIndent) . $element . "\n";
-            }
-            /**
-             * find open/closed tags on the same line print to string
-             */
-            else {
-                $string .=  str_repeat("\t", $currIndent) . $element . "\n";
-            }
-        }
-
-        return $string;
-
-    }
+	}
 }
 
 ?>

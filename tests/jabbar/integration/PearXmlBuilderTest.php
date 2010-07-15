@@ -1,16 +1,18 @@
 <?php
-/* 
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Holds the PearXmlBuilderTest class
+ *
+ * @author fqqdk <fqqdk@freemail.hu>
  */
 
 /**
  * Description of PearXmlBuilderTest
- *
- * @author fqqdk
  */
 class PearXmlBuilderTest extends PhpCmcEndToEndTest implements FileWalker
 {
+	/**
+	 * @var array dataset to build a directory tree for the test
+	 */
 	private $files = array(
 		'/dir'              => true,
 		'/dir/one.php'      => false,
@@ -41,12 +43,11 @@ class PearXmlBuilderTest extends PhpCmcEndToEndTest implements FileWalker
 		}
 
 		$xml = new XMLWriter();
+		$xml->openMemory();
 
 		$builder = new PearXmlBuilder($xml);
 
-		$builder->start();
 		$builder->process($this);
-		$builder->finish();
 
 		$output = Jabbar::prettifyXmlString($xml->flush());
 
@@ -73,6 +74,13 @@ class PearXmlBuilderTest extends PhpCmcEndToEndTest implements FileWalker
 		$this->cleanupOnSuccess();
 	}
 
+	/**
+	 * Mock method
+	 *
+	 * @param FileWalkListener $listener listener
+	 *
+	 * @return void
+	 */
 	public function walk(FileWalkListener $listener)
 	{
 		foreach ($this->files as $fileName => $isDir) {

@@ -10,6 +10,13 @@
  */
 interface FileWalker
 {
+	/**
+	 * Walks a set of files and notifies the FileWalkListener
+	 *
+	 * @param FileWalkListener $listener the listener
+	 *
+	 * @return void
+	 */
 	public function walk(FileWalkListener $listener);
 }
 
