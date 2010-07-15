@@ -70,7 +70,6 @@ class JabbarTest extends PhpCmcEndToEndTest
 			<file name="yetanother" role="php" />
 		';
 		$this->assert->that($output, $this->logicalNot($this->isEmpty()));
-		$this->fail($output);
 		$this->assertXmlStringEqualsXmlString(
 			'<root>'.$expectedXml.'</root>',
 			'<root>'.$output.'</root>'

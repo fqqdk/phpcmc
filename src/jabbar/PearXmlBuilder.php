@@ -15,7 +15,6 @@ class PearXmlBuilder implements FileWalkListener
 	 */
 	private $xml;
 	private $stack = array();
-	private $foundBaseDir = false;
 
 	public function __construct(XMLWriter $xml)
 	{
@@ -49,7 +48,9 @@ class PearXmlBuilder implements FileWalkListener
 
 	public function foundFile(SplFileInfo $file)
 	{
-		if ($this->isCurrentDirAdjacentTo($file)) {
+
+		while ($this->isCurrentDirAdjacentTo($file)) {
+			// this is the bug
 			$this->pop();
 			$this->xml->endElement();
 		}

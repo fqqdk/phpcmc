@@ -68,7 +68,7 @@ class RecursiveDirectoryWalker implements FileWalker
 		}
 
 		foreach ($files as $file) {
-			$listener->foundFile(new SplFileInfo($file));
+			$listener->foundFile(new SplFileInfo($this->dir. DIRECTORY_SEPARATOR . $file));
 		}
 	}
 }
