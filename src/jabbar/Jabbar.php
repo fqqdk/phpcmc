@@ -35,7 +35,7 @@ class Jabbar
 		echo $this->prettifyXmlString($xml->flush());
 	}
 
-    public function prettifyXmlString($string)
+    public static function prettifyXmlString($string)
     {
         /**
          * put each element on it's own line

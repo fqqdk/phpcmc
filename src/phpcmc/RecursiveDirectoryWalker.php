@@ -43,6 +43,11 @@ class RecursiveDirectoryWalker implements FileWalker
 	public function walk(FileWalkListener $listener)
 	{
 		foreach ($this->getIterator() as $file) {
+			$fileName = $file->getFileName();
+			if ('.' == $fileName || '..' == $fileName) {
+				continue;
+			}
+
 			$listener->foundFile($file);
 		}
 	}
