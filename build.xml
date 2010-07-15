@@ -51,7 +51,7 @@
 
 	<target name        = "deploy"
 			description = "deploys package to the repository"
-			depends     = "prepare, jabbar-deploy" />
+			depends     = "prepare, pirum-deploy" />
 
 	<target name        = "release"
 			description = "releases the project"
@@ -86,6 +86,7 @@
 		</tstamp>
 		<property file="version.properties" />
 		<property name="release.version"   value="${version.major}.${version.minor}" />
+		<property name="pirum.repo.dir"    value="/opt/pearserver" />
 		<property name="uriAndOrChannel"   value="&lt;channel&gt;pear.meza.hu&lt;/channel&gt;" />
 		<property name="target.dir"        value="${basedir}/build" />
 		<property name="package.dir"       value="${target.dir}/package" />
@@ -216,6 +217,14 @@
 		<pear>
 			<arg line="-v install -f ${package.url}" />
 		</pear>
+	</target>
+
+	<target name="pirum-deploy" depends="prepare">
+		<shell executable="pirum">
+			<arg value="add" />
+			<arg value="${pirum.repo.dir}" />
+			<arg value="${package.dir}/phpcmc-${release.version}.tgz" />
+		</shell>
 	</target>
 
 	<target name="install-standard">
