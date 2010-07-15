@@ -53,6 +53,7 @@
 			<file name="phpcmc.php" role="script" baseinstalldir="/">
 				<tasks:replace from="/usr/bin/env php"  to="php_bin" type="pear-config" />
 				<tasks:replace from="@php_bin@"         to="php_bin" type="pear-config" />
+				<tasks:replace from="@php_dir@"         to="php_dir" type="pear-config" />
 				<tasks:replace from="@package_version@" to="version" type="package-info" />
 			</file>
 			<file name="phpcmc.bat" role="script" baseinstalldir="/">

@@ -67,7 +67,11 @@ class PhpCmcApplication
 		$error  = new OutputStream(STDERR);
 
 		$cmc = new self($output, $error);
-		$cmc->run($args);
+		try {
+			$cmc->run($args);
+		} catch (PhpCmcException $ex) {
+			$error->write($ex->getMessage() . PHP_EOL);
+		}
 	}
 
 	/**
@@ -82,8 +86,8 @@ class PhpCmcApplication
 		if (false == isset(self::$classMap[$className])) {
 			return false;
 		}
-		include_once self::$classMap[$className];
-		return true;
+
+		return include_once self::$classMap[$className];
 	}
 
 	/**

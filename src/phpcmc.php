@@ -6,6 +6,17 @@
  * @author fqqdk <fqqdk@freemail.hu>
  */
 
+// include_path hack
+if (0 === strpos('@php_dir@', '@php_dir')) {
+	set_include_path(
+		dirname(__file__) . PATH_SEPARATOR . get_include_path()
+	);
+} else {
+	set_include_path(
+		'@php_dir@' . PATH_SEPARATOR . get_include_path()
+	);
+}
+
 /**
  * Assuming the libraries are on the include_path.
  * We need the bootstrapper that sets the classloaders and the

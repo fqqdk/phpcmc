@@ -118,6 +118,15 @@ class PackagingTest extends ZetsuboTestCase
 			'OtherClass' => '/base/OtherClass.php',
 		)));
 
+		try {
+			$output = ShellCommandBuilder::newScript($fsDriver->absolute($binFile))
+				->runWith($this->runner);
+			$this->fail('This run should fail, but: '.$output);
+		} catch (ForeignError $ex) {
+			$this->assertContains('Directory argument is mandatory', $ex->getError());
+			$this->assertNotContains('Uncaught exception', $ex->getError());
+		}
+
 		$this->runner->runPhpScriptFromStdin(
 			sprintf('
 				<?php
