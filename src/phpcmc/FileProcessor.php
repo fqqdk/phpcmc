@@ -53,12 +53,7 @@ class FileProcessor implements FileWalkListener
 		$classes = $this->naming->collectPhpClassesFrom($file);
 
 		foreach ($classes as $className) {
-			if (isset($this->map[$className])) {
-				$this->listener->duplicate($className, $file, $this->map[$className]);
-			} else {
-				$this->map[$className] = $file->getPathname();
-				$this->listener->classFound($className, $file->getPathname());
-			}
+			$this->map->addClass($className, $file, $this->listener);
 		}
 	}
 }

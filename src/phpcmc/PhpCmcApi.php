@@ -25,17 +25,18 @@ class PhpCmcApi
 		PhpCmcApplication::bootstrap();
 
 		$listener  = new ApiListener();
-		$collector = new ClassMapCollector($listener);
-
-		$naming = new ParsingConvention(new PhpLinter($listener));
+		$classMap  = new ClassMap();
+		$naming    = new ParsingConvention(new PhpLinter($listener));
+		$collector = new ClassMapCollector($listener, $naming, $classMap);
 
 		try {
-			$classMap  = $collector->collect(new RecursiveDirectoryWalker($dir), $naming, $dir);
+			$collector->collect(new RecursiveDirectoryWalker($dir));
+			$rawClassMap = $classMap->getArrayCopy();
 		} catch (UnexpectedValueException $ex) {
 			throw new PhpCmcException('Cannot walk directory: '. $dir);
 		}
 
-		spl_autoload_register(array(new self($classMap), 'loadClass'));
+		spl_autoload_register(array(new self($rawClassMap), 'loadClass'));
 	}
 
 	/**

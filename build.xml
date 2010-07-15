@@ -219,6 +219,12 @@
 		</pear>
 	</target>
 
+	<target name="jabbar-undeploy">
+		<pear>
+			<arg line="uninstall pear.meza.hu/phpcmc" />
+		</pear>
+	</target>
+
 	<target name="pirum-deploy" depends="prepare">
 		<shell executable="pirum">
 			<arg value="add" />
