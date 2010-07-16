@@ -8,7 +8,7 @@
 /**
  * Description of ClassMap
  */
-class ClassMap
+class ClassMap implements ClassLoader
 {
 	/**
 	 * Constructor
@@ -62,6 +62,22 @@ class ClassMap
 	public function getArrayCopy()
 	{
 		return $this->map->getArrayCopy();
+	}
+
+	/**
+	 * Attempts to load a class
+	 *
+	 * @param string $className the name of the class to load
+	 *
+	 * @return boolean
+	 */
+	public function load($className)
+	{
+		if (false == isset($this->map[$className])) {
+			return false;
+		}
+
+		return include_once $this->map[$className];
 	}
 }
 

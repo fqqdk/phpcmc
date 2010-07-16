@@ -29,7 +29,7 @@ class Bootstrapper
 	{
 		$angstDir = dirname(__file__) . '/';
 
-		require_once $angstDir . 'ClassLoader.php';
+		require_once $angstDir . '../phpcmc/ClassLoader.php';
 		require_once $angstDir . 'ErrorHandler.php';
 		require_once $angstDir . 'LoaderSession.php';
 		require_once $angstDir . 'FileIncludeHandler.php';

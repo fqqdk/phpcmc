@@ -31,42 +31,11 @@ class PhpCmcApi
 
 		try {
 			$collector->collect(new RecursiveDirectoryWalker($dir));
-			$rawClassMap = $classMap->getArrayCopy();
 		} catch (UnexpectedValueException $ex) {
 			throw new PhpCmcException('Cannot walk directory: '. $dir);
 		}
 
-		spl_autoload_register(array(new self($rawClassMap), 'loadClass'));
-	}
-
-	/**
-	 * Constructor
-	 *
-	 * @param array $classMap the classmap
-	 *
-	 * @todo extract to a separate classloader
-	 *
-	 * @return PhpCmcApi
-	 */
-	public function __construct(array $classMap)
-	{
-		$this->classMap = $classMap;
-	}
-
-	/**
-	 * Loads a class
-	 *
-	 * @param string $className the name of the class to load
-	 *
-	 * @return boolean
-	 */
-	public function loadClass($className)
-	{
-		if (false == isset($this->classMap[$className])) {
-			return false;
-		}
-
-		return include_once $this->classMap[$className];
+		spl_autoload_register(array($classMap, 'load'));
 	}
 }
 
