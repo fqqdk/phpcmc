@@ -52,12 +52,16 @@ class ClassMapCollector
 	 */
 	public function collect(FileWalker $walker)
 	{
-		$this->listener->searchStarted();
+		try {
+			$this->listener->searchStarted();
 
-		$processor = new FileProcessor($this->naming, $this->map, $this->listener);
-		$walker->walk($processor);
+			$processor = new FileProcessor($this->naming, $this->map, $this->listener);
+			$walker->walk($processor);
 
-		$this->listener->searchCompleted();
+			$this->listener->searchCompleted();
+		} catch(UnexpectedValueException $ex) {
+			$this->listener->error('Cant walk directory: '. $dir);
+		}
 	}
 }
 
