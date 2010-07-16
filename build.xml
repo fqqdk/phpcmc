@@ -174,7 +174,7 @@
 			</fileset>
 		</copy>
 
-		<php file="${basedir}/src/jabbar.php" includepath="${basedir}/src">
+		<php file="${basedir}/src/jabbar.php" includepath="${basedir}/src" failonerror="false">
 			<arg value="-d" /><arg value="auto_prepend_file=${basedir}/bootstrap.php" />
 			<arg value="--" />
 			<arg value="${package.dir}" />
