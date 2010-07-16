@@ -25,11 +25,11 @@ class PhpCmcApi
 		PhpCmcApplication::bootstrap();
 
 		$listener  = new ApiListener();
-		$classMap  = new ClassMap();
+		$classMap  = new ClassMap($listener);
 		$naming    = new ParsingConvention(new PhpLinter($listener));
-		$collector = new ClassMapCollector($listener, $naming, $classMap);
+		$collector = new ClassMapCollector($naming, $classMap);
 
-		$collector->collect(new RecursiveDirectoryWalker($dir));
+		$collector->collect(new RecursiveDirectoryWalker($dir), $listener);
 
 		spl_autoload_register(array($classMap, 'load'));
 	}

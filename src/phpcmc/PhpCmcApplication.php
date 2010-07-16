@@ -121,11 +121,11 @@ class PhpCmcApplication
 		$listener  = new StreamListener($this->output, $this->error, $formatter);
 		$linter    = new PhpLinter($listener);
 		$naming    = $this->getNamingConvention($opts, $linter);
-		$classMap  = new ClassMap();
+		$classMap  = new ClassMap($listener);
 
-		$collector = new ClassMapCollector($listener, $naming, $classMap);
+		$collector = new ClassMapCollector($naming, $classMap);
 
-		$collector->collect(new RecursiveDirectoryWalker($dir));
+		$collector->collect(new RecursiveDirectoryWalker($dir), $listener);
 	}
 
 	/**

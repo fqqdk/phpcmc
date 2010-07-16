@@ -11,13 +11,26 @@
 class ClassMap implements ClassLoader
 {
 	/**
+	 * @var ClassListener for class related events
+	 */
+	private $listener;
+
+	/**
+	 * @var ArrayObject internal class map
+	 */
+	private $map;
+
+	/**
 	 * Constructor
+	 *
+	 * @param ClassListener $listener for class related events
 	 *
 	 * @return ClassMap
 	 */
-	public function __construct()
+	public function __construct(ClassListener $listener)
 	{
-		$this->map = new ArrayObject();
+		$this->listener = $listener;
+		$this->map      = new ArrayObject();
 	}
 
 	/**
@@ -35,23 +48,22 @@ class ClassMap implements ClassLoader
 	/**
 	 * Adds a class to the map
 	 *
-	 * @param string         $className the class
-	 * @param SplFileInfo    $file      the file the class has been found in
-	 * @param PhpCmcListener $listener  the listener to report
+	 * @param string      $className the class
+	 * @param SplFileInfo $file      the file the class has been found in
 	 *
 	 * @return void
 	 */
-	public function addClass($className, SplFileInfo $file, PhpCmcListener $listener)
+	public function addClass($className, SplFileInfo $file)
 	{
 		$path = $file->getPathname();
 
 		if ($this->classIsMapped($className)) {
-			$listener->duplicate($className, $file, $this->map[$className]);
+			$this->listener->duplicate($className, $file, $this->map[$className]);
 			return;
 		}
 
 		$this->map[$className] = $path;
-		$listener->classFound($className, $path);
+		$this->listener->classFound($className, $path);
 	}
 
 	/**

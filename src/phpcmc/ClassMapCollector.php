@@ -8,13 +8,8 @@
 /**
  * Description of ClassMapCollector
  */
-class ClassMapCollector
+class ClassMapCollector implements FileWalkListener
 {
-	/**
-	 * @var PhpCmcListener the listener who will be updated
-	 */
-	private $listener;
-
 	/**
 	 * @var PhpCmcNamingConvention the naming convention
 	 */
@@ -28,17 +23,13 @@ class ClassMapCollector
 	/**
 	 * Constructor
 	 *
-	 * @param PhpCmcListener         $listener the listener
-	 * @param PhpCmcNamingConvention $naming   the naming convention
-	 * @param ClassMap               $map      the classmap to collect the classes into
+	 * @param PhpCmcNamingConvention $naming the naming convention
+	 * @param ClassMap               $map    the classmap to collect the classes into
 	 *
 	 * @return ClassMapCollector
 	 */
-	public function __construct(
-		PhpCmcListener $listener, PhpCmcNamingConvention $naming, ClassMap $map
-	)
+	public function __construct(PhpCmcNamingConvention $naming, ClassMap $map)
 	{
-		$this->listener = $listener;
 		$this->naming   = $naming;
 		$this->map      = $map;
 	}
@@ -46,21 +37,37 @@ class ClassMapCollector
 	/**
 	 * Traverses a file iterator and reports found classes and errors to listener
 	 *
-	 * @param FileWalker $walker the file walker
+	 * @param FileWalker      $walker   the file walker
+	 * @param CollectListener $listener the listener for the collection events
 	 * 
 	 * @return array the raw classmap
 	 */
-	public function collect(FileWalker $walker)
+	public function collect(FileWalker $walker, CollectListener $listener)
 	{
 		try {
-			$this->listener->searchStarted();
+			$listener->searchStarted();
 
-			$processor = new FileProcessor($this->naming, $this->map, $this->listener);
-			$walker->walk($processor);
+			$walker->walk($this);
 
-			$this->listener->searchCompleted();
+			$listener->searchCompleted();
 		} catch(UnexpectedValueException $ex) {
-			$this->listener->error('Cant walk directory: '. $dir);
+			$listener->error('Cant walk directory: '. $dir);
+		}
+	}
+
+	/**
+	 * This event is fired when a FileWalker finds a file
+	 *
+	 * @param SplFileInfo $file the found file
+	 *
+	 * @return void
+	 */
+	public function foundFile(SplFileInfo $file)
+	{
+		$classes = $this->naming->collectPhpClassesFrom($file);
+
+		foreach ($classes as $className) {
+			$this->map->addClass($className, $file);
 		}
 	}
 }

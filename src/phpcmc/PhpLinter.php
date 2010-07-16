@@ -11,18 +11,18 @@
 class PhpLinter
 {
 	/**
-	 * @var OutputStream the error stream to report parse errors to
+	 * @var CollectListener the error listener
 	 */
 	private $listener;
 
 	/**
 	 * Constructor
 	 *
-	 * @param OutputStream $listener listener to report errors to
+	 * @param CollectListener $listener listener to report errors to
 	 *
 	 * @return PhpLinter
 	 */
-	public function __construct(PhpCmcListener $listener)
+	public function __construct(CollectListener $listener)
 	{
 		$this->listener = $listener;
 	}
