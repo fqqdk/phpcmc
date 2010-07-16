@@ -24,14 +24,14 @@ class PhpCmcApi
 		require_once dirname(__file__).'/PhpCmcApplication.php';
 		PhpCmcApplication::bootstrap();
 
-		$listener  = new ApiListener();
+		$listener  = new NullListener();
 		$classMap  = new ClassMap($listener);
 		$naming    = new ParsingConvention(new PhpLinter($listener));
 		$collector = new ClassMapCollector($naming, $classMap);
 
 		$collector->collect(new RecursiveDirectoryWalker($dir), $listener);
 
-		spl_autoload_register(array($classMap, 'load'));
+		spl_autoload_register(array($classMap->createLoader(), 'load'));
 	}
 }
 

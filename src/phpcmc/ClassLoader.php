@@ -5,6 +5,10 @@
  * @author fqqdk <fqqdk@freemail.hu>
  */
 
+if (interface_exists('ClassLoader')) {
+	return false;
+}
+
 /**
  * Description of ClassLoader
  */

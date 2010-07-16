@@ -8,19 +8,8 @@
 /**
  * The PhpCmcListener used by the API
  */
-class ApiListener implements PhpCmcListener
+class NullListener implements CollectListener, ClassListener
 {
-	/**
-	 * This event is fired when an error occurs during class map collection
-	 *
-	 * @param string $error the error message
-	 *
-	 * @return void
-	 */
-	public function error($error)
-	{
-	}
-
 	/**
 	 * This event is fired when the collector finds a class
 	 *
@@ -61,6 +50,17 @@ class ApiListener implements PhpCmcListener
 	 * @return void
 	 */
 	public function searchCompleted()
+	{
+	}
+
+	/**
+	 * This event is fired when an error occurs during class map collection
+	 *
+	 * @param string $error the error message
+	 *
+	 * @return void
+	 */
+	public function error($error)
 	{
 	}
 }

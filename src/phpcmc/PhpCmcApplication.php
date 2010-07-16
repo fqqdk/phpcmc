@@ -11,11 +11,6 @@
 class PhpCmcApplication
 {
 	/**
-	 * @var array classmap for autoloading
-	 */
-	private static $classMap = array();
-
-	/**
 	 * @var OutputStream output stream
 	 */
 	private $output;
@@ -47,8 +42,12 @@ class PhpCmcApplication
 			return false;
 		}
 
-		self::$classMap = require 'phpcmc.classmap.php';
-		spl_autoload_register(array(__class__, 'autoload'));
+		require_once dirname(__file__).'/ClassLoader.php';
+		require_once dirname(__file__).'/ClassMapLoader.php';
+
+		$loader = new ClassMapLoader(require 'phpcmc.classmap.php');
+
+		spl_autoload_register(array($loader, 'load'));
 	}
 
 	/**
@@ -72,22 +71,6 @@ class PhpCmcApplication
 		} catch (PhpCmcException $ex) {
 			$error->write($ex->getMessage() . PHP_EOL);
 		}
-	}
-
-	/**
-	 * Autoloads a class
-	 *
-	 * @param string $className the class name
-	 *
-	 * @return boolean
-	 */
-	public static function autoload($className)
-	{
-		if (false == isset(self::$classMap[$className])) {
-			return false;
-		}
-
-		return include_once self::$classMap[$className];
 	}
 
 	/**

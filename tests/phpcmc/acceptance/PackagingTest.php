@@ -123,7 +123,7 @@ class PackagingTest extends ZetsuboTestCase
 				->runWith($this->runner);
 			$this->fail('This run should fail, but: '.$output);
 		} catch (ForeignError $ex) {
-			$this->assertContains('Directory argument is mandatory', $ex->getError());
+			$this->assertContains('Directory argument is mandatory', $ex->getError(), $ex->getError());
 			$this->assertNotContains('Uncaught exception', $ex->getError());
 		}
 

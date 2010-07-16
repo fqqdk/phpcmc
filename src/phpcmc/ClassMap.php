@@ -8,7 +8,7 @@
 /**
  * Description of ClassMap
  */
-class ClassMap implements ClassLoader
+class ClassMap
 {
 	/**
 	 * @var ClassListener for class related events
@@ -67,29 +67,15 @@ class ClassMap implements ClassLoader
 	}
 
 	/**
-	 * Returns an array copy of the internal map
+	 * Creates a ClassLoader over the internal map
 	 *
-	 * @return array
+	 * @param string $baseDir optional basedir to prefix the files with
+	 *
+	 * @return ClassLoader
 	 */
-	public function getArrayCopy()
+	public function createLoader($baseDir='')
 	{
-		return $this->map->getArrayCopy();
-	}
-
-	/**
-	 * Attempts to load a class
-	 *
-	 * @param string $className the name of the class to load
-	 *
-	 * @return boolean
-	 */
-	public function load($className)
-	{
-		if (false == isset($this->map[$className])) {
-			return false;
-		}
-
-		return include_once $this->map[$className];
+		return new ClassMapLoader($this->map->getArrayCopy());
 	}
 }
 

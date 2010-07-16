@@ -37,7 +37,7 @@ class ParsingConvention implements PhpCmcNamingConvention
 	 *
 	 * @return ParsingConvention
 	 */
-	public function  __construct(PhpLinter $linter)
+	public function __construct(PhpLinter $linter)
 	{
 		$this->linter = $linter;
 	}
