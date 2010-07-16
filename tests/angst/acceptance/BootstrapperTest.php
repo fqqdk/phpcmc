@@ -154,6 +154,7 @@ class BootstrapperTest extends ZetsuboTestCase
 	 */
 	public function errorHandlerRegistrationOrderIsStackLike()
 	{
+        $this->requireIniSwitch('allow_url_include');
 		try {
 			$this->runFunctionIsolated(__class__.'::handlerWorkFlow', __file__);
 		} catch(ForeignError $ex) {
